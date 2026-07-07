@@ -10,12 +10,12 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-export type AIProvider = "openai" | "openrouter";
+export type AIProvider = "ollama_cloud" | "openai" | "openrouter";
 
 let cachedProvider: AIProvider | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL_MS = 30_000; // 30 seconds
-const DEFAULT_AI_PROVIDER: AIProvider = "openrouter";
+const DEFAULT_AI_PROVIDER: AIProvider = "ollama_cloud";
 
 /**
  * Functions that MUST always use direct OpenAI (embeddings, enrich workers).
@@ -46,7 +46,7 @@ export async function getAIProvider(): Promise<AIProvider> {
   }
 
   const envProvider = Deno.env.get("AI_PROVIDER")?.toLowerCase();
-  if (envProvider === "openai" || envProvider === "openrouter") {
+  if (envProvider === "ollama_cloud" || envProvider === "openai" || envProvider === "openrouter") {
     cachedProvider = envProvider;
     cacheTimestamp = now;
     return cachedProvider;
@@ -74,7 +74,9 @@ export async function getAIProvider(): Promise<AIProvider> {
       cachedProvider = DEFAULT_AI_PROVIDER;
     } else {
       const val = data.value as string;
-      if (val === "openai") {
+      if (val === "ollama_cloud") {
+        cachedProvider = "ollama_cloud";
+      } else if (val === "openai") {
         cachedProvider = "openai";
       } else if (val === "openrouter") {
         cachedProvider = "openrouter";
@@ -116,6 +118,22 @@ export function resolveEndpoint(
     };
   }
 
+  // Ollama Cloud (GLM etc.) — routed by the "ollama/" model prefix, OpenAI-compatible
+  // endpoint. Independent of the openai/openrouter setting so GLM-5.2 can be the primary
+  // analysis model per-function, with an OpenRouter fallback handled in openai-router.ts.
+  if (modelName.startsWith("ollama/")) {
+    const key = Deno.env.get("OLLAMA_CLOUD_API_KEY") ?? Deno.env.get("OLLAMA_API_KEY");
+    if (!key) throw new Error("[ai-provider] OLLAMA_CLOUD_API_KEY is not configured for Ollama Cloud");
+    const base = Deno.env.get("OLLAMA_CLOUD_BASE_URL");
+    if (!base) throw new Error("[ai-provider] OLLAMA_CLOUD_BASE_URL is not configured for Ollama Cloud");
+    const cleanBase = base.replace(/\/+$/, "");
+    return {
+      url: `${cleanBase}/chat/completions`,
+      apiKey: key,
+      modelForApi: modelName.replace(/^ollama\//, ""),
+    };
+  }
+
   // Functions that must always use direct OpenAI
   if (functionName && isOpenAIOnlyFunction(functionName)) {
     const key = Deno.env.get("OPENAI_API_KEY");
@@ -128,6 +146,18 @@ export function resolveEndpoint(
     };
   }
 
+  // In Ollama Cloud mode, non-Ollama model IDs are controlled secondary routes
+  // through OpenRouter. GLM failure fallback remains controlled in openai-router.ts.
+  if (provider === "ollama_cloud") {
+    const key = Deno.env.get("OPENROUTER_API_KEY");
+    if (!key) throw new Error("[ai-provider] OPENROUTER_API_KEY is not configured for secondary OpenRouter model route");
+    return {
+      url: "https://openrouter.ai/api/v1/chat/completions",
+      apiKey: key,
+      modelForApi: modelName,
+    };
+  }
+
   // OpenRouter provider: route ALL models (including google/*) through OpenRouter
   if (provider === "openrouter") {
     const key = Deno.env.get("OPENROUTER_API_KEY");
@@ -135,7 +165,7 @@ export function resolveEndpoint(
     return {
       url: "https://openrouter.ai/api/v1/chat/completions",
       apiKey: key,
-      modelForApi: modelName, // OpenRouter accepts full model names like "google/gemini-2.5-flash:free"
+      modelForApi: modelName, // OpenRouter accepts provider-qualified model names.
     };
   }
 

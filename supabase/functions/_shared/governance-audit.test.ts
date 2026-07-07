@@ -9,8 +9,9 @@
  */
 
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
+import { fromFileUrl } from "https://deno.land/std@0.224.0/path/mod.ts";
 
-const FUNCTIONS_DIR = new URL("../../functions", import.meta.url).pathname;
+const FUNCTIONS_DIR = fromFileUrl(new URL("../../functions", import.meta.url));
 
 // Helper: recursively collect .ts files
 async function collectTsFiles(dir: string): Promise<string[]> {
@@ -67,14 +68,16 @@ Deno.test("No direct ai.gateway calls outside shared helpers", async () => {
 });
 
 Deno.test("No hardcoded model strings outside MODEL_MAP", async () => {
-  // Extended pattern: catch prefixed (openai/, google/, anthropic/) AND bare model names (gpt-*, gemini-*, claude-*)
-  const modelPattern = /["'](openai\/(?!text-embedding)[^"']+|google\/gemini[^"']+|anthropic\/[^"']+|gpt-\d[^"']*|gemini-\d[^"']*|claude-\d[^"']*)["']/g;
+  // Extended pattern: catch prefixed (ollama/, openai/, google/, anthropic/) AND bare model names (gpt-*, gemini-*, claude-*)
+  const modelPattern = /["'](ollama\/[^"']+|openai\/(?!text-embedding)[^"']+|google\/gemini[^"']+|anthropic\/[^"']+|gpt-\d[^"']*|gemini-\d[^"']*|claude-\d[^"']*)["']/g;
   const files = await collectTsFiles(FUNCTIONS_DIR);
   const violations: string[] = [];
 
   for (const file of files) {
     const basename = file.split("/").pop()!;
     if (ALLOWED_MODEL_STRING_FILES.has(basename)) continue;
+    const normalizedFile = file.replaceAll("\\", "/");
+    if (normalizedFile.includes("/ocr-process/")) continue; // multimodal OCR pricing table
 
     const content = await Deno.readTextFile(file);
     const matches = [...content.matchAll(modelPattern)];
@@ -161,8 +164,8 @@ Deno.test("ai-analyze responses use model_used not model", async () => {
   const indexPath = `${FUNCTIONS_DIR}/ai-analyze/index.ts`;
   const content = await Deno.readTextFile(indexPath);
 
-  // Find all JSON response constructions
-  const responsePattern = /JSON\.stringify\(\{[^}]*\bmodel\b\s*:/g;
+  // Find response JSON constructions; logs/metrics may use `model`, API responses must use `model_used`.
+  const responsePattern = /return\s+new\s+Response\(\s*JSON\.stringify\(\{[^}]*\bmodel\b\s*:/g;
   const matches = [...content.matchAll(responsePattern)];
 
   // Filter out legitimate uses (model_used is fine)

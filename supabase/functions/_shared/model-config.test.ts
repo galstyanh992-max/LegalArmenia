@@ -79,13 +79,13 @@ Deno.test("All legal profiles pass validateProfiles()", () => {
 // 3) MODEL SELECTION — Correct model for each use case
 // =============================================================================
 
-Deno.test("Deep analysis uses GPT-5", () => {
-  assertEquals(LEGAL_DETERMINISTIC.model, "openai/gpt-5");
-  assertEquals(LEGAL_CHAT.model, "openai/gpt-5");
-  assertEquals(MULTI_AGENT_ANALYSIS.model, "openai/gpt-5");
-  assertEquals(DOCUMENT_GENERATION.model, "openai/gpt-5");
-  assertEquals(COMPLAINT_GENERATION.model, "openai/gpt-5");
-  assertEquals(FILE_ANALYSIS.model, "openai/gpt-5");
+Deno.test("Deep analysis uses GLM-5.2 Cloud", () => {
+  assertEquals(LEGAL_DETERMINISTIC.model, "ollama/glm-5.2:cloud");
+  assertEquals(LEGAL_CHAT.model, "ollama/glm-5.2:cloud");
+  assertEquals(MULTI_AGENT_ANALYSIS.model, "ollama/glm-5.2:cloud");
+  assertEquals(DOCUMENT_GENERATION.model, "ollama/glm-5.2:cloud");
+  assertEquals(COMPLAINT_GENERATION.model, "ollama/glm-5.2:cloud");
+  assertEquals(FILE_ANALYSIS.model, "ollama/glm-5.2:cloud");
 });
 
 Deno.test("Utility operations use Flash model", () => {
@@ -121,7 +121,7 @@ Deno.test("FIELD_EXTRACTION temperature <= 0.1", () => {
 
 Deno.test("getProfile returns correct profile", () => {
   const p = getProfile("LEGAL_DETERMINISTIC");
-  assertEquals(p.model, "openai/gpt-5");
+  assertEquals(p.model, "ollama/glm-5.2:cloud");
   assertEquals(p.temperature, 0.2);
 });
 

@@ -24,6 +24,8 @@ export interface ModelConfig {
   max_tokens: number;
   json_mode?: boolean;
   description: string;
+  /** Optional OpenRouter (or other) model to use if the primary provider fails. */
+  fallback?: string;
 }
 
 /** Governance metadata returned with every AI call */
@@ -41,40 +43,46 @@ export interface GovernanceMeta {
 export const MODEL_MAP: Record<string, ModelConfig> = {
   // ── Primary legal reasoning ───────────────────────────────────────────────
   "ai-analyze": {
-    model: "anthropic/claude-sonnet-4",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.15,
     max_tokens: 14000,
-    description: "Case analysis (Claude Sonnet 4)",
+    description: "Case analysis (GLM-5.2 primary; Claude Sonnet 4 fallback)",
+    fallback: "anthropic/claude-sonnet-4",
   },
   "multi-agent-analyze": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
-    description: "Multi-agent analysis (Claude 3.5 Sonnet)",
+    description: "Multi-agent analysis (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
   "generate-complaint": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 14000,
-    description: "Complaint drafting (Claude 3.5 Sonnet)",
+    description: "Complaint drafting (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
   "legal-chat": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
-    description: "Legal chat (Claude 3.5 Sonnet)",
+    description: "Legal chat (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
   "analyze-files-for-complaint": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
-    description: "File analysis (Claude 3.5 Sonnet)",
+    description: "File analysis (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
   "generate-document": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 10000,
-    description: "Documents (Claude 3.5 Sonnet)",
+    description: "Documents (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
 
   // ── Strict JSON ───────────────────────────────────────────────────────────
@@ -85,11 +93,12 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
     description: "Extract fields (Gemini 2.5 Pro)",
   },
   "kb-search-assistant": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 200,
     json_mode: true,
-    description: "KB keywords JSON (Gemini 2.5 Pro)",
+    description: "KB keywords JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
+    fallback: "google/gemini-2.5-pro",
   },
 
   // ── Utilities ─────────────────────────────────────────────────────────────
@@ -203,35 +212,40 @@ const ROLE_OVERRIDES: Record<string, Partial<ModelConfig>> = {
   "ai-analyze:legal_position_comparator": { description: "Comparator" },
   // ── Deterministic draft (temp=0) ───────────────────────────────────────────
   "ai-analyze:draft_deterministic": {
-    model: "anthropic/claude-sonnet-4",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0,
     max_tokens: 14000,
-    description: "Deterministic draft (Claude Sonnet 4 temp=0)",
+    description: "Deterministic draft (GLM-5.2 temp=0)",
+    fallback: "anthropic/claude-sonnet-4",
   },
   // ── JSON roles (Gemini Pro) ─────────────────────────────────────────────
   "ai-analyze:precedent_citation": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 8000,
-    description: "Precedent JSON (Gemini 2.5 Pro)",
+    description: "Precedent JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
+    fallback: "google/gemini-2.5-pro",
   },
   "ai-analyze:cross_exam": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 8000,
-    description: "Cross-exam JSON (Gemini 2.5 Pro)",
+    description: "Cross-exam JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
+    fallback: "google/gemini-2.5-pro",
   },
   "ai-analyze:deadline_rules": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 8000,
-    description: "Deadlines JSON (Gemini 2.5 Pro)",
+    description: "Deadlines JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
+    fallback: "google/gemini-2.5-pro",
   },
   "ai-analyze:law_update_summary": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 8000,
-    description: "Law update JSON (Gemini 2.5 Pro)",
+    description: "Law update JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
+    fallback: "google/gemini-2.5-pro",
   },
 };
 
@@ -256,6 +270,7 @@ const OPENAI_CHAT_ALLOWLIST = new Set([
   "ai-analyze:draft_deterministic",
   "extract-case-fields",
   "admin-ai-chat",
+  "practice-ai-enrich-worker",
 ]);
 
 /** OpenAI embedding models allowed ONLY for these functionNames */
@@ -472,6 +487,17 @@ function isRetryable(status: number): boolean {
   return status === 429 || status >= 500;
 }
 
+function isOpenRouterFallbackEnabled(): boolean {
+  return Deno.env.get("OPENROUTER_FALLBACK_ENABLED") === "true";
+}
+
+function isRetryableProviderError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const status = (err as Error & { status?: number }).status;
+  if (typeof status === "number") return isRetryable(status);
+  return err.name === "AbortError" || err.message.includes("network") || err.message.includes("Network");
+}
+
 async function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -490,11 +516,16 @@ async function fetchWithRetry(
   const provider = await getAIProvider();
   const modelName = body.model as string;
   const endpoint = resolveEndpoint(provider, modelName, functionName);
+  const effectiveTimeoutMs = modelName.startsWith("ollama/")
+    ? parseInt(Deno.env.get("OLLAMA_CLOUD_TIMEOUT_MS") ?? String(timeoutMs), 10)
+    : timeoutMs;
   
   // Update model name in body if routing to OpenAI directly
   const resolvedBody = { ...body, model: endpoint.modelForApi };
 
-  const max = maxRetries();
+  const max = modelName.startsWith("ollama/")
+    ? parseInt(Deno.env.get("OLLAMA_CLOUD_MAX_RETRIES") ?? "2", 10)
+    : maxRetries();
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= max; attempt++) {
@@ -503,7 +534,7 @@ async function fetchWithRetry(
     let response: Response;
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      const timer = setTimeout(() => controller.abort(), effectiveTimeoutMs);
 
       response = await fetch(endpoint.url, {
         method: "POST",
@@ -580,7 +611,10 @@ async function fetchWithRetry(
       }
 
       const errText = await response.text().catch(() => "");
-      throw new Error(`AI provider error ${response.status}: ${errText.substring(0, 200)}`);
+      throw Object.assign(
+        new Error(`AI provider error ${response.status}: ${errText.substring(0, 200)}`),
+        { status: response.status }
+      );
     }
 
     // Safely parse response body — guard against empty/truncated responses
@@ -672,25 +706,53 @@ export async function callText(
   }
 
   const cfg = getModelConfig(functionName, options.role);
-  const governance = buildGovernanceMeta(cfg, roleLabel);
-  const requestId = newRequestId();
   const safeMessages = prependSafetyHeader(functionName, messages);
   const timeoutMs = options.timeoutMs ?? defaultTimeout(false);
 
-  const body = buildRequestBody(cfg, safeMessages);
+  const runOnce = async (useCfg: ModelConfig): Promise<TextResult> => {
+    const requestId = newRequestId();
+    const body = buildRequestBody(useCfg, safeMessages);
+    const { data, latency_ms } = await fetchWithRetry(functionName, requestId, body, timeoutMs);
+    const choices = data.choices as Array<{ message: { content: string } }>;
+    const text = choices?.[0]?.message?.content ?? "";
+    const usage = data.usage as TextResult["usage"];
+    return {
+      text,
+      model_used: useCfg.model,
+      latency_ms,
+      request_id: requestId,
+      usage,
+      governance: buildGovernanceMeta(useCfg, roleLabel),
+    };
+  };
 
-  const { data, latency_ms } = await fetchWithRetry(
-    functionName,
-    requestId,
-    body,
-    timeoutMs
+  // Primary provider (e.g. GLM-5.2 on Ollama Cloud). For Ollama-primary roles, skip
+  // straight to the OpenRouter fallback when no OLLAMA key is configured — avoids a
+  // guaranteed-failing call and noisy logs. Fallback is explicit, never silent.
+  try {
+    return await runOnce(cfg);
+  } catch (err) {
+    if (!cfg.fallback || !cfg.model.startsWith("ollama/")) throw err;
+    if (!isRetryableProviderError(err) || !isOpenRouterFallbackEnabled()) throw err;
+    console.warn(
+      JSON.stringify({
+        function_name: functionName,
+        event: "provider_fallback",
+        from_model: cfg.model,
+        to_model: cfg.fallback,
+        reason: (err as Error)?.message?.slice(0, 160) ?? "unknown",
+      })
+    );
+  }
+
+  if (cfg.fallback) {
+    const fbCfg = enforceGovernance({ ...cfg, model: cfg.fallback }, roleLabel, functionName);
+    return await runOnce(fbCfg);
+  }
+
+  throw new Error(
+    `[openai-router] ${functionName}: primary model "${cfg.model}" unavailable and no fallback configured.`
   );
-
-  const choices = data.choices as Array<{ message: { content: string } }>;
-  const text = choices?.[0]?.message?.content ?? "";
-  const usage = data.usage as TextResult["usage"];
-
-  return { text, model_used: cfg.model, latency_ms, request_id: requestId, usage, governance };
 }
 
 /**
@@ -721,19 +783,46 @@ export async function callJSON<T = Record<string, unknown>>(
         `Use Gemini Pro JSON roles only.`
     );
   }
-  const governance = buildGovernanceMeta(cfg, roleLabel);
-  const requestId = newRequestId();
   const safeMessages = prependSafetyHeader(functionName, messages);
   const timeoutMs = options.timeoutMs ?? defaultTimeout(false);
 
-  const body = buildRequestBody(cfg, safeMessages);
+  let activeCfg = cfg;
+  let governance = buildGovernanceMeta(activeCfg, roleLabel);
+  let requestId = newRequestId();
+  let body = buildRequestBody(activeCfg, safeMessages);
+  let data: Record<string, unknown>;
+  let latency_ms: number;
 
-  const { data, latency_ms } = await fetchWithRetry(
-    functionName,
-    requestId,
-    body,
-    timeoutMs
-  );
+  try {
+    ({ data, latency_ms } = await fetchWithRetry(
+      functionName,
+      requestId,
+      body,
+      timeoutMs
+    ));
+  } catch (err) {
+    if (!cfg.fallback || !cfg.model.startsWith("ollama/")) throw err;
+    if (!isRetryableProviderError(err) || !isOpenRouterFallbackEnabled()) throw err;
+    console.warn(
+      JSON.stringify({
+        function_name: functionName,
+        event: "provider_fallback",
+        from_model: cfg.model,
+        to_model: cfg.fallback,
+        reason: (err as Error)?.message?.slice(0, 160) ?? "unknown",
+      })
+    );
+    activeCfg = enforceGovernance({ ...cfg, model: cfg.fallback }, roleLabel, functionName);
+    governance = buildGovernanceMeta(activeCfg, roleLabel);
+    requestId = newRequestId();
+    body = buildRequestBody(activeCfg, safeMessages);
+    ({ data, latency_ms } = await fetchWithRetry(
+      functionName,
+      requestId,
+      body,
+      timeoutMs
+    ));
+  }
 
   const choices = data.choices as Array<{ message: { content: string } }>;
   let raw = choices?.[0]?.message?.content ?? "";
@@ -768,7 +857,7 @@ export async function callJSON<T = Record<string, unknown>>(
 
   return {
     json: validated,
-    model_used: cfg.model,
+    model_used: activeCfg.model,
     latency_ms,
     request_id: requestId,
     usage,

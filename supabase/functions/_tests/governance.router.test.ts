@@ -67,9 +67,10 @@ Deno.test("governance: all MODEL_MAP entries have max_tokens <= 16384", () => {
 
 // ─── Test 4: Only allowed model prefixes ────────────────────────────────────
 
-Deno.test("governance: all models use allowed prefixes (openai/, google/, openrouter/, anthropic/)", () => {
+Deno.test("governance: all models use allowed prefixes (ollama/, openai/, google/, openrouter/, anthropic/)", () => {
   for (const [key, cfg] of Object.entries(MODEL_MAP)) {
     const validPrefix = 
+      cfg.model.startsWith("ollama/") ||
       cfg.model.startsWith("openai/") || 
       cfg.model.startsWith("google/") || 
       cfg.model.startsWith("openrouter/") || 
@@ -77,14 +78,14 @@ Deno.test("governance: all models use allowed prefixes (openai/, google/, openro
     assertEquals(
       validPrefix,
       true,
-      `${key}: model "${cfg.model}" has invalid prefix (must be openai/, google/, openrouter/, or anthropic/)`
+      `${key}: model "${cfg.model}" has invalid prefix (must be ollama/, openai/, google/, openrouter/, or anthropic/)`
     );
   }
 });
 
 // ─── Test 5: Strict JSON roles must use Gemini Pro ──────────────────────────
 
-Deno.test("governance: strict JSON roles resolve to google/gemini-2.5-pro", () => {
+Deno.test("governance: strict JSON roles resolve to ollama/glm-5.2:cloud", () => {
   const strictRoles = [
     "precedent_citation",
     "cross_exam",
@@ -96,8 +97,26 @@ Deno.test("governance: strict JSON roles resolve to google/gemini-2.5-pro", () =
     const cfg = getModelConfig("ai-analyze", role);
     assertEquals(
       cfg.model,
-      "google/gemini-2.5-pro",
-      `ai-analyze:${role} must use google/gemini-2.5-pro, got ${cfg.model}`
+      "ollama/glm-5.2:cloud",
+      `ai-analyze:${role} must use ollama/glm-5.2:cloud, got ${cfg.model}`
+    );
+  }
+});
+
+Deno.test("governance: strict JSON roles have OpenRouter fallback models", () => {
+  const strictRoles = [
+    "precedent_citation",
+    "cross_exam",
+    "deadline_rules",
+    "law_update_summary",
+  ];
+
+  for (const role of strictRoles) {
+    const cfg = getModelConfig("ai-analyze", role);
+    assertEquals(
+      typeof cfg.fallback,
+      "string",
+      `ai-analyze:${role} must define a fallback model`
     );
   }
 });

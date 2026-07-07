@@ -28,7 +28,7 @@ export interface ModelConfig {
  * USES: OpenAI legal reasoning model
  */
 export const LEGAL_DETERMINISTIC: ModelConfig = {
-  model: "openai/gpt-5",
+  model: "ollama/glm-5.2:cloud",
   temperature: 0.2,
   max_tokens: 16384,
   top_p: 0.92,
@@ -41,7 +41,7 @@ export const LEGAL_DETERMINISTIC: ModelConfig = {
  * USES: OpenAI legal chat model
  */
 export const LEGAL_CHAT: ModelConfig = {
-  model: "openai/gpt-5",
+  model: "ollama/glm-5.2:cloud",
   temperature: 0.2,
   max_tokens: 16000,
   description: "Legal chat (temp=0.2, GPT-5)",
@@ -52,7 +52,7 @@ export const LEGAL_CHAT: ModelConfig = {
  * USES: OpenAI document generation model
  */
 export const DOCUMENT_GENERATION: ModelConfig = {
-  model: "openai/gpt-5",
+  model: "ollama/glm-5.2:cloud",
   temperature: 0.2,
   max_tokens: 10000,
   description: "Document generation (temp=0.2, GPT-5)",
@@ -63,7 +63,7 @@ export const DOCUMENT_GENERATION: ModelConfig = {
  * USES: OpenAI complaint generation model
  */
 export const COMPLAINT_GENERATION: ModelConfig = {
-  model: "openai/gpt-5",
+  model: "ollama/glm-5.2:cloud",
   temperature: 0.1,
   max_tokens: 12000,
   description: "Complaint generation (temp=0.1, GPT-5)",
@@ -97,7 +97,7 @@ export const AUDIO_TRANSCRIPTION: ModelConfig = {
  * USES: OpenAI multi-agent analysis model
  */
 export const MULTI_AGENT_ANALYSIS: ModelConfig = {
-  model: "openai/gpt-5",
+  model: "ollama/glm-5.2:cloud",
   temperature: 0.1,
   max_tokens: 16384,
   description: "Multi-agent legal analysis (temp=0.1, GPT-5)",
@@ -108,7 +108,7 @@ export const MULTI_AGENT_ANALYSIS: ModelConfig = {
  * USES: OpenAI file analysis model
  */
 export const FILE_ANALYSIS: ModelConfig = {
-  model: "openai/gpt-5",
+  model: "ollama/glm-5.2:cloud",
   temperature: 0.1,
   max_tokens: 16384,
   description: "File analysis for complaints (temp=0.1, GPT-5)",
@@ -216,8 +216,8 @@ export function validateProfiles(): string[] {
         `${name}: temperature ${p.temperature} exceeds legal max ${LEGAL_MAX_TEMP}`
       );
     }
-    // Block unknown model prefixes (only openai/ and google/ allowed)
-    if (!p.model.startsWith("openai/") && !p.model.startsWith("google/")) {
+    // Block unknown model prefixes.
+    if (!p.model.startsWith("ollama/") && !p.model.startsWith("openai/") && !p.model.startsWith("google/")) {
       violations.push(
         `${name}: unknown model prefix, found ${p.model}`
       );
