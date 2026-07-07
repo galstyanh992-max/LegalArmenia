@@ -1,7 +1,7 @@
 /**
  * embeddings-generate — Central server-side embeddings service.
  *
- * Uses OpenAI embeddings with text-embedding-3-small by default.
+ * Uses the Metric-AI embedding endpoint (EMBEDDING_ENDPOINT), armenian-text-embeddings-2-large by default.
  *
  * Security:
  *   - Requires x-internal-key header (INTERNAL_INGEST_KEY) OR valid Bearer JWT.
@@ -15,7 +15,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 
 // ─── Config ────────────────────────────────────────────────────────────────
-const OPENAI_BASE_URL = Deno.env.get("EMBEDDING_ENDPOINT") ?? Deno.env.get("OPENAI_BASE_URL") ?? "https://api.openai.com/v1";
+const EMBEDDING_BASE_URL = Deno.env.get("EMBEDDING_ENDPOINT") ?? Deno.env.get("OPENAI_BASE_URL") ?? "https://api.openai.com/v1";
 const DEFAULT_MODEL = "text-embedding-3-small";
 const MAX_BATCH_SIZE = 100;
 const MAX_CHARS_PER_TEXT = 6_000; // worst-case Armenian ≈ 1 char/token; model limit 8191
@@ -71,8 +71,8 @@ async function withRetry<T>(
   throw lastError;
 }
 
-// ─── OpenAI embedding call ─────────────────────────────────────────────────
-async function callOpenAIEmbeddings(
+// ─── Metric-AI embedding call ──────────────────────────────────────────────
+async function callEmbeddingEndpoint(
   texts: string[],
   model: string,
   dimensions?: number,
@@ -86,7 +86,7 @@ async function callOpenAIEmbeddings(
   if (dimensions) body.dimensions = dimensions;
 
   const response = await withRetry(async () => {
-    const res = await fetch(`${OPENAI_BASE_URL}/embeddings`, {
+    const res = await fetch(`${EMBEDDING_BASE_URL}/embeddings`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -99,11 +99,11 @@ async function callOpenAIEmbeddings(
       const errText = await res.text();
       // 400 with token-limit message → do not retry (text too long)
       if (res.status === 400 && /token|too long|maximum context/i.test(errText)) {
-        const err = new Error(`OpenAI token limit exceeded (400): ${errText.substring(0, 200)}`);
+        const err = new Error(`Embedding token limit exceeded (400): ${errText.substring(0, 200)}`);
         (err as Error & { nonRetryable: boolean }).nonRetryable = true;
         throw err;
       }
-      throw new Error(`OpenAI embeddings error ${res.status}: ${errText}`);
+      throw new Error(`Embedding endpoint error ${res.status}: ${errText}`);
     }
 
     return res;
@@ -112,7 +112,7 @@ async function callOpenAIEmbeddings(
   const json = await response.json();
 
   if (!json.data || !Array.isArray(json.data)) {
-    throw new Error("Unexpected response format from OpenAI embeddings");
+    throw new Error("Unexpected response format from embedding endpoint");
   }
 
   // Sort by index to preserve order
@@ -187,7 +187,7 @@ serve(async (req) => {
       `[embeddings-generate] batch=${texts.length} model=${resolvedModel}${dimensions ? ` dims=${dimensions}` : ""}`,
     );
 
-    const { vectors, totalTokens } = await callOpenAIEmbeddings(
+    const { vectors, totalTokens } = await callEmbeddingEndpoint(
       texts,
       resolvedModel,
       dimensions,

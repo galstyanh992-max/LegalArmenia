@@ -2,7 +2,7 @@
  * Token-aware segmentation for embeddings + stable fingerprint text.
  *
  * Purpose:
- * - Avoid OpenAI "token limit exceeded" by embedding up to N windows per text.
+ * - Avoid embedding-model "token limit exceeded" by embedding up to N windows per text.
  * - Pool the segment vectors (mean + L2 normalization) back into one vector.
  * - Provide a stable fingerprint string for idempotency hashing that matches
  *   the actual segments used for embeddings.

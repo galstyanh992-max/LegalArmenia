@@ -95,6 +95,12 @@ function isWildcardAllowed(): boolean {
   return true;
 }
 
+function isLocalDevOrigin(origin: string): boolean {
+  const hostname = parseOriginHostname(origin);
+  if (!hostname) return false;
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+}
+
 /**
  * Parse hostname from an origin string.
  * e.g. "https://foo.preview.example.com" -> "foo.preview.example.com"
@@ -111,6 +117,9 @@ export function parseOriginHostname(origin: string): string | null {
  * Check if origin is allowed by exact match OR suffix match.
  */
 export function isAllowedOrigin(origin: string): boolean {
+  // Local app development uses remote Edge Functions from localhost ports.
+  if (isLocalDevOrigin(origin)) return true;
+
   // 1) Exact match in ALLOWED_ORIGINS
   const exactList = getAllowedOrigins();
   if (exactList.includes(origin)) return true;

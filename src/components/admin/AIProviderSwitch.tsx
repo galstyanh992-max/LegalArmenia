@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Cpu, Globe } from "lucide-react";
+import { Loader2, Cpu, Globe, Cloud } from "lucide-react";
 import { toast } from "sonner";
 import {
   Select,
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type AIProvider = "openai" | "openrouter";
+type AIProvider = "ollama_cloud" | "openai" | "openrouter";
 
 type AppSettingsRow = { value: string };
 type AppSettingsQueryBuilder = {
@@ -32,7 +32,16 @@ type AppSettingsClient = typeof supabase & {
   from: (table: "app_settings") => AppSettingsQueryBuilder;
 };
 
+const isAIProvider = (value: string | null | undefined): value is AIProvider =>
+  value === "ollama_cloud" || value === "openai" || value === "openrouter";
+
 const PROVIDER_INFO: Record<AIProvider, { label: string; description: string; icon: typeof Cpu; badge: string }> = {
+  ollama_cloud: {
+    label: "Ollama Cloud",
+    description: "Primary GLM route through Ollama Cloud. Requires OLLAMA_CLOUD_API_KEY and OLLAMA_CLOUD_BASE_URL.",
+    icon: Cloud,
+    badge: "Ollama",
+  },
   openai: {
     label: "OpenAI Direct",
     description: "Only openai/* chat models can run directly through api.openai.com.",
@@ -65,7 +74,7 @@ export function AIProviderSwitch() {
         .single();
 
       if (!error && data) {
-        setProvider(data.value === "openai" ? "openai" : "openrouter");
+        setProvider(isAIProvider(data.value) ? data.value : "openrouter");
       }
     } catch {
       // app_settings may be unavailable in some environments.
@@ -138,6 +147,7 @@ export function AIProviderSwitch() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="ollama_cloud">Ollama Cloud</SelectItem>
                 <SelectItem value="openai">OpenAI Direct</SelectItem>
                 <SelectItem value="openrouter">OpenRouter</SelectItem>
               </SelectContent>

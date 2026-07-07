@@ -2,8 +2,8 @@
  * _shared/ai-provider.ts — Resolves the active AI provider setting.
  *
  * Reads `ai_provider` from `app_settings` table.
- * Values: "openai" (direct OpenAI API) | "openrouter" (OpenRouter API).
- * Default: "openrouter", because the current model registry uses Anthropic/Gemini IDs.
+ * Values: "ollama_cloud" (Ollama Cloud GLM) | "openai" (direct OpenAI API) | "openrouter" (OpenRouter API).
+ * Default: auto-detected from configured API keys.
  *
  * Cached per cold-start to avoid repeated DB calls within the same invocation.
  */
@@ -15,7 +15,17 @@ export type AIProvider = "ollama_cloud" | "openai" | "openrouter";
 let cachedProvider: AIProvider | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL_MS = 30_000; // 30 seconds
-const DEFAULT_AI_PROVIDER: AIProvider = "ollama_cloud";
+const VALID_AI_PROVIDERS = new Set<AIProvider>(["ollama_cloud", "openai", "openrouter"]);
+
+function isAIProvider(value: string | undefined | null): value is AIProvider {
+  return !!value && VALID_AI_PROVIDERS.has(value as AIProvider);
+}
+
+function detectConfiguredProvider(): AIProvider {
+  if (Deno.env.get("OPENROUTER_API_KEY")) return "openrouter";
+  if (Deno.env.get("OLLAMA_CLOUD_API_KEY") || Deno.env.get("OLLAMA_API_KEY")) return "ollama_cloud";
+  return "openai";
+}
 
 /**
  * Functions that MUST always use direct OpenAI (embeddings, enrich workers).
@@ -24,9 +34,6 @@ const DEFAULT_AI_PROVIDER: AIProvider = "ollama_cloud";
 const OPENAI_ONLY_FUNCTIONS = new Set([
   "generate-embeddings",
   "practice-embed-worker",
-  "practice-ai-enrich-worker",
-  "legal-practice-enrich",
-  "vector-search-rerank",
 ]);
 
 /**
@@ -46,18 +53,21 @@ export async function getAIProvider(): Promise<AIProvider> {
   }
 
   const envProvider = Deno.env.get("AI_PROVIDER")?.toLowerCase();
-  if (envProvider === "ollama_cloud" || envProvider === "openai" || envProvider === "openrouter") {
+  if (isAIProvider(envProvider)) {
     cachedProvider = envProvider;
     cacheTimestamp = now;
     return cachedProvider;
+  }
+  if (envProvider) {
+    console.warn(`[ai-provider] Invalid AI_PROVIDER="${envProvider}", auto-detecting from configured keys`);
   }
 
   try {
     const url = Deno.env.get("SUPABASE_URL");
     const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!url || !key) {
-      console.warn(`[ai-provider] Missing SUPABASE_URL or SERVICE_ROLE_KEY, defaulting to ${DEFAULT_AI_PROVIDER}`);
-      cachedProvider = DEFAULT_AI_PROVIDER;
+      cachedProvider = detectConfiguredProvider();
+      console.warn(`[ai-provider] Missing SUPABASE_URL or SERVICE_ROLE_KEY, using ${cachedProvider}`);
       cacheTimestamp = now;
       return cachedProvider;
     }
@@ -70,23 +80,20 @@ export async function getAIProvider(): Promise<AIProvider> {
       .single();
 
     if (error || !data) {
-      console.warn(`[ai-provider] Could not read ai_provider setting, defaulting to ${DEFAULT_AI_PROVIDER}:`, error?.message);
-      cachedProvider = DEFAULT_AI_PROVIDER;
+      cachedProvider = detectConfiguredProvider();
+      console.warn(`[ai-provider] Could not read ai_provider setting, using ${cachedProvider}:`, error?.message);
     } else {
-      const val = data.value as string;
-      if (val === "ollama_cloud") {
-        cachedProvider = "ollama_cloud";
-      } else if (val === "openai") {
-        cachedProvider = "openai";
-      } else if (val === "openrouter") {
-        cachedProvider = "openrouter";
+      const val = String(data.value ?? "").toLowerCase();
+      if (isAIProvider(val)) {
+        cachedProvider = val;
       } else {
-        cachedProvider = DEFAULT_AI_PROVIDER;
+        cachedProvider = detectConfiguredProvider();
+        console.warn(`[ai-provider] Invalid app_settings.ai_provider="${val}", using ${cachedProvider}`);
       }
     }
   } catch (e) {
+    cachedProvider = detectConfiguredProvider();
     console.warn("[ai-provider] Error reading setting:", e);
-    cachedProvider = DEFAULT_AI_PROVIDER;
   }
 
   cacheTimestamp = now;

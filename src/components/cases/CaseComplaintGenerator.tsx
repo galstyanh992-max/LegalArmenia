@@ -316,7 +316,7 @@ export function CaseComplaintGenerator({
       }
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       const sessionData = await supabase.auth.getSession();
       const accessToken = sessionData.data.session?.access_token;
 

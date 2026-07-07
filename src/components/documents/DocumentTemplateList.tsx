@@ -146,7 +146,8 @@ export function DocumentTemplateList({
   const { i18n } = useTranslation();
   // Filter templates based on recipient type
   const allowedCategories = RECIPIENT_CATEGORY_MAP[recipientType];
-  const filteredTemplates = templates.filter(t => allowedCategories.includes(t.category));
+  const recipientFilteredTemplates = templates.filter(t => allowedCategories.includes(t.category));
+  const filteredTemplates = recipientFilteredTemplates.length ? recipientFilteredTemplates : templates;
 
   // Group templates by category
   const groupedTemplates = filteredTemplates.reduce((acc, template) => {
@@ -171,6 +172,11 @@ export function DocumentTemplateList({
   return (
     <ScrollArea className="h-[500px] pr-4">
       <div className="space-y-6">
+        {!templates.length && (
+          <div className="rounded-2xl border border-border/70 bg-background/40 p-4 text-sm text-muted-foreground">
+            No document templates found.
+          </div>
+        )}
         {categoryOrder.map((category) => {
           const categoryTemplates = groupedTemplates[category];
           if (!categoryTemplates?.length) return null;

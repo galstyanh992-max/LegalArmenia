@@ -21,6 +21,81 @@ interface DocumentTemplate {
   required_fields: string[];
 }
 
+const FALLBACK_DOCUMENT_TEMPLATES: DocumentTemplate[] = [
+  {
+    id: "fallback-civil-claim",
+    category: "civil_process",
+    subcategory: "claim",
+    name_hy: "Հայցադիմում",
+    name_ru: "Исковое заявление",
+    name_en: "Statement of Claim",
+    required_fields: ["court", "plaintiff", "defendant", "claims"],
+  },
+  {
+    id: "fallback-civil-motion",
+    category: "civil_process",
+    subcategory: "motion",
+    name_hy: "Միջնորդություն",
+    name_ru: "Ходатайство",
+    name_en: "Motion",
+    required_fields: ["court", "case_number", "request", "grounds"],
+  },
+  {
+    id: "fallback-civil-appeal",
+    category: "civil_process",
+    subcategory: "appeal",
+    name_hy: "Վերաքննիչ բողոք",
+    name_ru: "Апелляционная жалоба",
+    name_en: "Appeal",
+    required_fields: ["court", "case_number", "decision_appealed", "grounds"],
+  },
+  {
+    id: "fallback-civil-cassation",
+    category: "civil_process",
+    subcategory: "cassation",
+    name_hy: "Վճռաբեկ բողոք",
+    name_ru: "Кассационная жалоба",
+    name_en: "Cassation Appeal",
+    required_fields: ["court", "case_number", "decision_appealed", "grounds"],
+  },
+  {
+    id: "fallback-criminal-complaint-investigator",
+    category: "criminal_process",
+    subcategory: "complaint_investigator",
+    name_hy: "Բողոք քննիչի գործողության կամ անգործության դեմ",
+    name_ru: "Жалоба на действия/бездействие следователя",
+    name_en: "Complaint Against Investigator",
+    required_fields: ["recipient", "investigator", "actions_complained", "grounds"],
+  },
+  {
+    id: "fallback-criminal-defense-motion",
+    category: "criminal_process",
+    subcategory: "defense_motion",
+    name_hy: "Պաշտպանի միջնորդություն",
+    name_ru: "Ходатайство защитника",
+    name_en: "Defense Motion",
+    required_fields: ["case_number", "request", "grounds"],
+  },
+  {
+    id: "fallback-administrative-claim",
+    category: "administrative_process",
+    subcategory: "claim",
+    name_hy: "Վարչական հայց",
+    name_ru: "Административный иск",
+    name_en: "Administrative Claim",
+    required_fields: ["court", "plaintiff", "defendant_authority", "claims"],
+  },
+  {
+    id: "fallback-general-application",
+    category: "general",
+    subcategory: "application",
+    name_hy: "Դիմում",
+    name_ru: "Заявление",
+    name_en: "Application",
+    required_fields: ["recipient", "applicant", "request"],
+  },
+];
+
 interface DynamicFieldsState {
   claimAmount: string;
   courtFee: string;
@@ -157,9 +232,10 @@ export function useDocumentGenerator(
         .order("category", { ascending: true });
 
       if (error) throw error;
-      setTemplates(data || []);
+      setTemplates(data?.length ? data : FALLBACK_DOCUMENT_TEMPLATES);
     } catch (error) {
       console.error("Error fetching templates:", error);
+      setTemplates(FALLBACK_DOCUMENT_TEMPLATES);
       toast({
         title: t("common:error"),
         description: t("cases:template_loading_error"),

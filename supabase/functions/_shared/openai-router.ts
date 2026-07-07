@@ -45,52 +45,53 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
   "ai-analyze": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.15,
-    max_tokens: 14000,
+    max_tokens: 28000,
     description: "Case analysis (GLM-5.2 primary; Claude Sonnet 4 fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "anthropic/claude-sonnet-5",
   },
   "multi-agent-analyze": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 16000,
+    max_tokens: 32000,
     description: "Multi-agent analysis (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "anthropic/claude-sonnet-5",
   },
   "generate-complaint": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
-    max_tokens: 14000,
+    max_tokens: 28000,
     description: "Complaint drafting (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "anthropic/claude-sonnet-5",
   },
   "legal-chat": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 16000,
+    max_tokens: 32000,
     description: "Legal chat (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "anthropic/claude-sonnet-5",
   },
   "analyze-files-for-complaint": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 16000,
+    max_tokens: 32000,
     description: "File analysis (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "anthropic/claude-sonnet-5",
   },
   "generate-document": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 10000,
+    max_tokens: 20000,
     description: "Documents (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "anthropic/claude-sonnet-5",
   },
 
   // ── Strict JSON ───────────────────────────────────────────────────────────
   "extract-case-fields": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.15,
-    max_tokens: 16000,
-    description: "Extract fields (Gemini 2.5 Pro)",
+    max_tokens: 32000,
+    description: "Extract fields (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
+    fallback: "google/gemini-2.5-pro",
   },
   "kb-search-assistant": {
     model: "ollama/glm-5.2:cloud",
@@ -98,26 +99,28 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
     max_tokens: 200,
     json_mode: true,
     description: "KB keywords JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "google/gemini-2.5-pro",
   },
 
   // ── Utilities ─────────────────────────────────────────────────────────────
   "audio-transcribe": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
-    max_tokens: 16000,
-    description: "Transcription (Gemini Flash)",
+    max_tokens: 32000,
+    description: "Transcription (GLM-5.2 primary; Gemini 2.5 Flash fallback)",
+    fallback: "google/gemini-2.5-flash",
   },
   "echr-translate": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
-    max_tokens: 8000,
-    description: "ECHR translate (Claude 3.5 Sonnet)",
+    max_tokens: 16000,
+    description: "ECHR translate (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
   "legal-practice-enrich": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 16000,
+    max_tokens: 32000,
     description: "Enrich practice (OpenAI GPT-4.1 mini)",
   },
   "vector-search-rerank": {
@@ -129,39 +132,39 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
 
   // ── Bypass-only utilities ─────────────────────────────────────────────────
   "ocr-process": {
-    model: "ollama/glm-5.2:cloud",
+    model: "google/gemini-2.5-flash",
     temperature: 0.1,
-    max_tokens: 8000,
-    description: "OCR vision (Gemini Flash, bypass:multimodal)",
+    max_tokens: 16000,
+    description: "OCR vision (Gemini Flash — GLM-5.2 image support unconfirmed, routed direct to OpenRouter)",
   },
   "kb-scrape-batch": {
-    model: "ollama/glm-5.2:cloud",
+    model: "google/gemini-2.5-flash",
     temperature: 0.1,
-    max_tokens: 16000,
-    description: "KB PDF scrape (Gemini Flash, bypass:multimodal)",
+    max_tokens: 32000,
+    description: "KB PDF scrape (Gemini Flash — vision, routed direct to OpenRouter)",
   },
   "kb-fetch-pdf-content": {
-    model: "ollama/glm-5.2:cloud",
+    model: "google/gemini-2.5-flash",
     temperature: 0.1,
-    max_tokens: 16000,
-    description: "KB fetch PDF (Gemini Flash, bypass:multimodal)",
+    max_tokens: 32000,
+    description: "KB fetch PDF (Gemini Flash — vision, routed direct to OpenRouter)",
   },
   "legal-practice-import": {
-    model: "ollama/glm-5.2:cloud",
+    model: "google/gemini-2.5-pro",
     temperature: 0,
-    max_tokens: 8000,
-    description: "Practice import extract (Gemini 2.5 Pro)",
+    max_tokens: 16000,
+    description: "Practice import extract (Gemini 2.5 Pro — vision, routed direct to OpenRouter)",
   },
   "prompt-armor-repair": {
-    model: "ollama/glm-5.2:cloud",
+    model: "google/gemini-2.5-pro",
     temperature: 0,
-    max_tokens: 8000,
-    description: "JSON repair (Gemini 2.5 Pro)",
+    max_tokens: 16000,
+    description: "JSON repair (Gemini 2.5 Pro — vision, routed direct to OpenRouter)",
   },
 
   // ── Embeddings (OpenAI only — always direct, no gateway) ──────────────────
   "generate-embeddings": {
-    model: "armenian-text-embeddings-2-large",
+    model: "openai/text-embedding-3-small",
     temperature: 0,
     max_tokens: 0,
     description: "Embeddings (Metric AI direct)",
@@ -171,15 +174,16 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
   "admin-ai-chat": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.3,
-    max_tokens: 16000,
-    description: "Admin AI chat (Claude 3.5 Sonnet)",
+    max_tokens: 32000,
+    description: "Admin AI chat (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
 
   // ── Worker aliases ────────────────────────────────────────────────────────
   "practice-ai-enrich-worker": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 16000,
+    max_tokens: 32000,
     description: "Enrich practice worker (OpenAI GPT-4.1 mini)",
   },
 
@@ -187,16 +191,18 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
   "map-reduce-summarize": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
-    max_tokens: 4000,
-    description: "Map-Reduce chunk summarizer (Claude 3.5 Sonnet)",
+    max_tokens: 8000,
+    description: "Map-Reduce chunk summarizer (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
 
   // ── Translation ───────────────────────────────────────────────────────────
   "translate-to-armenian": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
-    max_tokens: 4096,
-    description: "Legal translation to Armenian (Claude 3.5 Sonnet)",
+    max_tokens: 8192,
+    description: "Legal translation to Armenian (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
+    fallback: "anthropic/claude-3.5-sonnet",
   },
 };
 
@@ -214,45 +220,45 @@ const ROLE_OVERRIDES: Record<string, Partial<ModelConfig>> = {
   "ai-analyze:draft_deterministic": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0,
-    max_tokens: 14000,
+    max_tokens: 28000,
     description: "Deterministic draft (GLM-5.2 temp=0)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "anthropic/claude-sonnet-5",
   },
   // ── JSON roles (Gemini Pro) ─────────────────────────────────────────────
   "ai-analyze:precedent_citation": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 8000,
+    max_tokens: 16000,
     description: "Precedent JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "google/gemini-2.5-pro",
   },
   "ai-analyze:cross_exam": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 8000,
+    max_tokens: 16000,
     description: "Cross-exam JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "google/gemini-2.5-pro",
   },
   "ai-analyze:deadline_rules": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 8000,
+    max_tokens: 16000,
     description: "Deadlines JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "google/gemini-2.5-pro",
   },
   "ai-analyze:law_update_summary": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
-    max_tokens: 8000,
+    max_tokens: 16000,
     description: "Law update JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "ollama/glm-5.2:cloud",
+    fallback: "google/gemini-2.5-pro",
   },
 };
 
 // ── Governance constants & allowlists ────────────────────────────────────────
 
 const MAX_TEMPERATURE = 0.3;
-const MAX_TOKENS_CAP = 16384;
+const MAX_TOKENS_CAP = 32768;
 
 /** OpenAI chat models allowed ONLY for these roleLabels/functionNames (kept for future if we switch back) */
 const OPENAI_CHAT_ALLOWLIST = new Set([
@@ -351,7 +357,7 @@ export function buildGovernanceMeta(cfg: ModelConfig, roleLabel: string): Govern
  * - openai/text-embedding-*: allowed ONLY by functionName (not roleLabel).
  * - openai/* chat: allowed ONLY if roleLabel is in OPENAI_CHAT_ALLOWLIST.
  * - STRICT_JSON_ROLES must resolve to google/gemini-2.5-pro.
- * - Temperature > 0.3 or max_tokens > 16384: STRICT THROW.
+ * - Temperature > 0.3 or max_tokens > 32768: STRICT THROW.
  */
 function enforceGovernance(cfg: ModelConfig, roleLabel: string, functionName: string): ModelConfig {
   // ── OpenAI allowlist checks ────────────────────────────────────────────────
@@ -495,7 +501,14 @@ function isRetryableProviderError(err: unknown): boolean {
   if (!(err instanceof Error)) return false;
   const status = (err as Error & { status?: number }).status;
   if (typeof status === "number") return isRetryable(status);
-  return err.name === "AbortError" || err.message.includes("network") || err.message.includes("Network");
+  return (
+    err.name === "AbortError" ||
+    err.message.includes("network") ||
+    err.message.includes("Network") ||
+    err.message.includes("OLLAMA_CLOUD_API_KEY") ||
+    err.message.includes("OLLAMA_CLOUD_BASE_URL") ||
+    err.message.includes("not configured")
+  );
 }
 
 async function sleep(ms: number): Promise<void> {
@@ -519,7 +532,7 @@ async function fetchWithRetry(
   const effectiveTimeoutMs = modelName.startsWith("ollama/")
     ? parseInt(Deno.env.get("OLLAMA_CLOUD_TIMEOUT_MS") ?? String(timeoutMs), 10)
     : timeoutMs;
-  
+
   // Update model name in body if routing to OpenAI directly
   const resolvedBody = { ...body, model: endpoint.modelForApi };
 
@@ -756,6 +769,46 @@ export async function callText(
 }
 
 /**
+ * Extract the assistant's raw text from a provider response, then attempt to
+ * parse it as JSON. Strips markdown code fences the way most providers wrap
+ * JSON output when not using a strict json_mode flag.
+ */
+function extractJsonFromResponse<T>(data: Record<string, unknown>): { rawText: string; parsed: T | null } {
+  const choices = data.choices as Array<{ message: { content: string } }>;
+  const rawText = choices?.[0]?.message?.content ?? "";
+
+  let cleaned = rawText.trim();
+  cleaned = cleaned
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/```\s*$/i, "")
+    .trim();
+
+  const jsonStart = cleaned.indexOf("{");
+  const jsonEnd = cleaned.lastIndexOf("}");
+  if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
+    return { rawText, parsed: null };
+  }
+  cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+
+  try {
+    return { rawText, parsed: JSON.parse(cleaned) as T };
+  } catch {
+    return { rawText, parsed: null };
+  }
+}
+
+/**
+ * Checks that every key in `schema` is present in `candidate`. Only keys are
+ * validated (per callJSON's contract) — value types/shapes are the caller's
+ * concern, this just guards against the model dropping whole fields.
+ */
+function hasAllSchemaKeys(candidate: unknown, schema: Record<string, unknown>): boolean {
+  if (!candidate || typeof candidate !== "object") return false;
+  const obj = candidate as Record<string, unknown>;
+  return Object.keys(schema).every((key) => key in obj);
+}
+
+/**
  * callJSON — JSON extraction with one auto-repair attempt + schema key validation.
  *
  * @param schema - Object with expected keys (values are unused; only keys matter for validation)
@@ -816,148 +869,78 @@ export async function callJSON<T = Record<string, unknown>>(
     governance = buildGovernanceMeta(activeCfg, roleLabel);
     requestId = newRequestId();
     body = buildRequestBody(activeCfg, safeMessages);
-    ({ data, latency_ms } = await fetchWithRetry(
-      functionName,
-      requestId,
-      body,
-      timeoutMs
-    ));
+    ({ data, latency_ms } = await fetchWithRetry(functionName, requestId, body, timeoutMs));
   }
 
-  const choices = data.choices as Array<{ message: { content: string } }>;
-  let raw = choices?.[0]?.message?.content ?? "";
-  const usage = data.usage as JSONResult["usage"];
+  const { rawText, parsed: initialParsed } = extractJsonFromResponse<T>(data);
+  let parsed = initialParsed;
 
-  // Strip markdown code fences
-  const fenceMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (fenceMatch) raw = fenceMatch[1].trim();
-
-  // Attempt parse — no second AI call on failure
-  const parsed: T | null = tryParse<T>(raw);
-
-  if (parsed === null) {
-    console.error(
+  // One auto-repair attempt: ask the SAME resolved model (primary or fallback,
+  // whichever just answered) to correct its own malformed/incomplete JSON.
+  // This never changes provider/model selection — it reuses activeCfg exactly
+  // as chosen by the routing logic above.
+  if (!parsed || !hasAllSchemaKeys(parsed, schema)) {
+    console.warn(
       JSON.stringify({
-        request_id: requestId,
         function_name: functionName,
-        error_class: "JSON_PARSE_FAIL",
-        raw_length: raw.length,
+        event: "json_repair_attempt",
+        model_used: activeCfg.model,
+        request_id: requestId,
+        reason: parsed ? "missing_schema_keys" : "unparseable_json",
       })
     );
-    throw Object.assign(
-      new Error(
-        `[openai-router] ${functionName}: AI returned invalid JSON. No retry.`
-      ),
-      { code: "INVALID_JSON", raw_preview: raw.substring(0, 200) }
+
+    const repairMessages: RouterMessage[] = [
+      ...safeMessages,
+      { role: "assistant", content: rawText },
+      {
+        role: "user",
+        content:
+          `Your previous response was not valid JSON matching the required schema keys: ` +
+          `${Object.keys(schema).join(", ")}. Output ONLY a corrected JSON object containing ` +
+          `exactly those keys. No markdown, no code fences, no explanation — just the JSON object.`,
+      },
+    ];
+    const repairRequestId = newRequestId();
+    const repairBody = buildRequestBody(activeCfg, repairMessages);
+    const { data: repairData, latency_ms: repairLatency } = await fetchWithRetry(
+      functionName,
+      repairRequestId,
+      repairBody,
+      timeoutMs
+    );
+    const repaired = extractJsonFromResponse<T>(repairData);
+
+    if (!repaired.parsed || !hasAllSchemaKeys(repaired.parsed, schema)) {
+      throw new Error(
+        `[openai-router] callJSON: "${roleLabel}" produced invalid JSON even after one repair attempt ` +
+          `(missing keys or unparseable output).`
+      );
+    }
+
+    parsed = repaired.parsed;
+    data = repairData;
+    requestId = repairRequestId;
+    latency_ms = latency_ms + repairLatency;
+
+    console.log(
+      JSON.stringify({
+        function_name: functionName,
+        event: "json_repair_succeeded",
+        model_used: activeCfg.model,
+        request_id: requestId,
+      })
     );
   }
 
-  // Schema key validation: fill missing keys with null, drop extra keys
-  const validated = validateSchema<T>(parsed, schema);
+  const usage = data.usage as JSONResult<T>["usage"];
 
   return {
-    json: validated,
+    json: parsed as T,
     model_used: activeCfg.model,
     latency_ms,
     request_id: requestId,
     usage,
     governance,
   };
-}
-
-/**
- * callTranscription — Multimodal audio/video transcription via gateway.
- * Sends audio as base64 inline content.
- */
-export async function callTranscription(
-  functionName: string,
-  messages: RouterMessage[],
-  options: RouterCallOptions = {}
-): Promise<TextResult> {
-  const cfg = getModelConfig(functionName);
-  const governance = buildGovernanceMeta(cfg, functionName);
-  const requestId = newRequestId();
-  const timeoutMs = options.timeoutMs ?? defaultTimeout(true);
-
-  // Use shared buildRequestBody — governance already blocks openai/*
-  const body = buildRequestBody(cfg, messages);
-
-  const { data, latency_ms } = await fetchWithRetry(
-    functionName,
-    requestId,
-    body,
-    timeoutMs
-  );
-
-  const choices = data.choices as Array<{ message: { content: string } }>;
-  const text = choices?.[0]?.message?.content ?? "";
-  const usage = data.usage as TextResult["usage"];
-
-  return { text, model_used: cfg.model, latency_ms, request_id: requestId, usage, governance };
-}
-
-/**
- * callEmbeddings — Vector embeddings (delegated to embeddings-generate function).
- * Included here for API completeness; actual call is via embeddings.ts.
- */
-export async function callEmbeddings(
-  texts: string[]
-): Promise<{ vectors: number[][]; model_used: string }> {
-  // Re-use the existing embeddings-generate edge function
-  const cfg = MODEL_MAP["generate-embeddings"];
-  const { generateEmbeddings } = await import("./embeddings.ts");
-  const vectors = await generateEmbeddings(texts);
-  return { vectors, model_used: cfg.model };
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-function tryParse<T>(str: string): T | null {
-  try {
-    return JSON.parse(str) as T;
-  } catch {
-    // Try to extract JSON object/array from surrounding text
-    const objMatch = str.match(/\{[\s\S]*\}/);
-    if (objMatch) {
-      try {
-        return JSON.parse(objMatch[0]) as T;
-      } catch {
-        // ignore
-      }
-    }
-    const arrMatch = str.match(/\[[\s\S]*\]/);
-    if (arrMatch) {
-      try {
-        return JSON.parse(arrMatch[0]) as T;
-      } catch {
-        // ignore
-      }
-    }
-    return null;
-  }
-}
-
-function validateSchema<T>(parsed: unknown, schema: Record<string, unknown>): T {
-  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-    return parsed as T;
-  }
-
-  const obj = parsed as Record<string, unknown>;
-  const schemaKeys = Object.keys(schema);
-
-  // Fill missing keys with null
-  for (const key of schemaKeys) {
-    if (!(key in obj)) {
-      obj[key] = null;
-    }
-  }
-
-  // Drop extra keys
-  for (const key of Object.keys(obj)) {
-    if (!schemaKeys.includes(key)) {
-      delete obj[key];
-    }
-  }
-
-  return obj as T;
 }

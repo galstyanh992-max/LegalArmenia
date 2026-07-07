@@ -13,34 +13,32 @@ import { ChatBubble } from '@/components/chat/ChatBubble';
 import { TelegramUploads } from '@/components/profile/TelegramUploads';
 import { TelegramSettings } from '@/components/profile/TelegramSettings';
 import { NotesBubble } from '@/components/notes/NotesBubble';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCases, type CaseFilters as CaseFiltersType } from '@/hooks/useCases';
 import { useKnowledgeBase, type KBFilters as KBFiltersType } from '@/hooks/useKnowledgeBase';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Scale, 
-  Plus, 
-  Loader2,
-  LogOut,
-  FolderOpen,
-  BookOpen,
-  BarChart3,
-  Users2,
-  Calendar as CalendarIcon,
-  FileText,
-  Mic,
-  MessageCircle,
-  FileWarning,
-  ExternalLink,
-  FolderArchive,
-  Send,
-  Gavel,
-  StickyNote,
-  BookOpenText,
-} from 'lucide-react';
+import {
+  IconScale,
+  IconPlus,
+  IconLoader,
+  IconLogout,
+  IconFolderOpen,
+  IconBook,
+  IconChart,
+  IconUsers,
+  IconCalendar,
+  IconFile,
+  IconMic,
+  IconShieldAlert,
+  IconExternal,
+  IconArchive,
+  IconSend,
+  IconGavel,
+  IconNote,
+  IconBookText,
+} from '@/components/icons/PremiumIcon';
 import { DocumentGeneratorDialog } from '@/components/documents/DocumentGeneratorDialog';
 import { ComplaintWizard } from '@/components/complaints/ComplaintWizard';
 import { NotesPanel } from '@/components/notes/NotesPanel';
@@ -74,7 +72,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, signOut, isClient, isAdmin, isAuditor } = useAuth();
-  
+
   const [filters, setFilters] = useState<CaseFiltersType>({});
   const [formOpen, setFormOpen] = useState(false);
   const [editingCase, setEditingCase] = useState<Case | null>(null);
@@ -84,7 +82,8 @@ const Dashboard = () => {
   const [kbSearchOpen, setKbSearchOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [dictOpen, setDictOpen] = useState(false);
-  
+  const [telegramOpen, setTelegramOpen] = useState(false);
+
   const [kbFilters, setKbFilters] = useState<KBFiltersType>({ page: 1, pageSize: 10 });
 
   const { cases, isLoading, createCase, updateCase, deleteCase } = useCases(filters);
@@ -164,55 +163,147 @@ const Dashboard = () => {
   // Allow all authenticated users to create cases
   const canCreateCase = !!user;
 
+  const sidebarItems = [
+    { icon: <IconFolderOpen size={20} />, label: t('cases:cases'), active: true, onClick: () => navigate('/dashboard') },
+    { icon: <IconCalendar size={20} />, label: t('calendar:calendar', 'Calendar'), onClick: () => navigate('/calendar') },
+    { icon: <IconMic size={20} />, label: t('audio:audio', 'Audio/Video'), onClick: () => navigate('/transcriptions') },
+    { icon: <IconFile size={20} />, label: t('common:documents', 'Documents'), onClick: () => setDocGeneratorOpen(true) },
+    { icon: <IconArchive size={20} />, label: t('common:my_documents'), onClick: () => navigate('/my-documents') },
+    { icon: <IconShieldAlert size={20} />, label: t('common:complaint'), onClick: () => setComplaintWizardOpen(true) },
+    { icon: <IconNote size={20} />, label: t('common:my_notes', 'My Notes'), onClick: () => setNotesOpen(true) },
+    { icon: <IconBookText size={20} />, label: t('dictionary:dictionary', 'Dictionary'), onClick: () => setDictOpen(true) },
+    { icon: <IconExternal size={20} />, label: 'E-request', onClick: () => window.open('https://e-request.am', '_blank') },
+    { icon: <IconSend size={20} />, label: 'Telegram', onClick: () => setTelegramOpen(true) },
+  ];
+
+  const Pill = ({
+    icon,
+    label,
+    onClick,
+    asChild,
+    children,
+  }: {
+    icon: React.ReactNode;
+    label: React.ReactNode;
+    onClick?: () => void;
+    asChild?: boolean;
+    children?: React.ReactNode;
+  }) => {
+    const cls = 'pill-premium flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-11 justify-center text-center';
+    if (asChild) {
+      return (
+        <SheetTrigger asChild>
+          <button className={cls} type="button">
+            <span className="flex items-center justify-center">{icon}</span>
+            <span className="text-xs sm:text-sm mt-1 sm:mt-0 sm:ml-1">{label}</span>
+          </button>
+        </SheetTrigger>
+      );
+    }
+    return (
+      <button className={cls} onClick={onClick} type="button">
+        <span className="flex items-center justify-center">{icon}</span>
+        <span className="text-xs sm:text-sm mt-1 sm:mt-0 sm:ml-1">{label}</span>
+      </button>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-10 border-b bg-card">
-        <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
-          <div className="flex items-center gap-2">
-            <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-            <h1 className="text-lg sm:text-xl font-bold hidden xs:block">{t('common:app_name')}</h1>
+    <div className="dark min-h-screen surface-bg lg:flex">
+      <aside className="premium-sidebar hidden lg:flex">
+        <div className="flex items-center gap-3 px-5 py-7">
+          <span className="text-[hsl(38,56%,63%)]">
+            <IconScale size={38} />
+          </span>
+          <span className="text-[15px] font-semibold uppercase tracking-[0.06em] text-[hsl(38_56%_68%)]">
+            AI Legal Armenia
+          </span>
+        </div>
+
+        <nav className="mt-4 flex flex-1 flex-col gap-1 px-4">
+          {sidebarItems.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              className="nav-item-premium"
+              data-active={item.active ? 'true' : undefined}
+              onClick={item.onClick}
+            >
+              <span className="text-[hsl(38_56%_70%)]">{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="border-t border-white/10 px-4 py-5">
+          <button className="nav-item-premium w-full" type="button">
+            <IconChart size={20} />
+            <span>Settings</span>
+          </button>
+          <button className="nav-item-premium mt-1 w-full" type="button">
+            <IconBook size={20} />
+            <span>Help</span>
+          </button>
+          <div className="mt-6 flex items-center gap-3 px-2">
+            <div className="h-12 w-12 rounded-full border border-white/10 bg-[linear-gradient(145deg,#D7B46A,#25304A)]" />
+            <div className="min-w-0">
+              <div className="truncate text-[15px] font-medium text-[hsl(213_30%_92%)]">E. Mason</div>
+              <div className="text-meta">Administrator</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div className="min-w-0 flex-1">
+      <header className="sticky top-0 z-20 glass-header">
+        <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4 lg:px-8">
+          <div className="flex items-center gap-2.5">
+            <span className="text-[hsl(38,56%,63%)] lg:hidden">
+              <IconScale size={22} />
+            </span>
+            <h1 className="hidden text-section xs:block lg:hidden" style={{ fontSize: 22 }}>
+              {t('common:app_name')}
+            </h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
-            <span className="hidden sm:block text-sm text-muted-foreground truncate max-w-[120px]">
+            <span className="hidden sm:block text-meta truncate max-w-[120px]">
               {user?.email}
             </span>
             <LanguageSwitcher />
-            <Button variant="ghost" size="icon" onClick={() => signOut()}>
-              <LogOut className="h-5 w-5" />
-            </Button>
+            <button className="btn-ghost-premium" onClick={() => signOut()} aria-label="Logout">
+              <IconLogout size={18} />
+            </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
+      <main className="mx-auto max-w-[1500px] px-4 py-8 sm:py-10 lg:px-8 lg:py-12">
         {/* Page Header */}
-        <div className="mb-6 flex flex-col gap-4">
+        <div className="mb-8 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold">{t('cases:cases')}</h2>
-              <p className="text-xs sm:text-sm text-muted-foreground">
+              <h2 className="text-title" style={{ fontSize: 34 }}>{t('cases:cases')}</h2>
+              <p className="text-meta mt-2 text-[hsl(215_18%_60%)]">
                 {t('dashboard:manage_cases', 'Manage your legal cases')}
               </p>
             </div>
             {canCreateCase && (
-              <Button onClick={() => setFormOpen(true)} size="sm" className="sm:hidden">
-                <Plus className="h-4 w-4" />
-              </Button>
+              <button onClick={() => setFormOpen(true)} className="btn-gold sm:hidden" aria-label="New case">
+                <IconPlus size={18} />
+              </button>
             )}
           </div>
-          <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2">
+          <div className="premium-tabs-bar grid grid-cols-3 gap-2.5 sm:flex sm:flex-wrap">
             {/* AI Legal Chat bubble is always visible as floating button */}
             {/* Unified Search */}
             <Sheet open={kbSearchOpen} onOpenChange={setKbSearchOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-                  <BookOpen className="h-4 w-4 sm:mr-2" />
-                  <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('common:search', 'Search')}</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+              <Pill
+                asChild
+                icon={<IconBook size={16} />}
+                label={t('common:search', 'Search')}
+              />
+              <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel backdrop-blur-[8px]">
                 <SheetHeader>
                   <SheetTitle>{t('common:search', 'Search')}</SheetTitle>
                   <SheetDescription>
@@ -224,7 +315,7 @@ const Dashboard = () => {
                   <KBSearchFilters filters={kbFilters} onFiltersChange={setKbFilters} />
                   {kbLoading ? (
                     <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin" />
+                      <IconLoader size={24} />
                     </div>
                   ) : kbDocuments.length === 0 ? (
                     <p className="text-center text-muted-foreground py-4">
@@ -244,45 +335,28 @@ const Dashboard = () => {
                     </div>
                   )}
                   {/* Judicial Practice search */}
-                  <div className="border-t pt-4">
-                    <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                      <Gavel className="h-4 w-4 text-primary" />
-                      {t('kb:tab_practice', '\u0534\u0561\u057F\u0561\u056F\u0561\u0576 \u057A\u0580\u0561\u056F\u057F\u056B\u056F\u0561')}
+                  <div className="pt-4">
+                    <div className="divider-subtle mb-4" />
+                    <h3 className="text-card-title mb-3 flex items-center gap-2" style={{ fontSize: 18 }}>
+                      <span className="text-[hsl(38,56%,63%)]">
+                        <IconGavel size={18} />
+                      </span>
+                      {t('kb:tab_practice', 'Դատական պրակտիկա')}
                     </h3>
                     <KBSearchPanel />
                   </div>
                 </div>
               </SheetContent>
             </Sheet>
-            <Button variant="outline" size="sm" onClick={() => navigate('/calendar')} className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-              <CalendarIcon className="h-4 w-4 sm:mr-2" />
-              <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('calendar:calendar', 'Calendar')}</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate('/transcriptions')} className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-              <Mic className="h-4 w-4 sm:mr-2" />
-              <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('audio:audio', 'Audio')}</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setDocGeneratorOpen(true)} className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-              <FileText className="h-4 w-4 sm:mr-2" />
-              <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('common:documents', 'Documents')}</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate('/my-documents')} className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-              <FolderArchive className="h-4 w-4 sm:mr-2" />
-              <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('common:my_documents')}</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setComplaintWizardOpen(true)} className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-              <FileWarning className="h-4 w-4 sm:mr-2" />
-              <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('common:complaint')}</span>
-            </Button>
+            <Pill icon={<IconCalendar size={16} />} label={t('calendar:calendar', 'Calendar')} onClick={() => navigate('/calendar')} />
+            <Pill icon={<IconMic size={16} />} label={t('audio:audio', 'Audio')} onClick={() => navigate('/transcriptions')} />
+            <Pill icon={<IconFile size={16} />} label={t('common:documents', 'Documents')} onClick={() => setDocGeneratorOpen(true)} />
+            <Pill icon={<IconArchive size={16} />} label={t('common:my_documents')} onClick={() => navigate('/my-documents')} />
+            <Pill icon={<IconShieldAlert size={16} />} label={t('common:complaint')} onClick={() => setComplaintWizardOpen(true)} />
             {/* Notes Editor */}
             <Sheet open={notesOpen} onOpenChange={setNotesOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-                  <StickyNote className="h-4 w-4 sm:mr-2" />
-                  <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('common:my_notes', '\u053b\u0574 \u0563\u0580\u0561\u057c\u0578\u0582\u0574\u0576\u0565\u0580\u0568')}</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-2xl p-0 flex flex-col" side="right">
+              <Pill asChild icon={<IconNote size={16} />} label={t('common:my_notes', 'Իմ գրառումներ')} />
+              <SheetContent className="w-full sm:max-w-2xl p-0 flex flex-col surface-panel" side="right">
                 <div className="h-full flex flex-col">
                   <NotesPanel />
                 </div>
@@ -290,17 +364,12 @@ const Dashboard = () => {
             </Sheet>
             {/* Dictionary */}
             <Sheet open={dictOpen} onOpenChange={setDictOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-                  <BookOpenText className="h-4 w-4 sm:mr-2" />
-                  <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('dictionary:dictionary', '\u0532\u0561\u057c\u0561\u0580\u0561\u0576')}</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+              <Pill asChild icon={<IconBookText size={16} />} label={t('dictionary:dictionary', 'Բառարան')} />
+              <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel">
                 <SheetHeader>
-                  <SheetTitle>{t('dictionary:dictionary', '\u0532\u0561\u057c\u0561\u0580\u0561\u0576')}</SheetTitle>
+                  <SheetTitle>{t('dictionary:dictionary', 'Բառարան')}</SheetTitle>
                   <SheetDescription>
-                    {t('dictionary:search_placeholder', '\u0548\u0580\u0578\u0576\u0565\u056c \u0562\u0561\u057c...')}
+                    {t('dictionary:search_placeholder', 'Որոնել բառ...')}
                   </SheetDescription>
                 </SheetHeader>
                 <div className="mt-6">
@@ -308,24 +377,11 @@ const Dashboard = () => {
                 </div>
               </SheetContent>
             </Sheet>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => window.open('https://e-request.am', '_blank')}
-              className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9"
-            >
-              <ExternalLink className="h-4 w-4 sm:mr-2" />
-              <span className="text-xs sm:text-sm mt-1 sm:mt-0">E-request</span>
-            </Button>
+            <Pill icon={<IconExternal size={16} />} label="E-request" onClick={() => window.open('https://e-request.am', '_blank')} />
             {/* Telegram Uploads */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-                  <Send className="h-4 w-4 sm:mr-2" />
-                  <span className="text-xs sm:text-sm mt-1 sm:mt-0">Telegram</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+            <Sheet open={telegramOpen} onOpenChange={setTelegramOpen}>
+              <Pill asChild icon={<IconSend size={16} />} label="Telegram" />
+              <SheetContent className="w-full sm:max-w-lg overflow-y-auto surface-panel">
                 <SheetHeader>
                   <SheetTitle>{t('common:telegram_files', 'Telegram Files')}</SheetTitle>
                   <SheetDescription>
@@ -334,8 +390,9 @@ const Dashboard = () => {
                 </SheetHeader>
                 <div className="mt-6 space-y-6">
                   <TelegramSettings />
-                  <div className="border-t pt-4">
-                    <h4 className="font-medium mb-3">{t('common:uploaded_files', 'Uploaded files')}</h4>
+                  <div className="pt-4">
+                    <div className="divider-subtle mb-4" />
+                    <h4 className="text-card-title mb-3" style={{ fontSize: 16 }}>{t('common:uploaded_files', 'Uploaded files')}</h4>
                     <TelegramUploads />
                   </div>
                 </div>
@@ -343,20 +400,12 @@ const Dashboard = () => {
             </Sheet>
             {/* KB Management - Admin only */}
             {isAdmin && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/kb')} className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-                <BookOpen className="h-4 w-4 sm:mr-2" />
-                <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('kb:kb_short', 'KB')}</span>
-              </Button>
+              <Pill icon={<IconBook size={16} />} label={t('kb:kb_short', 'KB')} onClick={() => navigate('/kb')} />
             )}
             {isAdmin && (
               <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex-col sm:flex-row h-auto py-2 sm:py-2 sm:h-9">
-                    <BarChart3 className="h-4 w-4 sm:mr-2" />
-                    <span className="text-xs sm:text-sm mt-1 sm:mt-0">{t('usage:usage')}</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+              <Pill asChild icon={<IconChart size={16} />} label={t('usage:usage')} />
+                <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel">
                   <SheetHeader>
                     <SheetTitle>{t('usage:usage_title')}</SheetTitle>
                     <SheetDescription>
@@ -369,27 +418,21 @@ const Dashboard = () => {
                 </SheetContent>
               </Sheet>
             )}
-            {canCreateCase && (
-              <Button onClick={() => setFormOpen(true)} size="sm" className="hidden sm:flex">
-                <Plus className="mr-2 h-4 w-4" />
-                {t('cases:new_case')}
-              </Button>
-            )}
           </div>
         </div>
 
         {/* Dashboard Tabs for Auditors */}
         {isAuditor ? (
           <Tabs defaultValue="team" className="space-y-6">
-            <TabsList>
-            <TabsTrigger value="team" className="gap-2">
-              <Users2 className="h-4 w-4" />
-              {t('admin:my_team')}
-            </TabsTrigger>
-            <TabsTrigger value="cases" className="gap-2">
-              <FolderOpen className="h-4 w-4" />
-              {t('admin:cases')}
-            </TabsTrigger>
+            <TabsList className="surface-panel rounded-[18px] p-2">
+              <TabsTrigger value="team" className="gap-2 rounded-[14px]">
+                <IconUsers size={16} />
+                {t('admin:my_team')}
+              </TabsTrigger>
+              <TabsTrigger value="cases" className="gap-2 rounded-[14px]">
+                <IconFolderOpen size={16} />
+                {t('admin:cases')}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="team">
@@ -398,22 +441,30 @@ const Dashboard = () => {
 
             <TabsContent value="cases" className="space-y-6">
               {/* Filters */}
-              <CaseFilters filters={filters} onFiltersChange={setFilters} />
+              <div className="case-toolbar">
+                {canCreateCase && (
+                  <button onClick={() => setFormOpen(true)} className="btn-gold hidden min-w-[170px] sm:inline-flex">
+                    <IconPlus size={18} />
+                    {t('cases:new_case')}
+                  </button>
+                )}
+                <CaseFilters filters={filters} onFiltersChange={setFilters} />
+              </div>
 
               {/* Cases Grid */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-16">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <IconLoader size={32} />
                 </div>
               ) : cases.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
-                  <FolderOpen className="h-12 w-12 text-muted-foreground/50" />
-                  <p className="mt-4 text-lg font-medium text-muted-foreground">
+                <div className="flex flex-col items-center justify-center surface-card py-16">
+                  <IconFolderOpen size={48} />
+                  <p className="mt-4 text-card-title text-muted-foreground" style={{ fontSize: 18 }}>
                     {t('cases:no_cases')}
                   </p>
                 </div>
               ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                   {cases.map((caseItem) => (
                     <CaseCard
                       key={caseItem.id}
@@ -433,30 +484,36 @@ const Dashboard = () => {
         ) : (
           <>
             {/* Filters */}
-            <div className="mb-6">
+            <div className="case-toolbar mb-6">
+              {canCreateCase && (
+                <button onClick={() => setFormOpen(true)} className="btn-gold hidden min-w-[170px] sm:inline-flex">
+                  <IconPlus size={18} />
+                  {t('cases:new_case')}
+                </button>
+              )}
               <CaseFilters filters={filters} onFiltersChange={setFilters} />
             </div>
 
             {/* Cases Grid */}
             {isLoading ? (
               <div className="flex items-center justify-center py-16">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <IconLoader size={32} />
               </div>
             ) : cases.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
-                <FolderOpen className="h-12 w-12 text-muted-foreground/50" />
-                <p className="mt-4 text-lg font-medium text-muted-foreground">
-                  {t('cases:no_cases')}
-                </p>
+              <div className="flex flex-col items-center justify-center surface-card py-16">
+                <IconFolderOpen size={48} />
+                  <p className="mt-4 text-card-title text-muted-foreground" style={{ fontSize: 18 }}>
+                    {t('cases:no_cases')}
+                  </p>
                 {canCreateCase && (
-                  <Button className="mt-4" onClick={() => setFormOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
+                  <button className="btn-gold mt-5" onClick={() => setFormOpen(true)}>
+                    <IconPlus size={18} />
                     {t('cases:new_case')}
-                  </Button>
+                  </button>
                 )}
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {cases.map((caseItem) => (
                   <CaseCard
                     key={caseItem.id}
@@ -472,7 +529,9 @@ const Dashboard = () => {
               </div>
             )}
 
-            {/* Usage Widget for all users */}
+            {/* Usage widget — rendered for all users; UsageMonitor itself is
+                role-aware and shows an admin-only placeholder for non-admins
+                without ever calling the metrics RPC. */}
             <div className="mt-8">
               <UsageMonitor budgetLimit={5.0} compact={true} />
             </div>
@@ -480,9 +539,9 @@ const Dashboard = () => {
         )}
 
         {/* Legal Disclaimer */}
-        <div className="mt-8 rounded-lg border border-amber-500/50 bg-amber-500/10 p-4">
-          <p className="text-sm text-amber-700 dark:text-amber-400">
-            ⚠️ {t('disclaimer:main')}
+        <div className="mt-8 surface-card p-4" style={{ borderColor: 'rgba(217,160,60,0.28)' }}>
+          <p className="text-body" style={{ color: 'hsl(38,70%,72%)' }}>
+            {'⚠️'} {t('disclaimer:main')}
           </p>
         </div>
       </main>
@@ -536,6 +595,7 @@ const Dashboard = () => {
         open={complaintWizardOpen}
         onOpenChange={setComplaintWizardOpen}
       />
+      </div>
     </div>
   );
 };

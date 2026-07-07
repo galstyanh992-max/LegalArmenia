@@ -1,3 +1,5 @@
+import { getModelConfig } from "./openai-router.ts";
+
 export type AIProviderName = "ollama_cloud" | "openrouter" | "openai";
 
 export type AIProviderConfig = {
@@ -31,35 +33,44 @@ export type AIResponse = {
   rawProviderStatus?: number;
 };
 
+const VALID_PROVIDERS = new Set<AIProviderName>(["ollama_cloud", "openrouter", "openai"]);
+
+function isProvider(value: string | undefined | null): value is AIProviderName {
+  return !!value && VALID_PROVIDERS.has(value as AIProviderName);
+}
+
+function detectProvider(): AIProviderName {
+  if (Deno.env.get("OPENROUTER_API_KEY")) return "openrouter";
+  if (Deno.env.get("OLLAMA_CLOUD_API_KEY") || Deno.env.get("OLLAMA_API_KEY")) return "ollama_cloud";
+  return "openai";
+}
+
 export class AIClient {
   private config: AIProviderConfig;
 
   constructor() {
-    const rawProvider = Deno.env.get("AI_PROVIDER")?.toLowerCase() || "ollama_cloud";
-    
-    if (rawProvider !== "ollama_cloud" && rawProvider !== "openrouter" && rawProvider !== "openai") {
-      throw new Error(`[AIClient] Invalid provider "${rawProvider}". Allowed: ollama_cloud, openrouter, openai.`);
+    const rawProvider = Deno.env.get("AI_PROVIDER")?.toLowerCase();
+    const provider = isProvider(rawProvider) ? rawProvider : detectProvider();
+    const adminChatModel = getModelConfig("admin-ai-chat");
+    if (rawProvider && !isProvider(rawProvider)) {
+      console.warn(`[AIClient] Invalid provider "${rawProvider}". Using ${provider}.`);
     }
-
-    const provider = rawProvider as AIProviderName;
 
     // Load provider-specific defaults
     if (provider === "ollama_cloud") {
       this.config = {
         provider,
-        model: Deno.env.get("OLLAMA_CLOUD_MODEL") || "glm-5.2:cloud",
+        model: Deno.env.get("OLLAMA_CLOUD_MODEL") || adminChatModel.model.replace(/^ollama\//, ""),
         apiKeyEnvName: "OLLAMA_CLOUD_API_KEY",
-        baseURL: Deno.env.get("OLLAMA_CLOUD_BASE_URL") || "https://api.ollama.cloud/v1",
+        baseURL: Deno.env.get("OLLAMA_CLOUD_BASE_URL") || "https://ollama.com/v1",
         timeoutMs: 60000,
         maxTokens: 4000,
         temperature: 0.2,
       };
     } else if (provider === "openrouter") {
-      // OpenRouter model MUST be provided via env. No hardcoded third-party
-      // model default is allowed by project provider/model policy.
       this.config = {
         provider,
-        model: Deno.env.get("OPENROUTER_MODEL") || null,
+        model: Deno.env.get("OPENROUTER_MODEL") || adminChatModel.fallback || adminChatModel.model,
         apiKeyEnvName: "OPENROUTER_API_KEY",
         baseURL: Deno.env.get("OPENROUTER_BASE_URL") || "https://openrouter.ai/api/v1",
         timeoutMs: 60000,
@@ -69,7 +80,7 @@ export class AIClient {
     } else {
       this.config = {
         provider,
-        model: Deno.env.get("OPENAI_MODEL") || "gpt-4o-mini",
+        model: Deno.env.get("OPENAI_MODEL") || null,
         apiKeyEnvName: "OPENAI_API_KEY",
         baseURL: Deno.env.get("OPENAI_BASE_URL") || "https://api.openai.com/v1",
         timeoutMs: 60000,

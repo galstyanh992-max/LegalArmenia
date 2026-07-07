@@ -7,7 +7,7 @@
  */
 
 import { getModelConfig, type ModelConfig } from "./openai-router.ts";
-import { getAIProvider, resolveEndpoint } from "./ai-provider.ts";
+import { getAIProvider, resolveEndpoint, type AIProvider } from "./ai-provider.ts";
 
 export interface BypassOptions {
   /** Function name for MODEL_MAP lookup */
@@ -27,6 +27,48 @@ export interface BypassResult {
   model_used: string;
   latency_ms: number;
   request_id: string;
+}
+
+type ResolvedEndpoint = ReturnType<typeof resolveEndpoint>;
+
+function providerForModel(model: string): AIProvider {
+  if (model.startsWith("ollama/")) return "ollama_cloud";
+  if (model.startsWith("openai/")) return "openai";
+  return "openrouter";
+}
+
+function errorStatus(error: unknown): number | undefined {
+  if (error && typeof error === "object" && "status" in error) {
+    const status = (error as { status?: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+  return undefined;
+}
+
+function resolveEndpointWithFallback(
+  provider: AIProvider,
+  cfg: ModelConfig,
+  functionName: string,
+): { endpoint: ResolvedEndpoint; modelUsed: string; usedFallback: boolean } {
+  try {
+    return {
+      endpoint: resolveEndpoint(provider, cfg.model, functionName),
+      modelUsed: cfg.model,
+      usedFallback: false,
+    };
+  } catch (error) {
+    if (!cfg.fallback) throw error;
+    console.warn(
+      `[gateway-bypass] Primary endpoint resolution failed for ${cfg.model}. Trying fallback ${cfg.fallback}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return {
+      endpoint: resolveEndpoint(providerForModel(cfg.fallback), cfg.fallback, functionName),
+      modelUsed: cfg.fallback,
+      usedFallback: true,
+    };
+  }
 }
 
 /**
@@ -63,26 +105,27 @@ export async function callGatewayBypass(
   const cfg = getModelConfig(options.functionName);
   const requestId = crypto.randomUUID();
   const provider = await getAIProvider();
-  const endpoint = resolveEndpoint(provider, cfg.model, options.functionName);
+  let resolved = resolveEndpointWithFallback(provider, cfg, options.functionName);
 
   const body = buildBypassBody(cfg, messages, options.extraBody);
   // Update model in body to resolved model name
-  body.model = endpoint.modelForApi;
+  body.model = resolved.endpoint.modelForApi;
   const timeoutMs = options.timeoutMs ?? 60000;
   const maxRetries = options.maxRetries ?? 0;
+  const maxAttempts = maxRetries + (cfg.fallback && !resolved.usedFallback ? 1 : 0);
 
   let lastError: Error | null = null;
 
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+  for (let attempt = 0; attempt <= maxAttempts; attempt++) {
     const t0 = Date.now();
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(endpoint.url, {
+      const response = await fetch(resolved.endpoint.url, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${endpoint.apiKey}`,
+          Authorization: `Bearer ${resolved.endpoint.apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
@@ -95,7 +138,7 @@ export async function callGatewayBypass(
       // Mandatory bypass log
       console.log(JSON.stringify({
         fn: options.functionName,
-        model: cfg.model,
+        model: resolved.modelUsed,
         temperature: cfg.temperature,
         max_tokens: cfg.max_tokens,
         request_id: requestId,
@@ -124,13 +167,27 @@ export async function callGatewayBypass(
 
       return {
         data,
-        model_used: cfg.model,
+        model_used: resolved.modelUsed,
         latency_ms,
         request_id: requestId,
       };
     } catch (err) {
       clearTimeout(timer);
-      if (attempt < maxRetries && !(err instanceof Error && (err as Error & { status?: number }).status === 402)) {
+      
+      // If we got an error (other than 429) and we have a fallback, try fallback immediately
+      const status = errorStatus(err);
+      if (!resolved.usedFallback && cfg.fallback && status !== 429) {
+        console.warn(`[gateway-bypass] Primary model ${resolved.modelUsed} failed with ${status}. Trying fallback ${cfg.fallback}`);
+        const fallbackProvider = providerForModel(cfg.fallback);
+        const fallbackEndpoint = resolveEndpoint(fallbackProvider, cfg.fallback, options.functionName);
+        resolved = { endpoint: fallbackEndpoint, modelUsed: cfg.fallback, usedFallback: true };
+        body.model = fallbackEndpoint.modelForApi;
+        // Continue the loop to retry using the fallback
+        lastError = err instanceof Error ? err : new Error(String(err));
+        continue;
+      }
+
+      if (attempt < maxAttempts && !(err instanceof Error && (err as Error & { status?: number }).status === 402 && !cfg.fallback)) {
         lastError = err instanceof Error ? err : new Error(String(err));
         const backoff = Math.pow(2, attempt) * 1000 + Math.random() * 500;
         await new Promise(r => setTimeout(r, backoff));
@@ -156,36 +213,71 @@ export async function callStreamBypass(
   const cfg = getModelConfig(options.functionName);
   const requestId = crypto.randomUUID();
   const provider = await getAIProvider();
-  const endpoint = resolveEndpoint(provider, cfg.model, options.functionName);
+  let resolved = resolveEndpointWithFallback(provider, cfg, options.functionName);
 
   const body = buildBypassBody(cfg, messages, {
     ...options.extraBody,
     stream: true,
   });
-  body.model = endpoint.modelForApi;
+  body.model = resolved.endpoint.modelForApi;
   const timeoutMs = options.timeoutMs ?? 60000;
 
   const t0 = Date.now();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  const response = await fetch(endpoint.url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${endpoint.apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-    signal: controller.signal,
-  });
+  let response: Response | undefined;
+  let fetchFailed = false;
+  
+  try {
+    response = await fetch(resolved.endpoint.url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resolved.endpoint.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    fetchFailed = true;
+    console.warn(`[gateway-bypass] Primary model ${cfg.model} threw network error:`, err);
+  }
+  
   clearTimeout(timer);
+  
+  if (!resolved.usedFallback && (fetchFailed || !response?.ok) && cfg.fallback && (!response || response.status !== 429)) {
+    console.warn(`[gateway-bypass] Primary model ${resolved.modelUsed} failed. Trying fallback ${cfg.fallback}`);
+    const fallbackProvider = providerForModel(cfg.fallback);
+    const fallbackEndpoint = resolveEndpoint(fallbackProvider, cfg.fallback, options.functionName);
+    resolved = { endpoint: fallbackEndpoint, modelUsed: cfg.fallback, usedFallback: true };
+    
+    body.model = fallbackEndpoint.modelForApi;
+    const fallbackController = new AbortController();
+    const fallbackTimer = setTimeout(() => fallbackController.abort(), timeoutMs);
+    
+    response = await fetch(fallbackEndpoint.url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${fallbackEndpoint.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: fallbackController.signal,
+    });
+    clearTimeout(fallbackTimer);
+  }
 
   const latency_ms = Date.now() - t0;
+
+  if (!response) {
+    throw new Error("[gateway-bypass] Primary fetch failed and no valid fallback response");
+  }
 
   // Mandatory bypass log
   console.log(JSON.stringify({
     fn: options.functionName,
-    model: cfg.model,
+    model: resolved.modelUsed,
     temperature: cfg.temperature,
     max_tokens: cfg.max_tokens,
     request_id: requestId,
@@ -194,5 +286,5 @@ export async function callStreamBypass(
     bypass_reason: options.bypassReason,
   }));
 
-  return { response, model_used: cfg.model, request_id: requestId };
+  return { response, model_used: resolved.modelUsed, request_id: requestId };
 }

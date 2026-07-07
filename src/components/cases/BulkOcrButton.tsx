@@ -227,7 +227,7 @@ export function BulkOcrButton({ caseId, files, existingOcrFileIds, forceProcess 
       
       const session = (await supabase.auth.getSession()).data.session;
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       
       const resp = await fetch(`${supabaseUrl}/functions/v1/extract-case-fields`, {
         method: 'POST',

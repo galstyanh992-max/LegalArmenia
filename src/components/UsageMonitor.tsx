@@ -27,10 +27,10 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { 
-  AlertTriangle, 
-  TrendingUp, 
-  RefreshCw, 
+import {
+  AlertTriangle,
+  TrendingUp,
+  RefreshCw,
   Loader2,
   Cpu,
   FileText,
@@ -110,16 +110,16 @@ const aggregateAiMetrics = (rows: AiMetricsSummaryRow[]): UsageSummary[] => {
   return Array.from(byService.values());
 };
 
-export function UsageMonitor({ 
-  budgetLimit = 5.0, 
-  showChart = true, 
+export function UsageMonitor({
+  budgetLimit = 5.0,
+  showChart = true,
   showTopUsers = true,
-  compact = false 
+  compact = false
 }: UsageMonitorProps) {
   const { t } = useTranslation(['usage', 'common']);
   const { toast } = useToast();
-  const { isAdmin } = useAuth();
-  
+  const { isAdmin, isLoading: authLoading } = useAuth();
+
   const [usage, setUsage] = useState<UsageSummary[]>([]);
   const [dailyUsage, setDailyUsage] = useState<DailyUsage[]>([]);
   const [topUsers, setTopUsers] = useState<TopUser[]>([]);
@@ -130,8 +130,17 @@ export function UsageMonitor({
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchUsage = useCallback(async (showRefreshState = false) => {
+    // Defense in depth: this RPC is admin-gated server-side (returns a safe empty
+    // result for non-admins, never a 403), but non-admin users should never issue
+    // the call at all — no network round trip, no possibility of a console error.
+    if (!isAdmin) {
+      setLoading(false);
+      setRefreshing(false);
+      return;
+    }
+
     if (showRefreshState) setRefreshing(true);
-    
+
     try {
       const { data: metricsData, error: usageError } = await (supabase as AiMetricsRpcClient)
         .rpc('get_ai_metrics_summary', { p_days: 30 });
@@ -143,13 +152,13 @@ export function UsageMonitor({
 
       const usageData = aggregateAiMetrics(metricsData || []);
       setUsage(usageData);
-      
+
       const total = usageData.reduce(
-        (sum: number, item: UsageSummary) => sum + Number(item.total_cost || 0), 
+        (sum: number, item: UsageSummary) => sum + Number(item.total_cost || 0),
         0
       );
       setTotalCost(total);
-      
+
       const wasOverBudget = isOverBudget;
       const overBudget = total >= budgetLimit;
       setIsOverBudget(overBudget || false);
@@ -158,9 +167,9 @@ export function UsageMonitor({
       if (overBudget && !wasOverBudget) {
         toast({
           title: t('usage:budget_alert'),
-          description: t('usage:budget_exceeded', { 
-            limit: budgetLimit.toFixed(2), 
-            current: total.toFixed(2) 
+          description: t('usage:budget_exceeded', {
+            limit: budgetLimit.toFixed(2),
+            current: total.toFixed(2)
           }),
           variant: 'destructive',
         });
@@ -200,12 +209,21 @@ export function UsageMonitor({
   }, [budgetLimit, isAdmin, showChart, showTopUsers, isOverBudget, toast, t]);
 
   useEffect(() => {
+    // Wait for the role to resolve before deciding anything — avoids firing the
+    // RPC (or showing the admin-only placeholder) before we actually know the role.
+    if (authLoading) return;
+
+    if (!isAdmin) {
+      setLoading(false);
+      return;
+    }
+
     fetchUsage();
-    
+
     // Refresh every 5 minutes
     const interval = setInterval(() => fetchUsage(), 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [fetchUsage]);
+  }, [fetchUsage, isAdmin, authLoading]);
 
   const handleRefresh = () => fetchUsage(true);
 
@@ -235,6 +253,35 @@ export function UsageMonitor({
     );
   }
 
+  // Non-admin roles never see real (or attempted) AI metrics — replaced with a
+  // quiet, static placeholder. No RPC call happens for this branch (see fetchUsage
+  // / the mount effect above), so there is nothing here that can fail or log.
+  if (!isAdmin) {
+    if (compact) {
+      return (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2 text-muted-foreground">
+              <TrendingUp className="h-4 w-4" />
+              {t('usage:monthly_usage')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">{t('usage:admin_only')}</p>
+          </CardContent>
+        </Card>
+      );
+    }
+    return (
+      <Card>
+        <CardContent className="py-8 text-center text-muted-foreground">
+          <TrendingUp className="h-12 w-12 mx-auto mb-3 opacity-50" />
+          <p>{t('usage:admin_only')}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const percentUsed = Math.min((totalCost / budgetLimit) * 100, 100);
 
   // Compact version for dashboard widget
@@ -252,9 +299,9 @@ export function UsageMonitor({
             <Alert variant="destructive" className="py-2">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription className="text-xs">
-                {t('usage:budget_exceeded', { 
-                  limit: budgetLimit.toFixed(2), 
-                  current: totalCost.toFixed(2) 
+                {t('usage:budget_exceeded', {
+                  limit: budgetLimit.toFixed(2),
+                  current: totalCost.toFixed(2)
                 })}
               </AlertDescription>
             </Alert>
@@ -265,9 +312,9 @@ export function UsageMonitor({
             <span className="font-medium">${totalCost.toFixed(4)} / ${budgetLimit.toFixed(2)}</span>
           </div>
 
-          <Progress 
-            value={percentUsed} 
-            className={percentUsed > 80 ? 'bg-destructive/20' : ''} 
+          <Progress
+            value={percentUsed}
+            className={percentUsed > 80 ? 'bg-destructive/20' : ''}
           />
 
           {usage.length > 0 && (
@@ -350,9 +397,9 @@ export function UsageMonitor({
                 <CardTitle>{t('usage:chart_title')}</CardTitle>
                 <CardDescription>{t('usage:daily_requests')}</CardDescription>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleRefresh}
                 disabled={refreshing}
               >
@@ -370,49 +417,49 @@ export function UsageMonitor({
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={dailyUsage}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     className="text-xs fill-muted-foreground"
                     tickLine={false}
                   />
-                  <YAxis 
+                  <YAxis
                     className="text-xs fill-muted-foreground"
                     tickLine={false}
                     axisLine={false}
                   />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--card))', 
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px'
                     }}
                   />
                   <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="llm" 
+                  <Area
+                    type="monotone"
+                    dataKey="llm"
                     stackId="1"
                     name={t('usage:service_llm')}
-                    stroke="hsl(var(--primary))" 
-                    fill="hsl(var(--primary))" 
+                    stroke="hsl(var(--primary))"
+                    fill="hsl(var(--primary))"
                     fillOpacity={0.6}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="ocr" 
+                  <Area
+                    type="monotone"
+                    dataKey="ocr"
                     stackId="1"
                     name={t('usage:service_ocr')}
-                    stroke="hsl(var(--secondary))" 
-                    fill="hsl(var(--secondary))" 
+                    stroke="hsl(var(--secondary))"
+                    fill="hsl(var(--secondary))"
                     fillOpacity={0.6}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="audio" 
+                  <Area
+                    type="monotone"
+                    dataKey="audio"
                     stackId="1"
                     name={t('usage:service_audio')}
-                    stroke="hsl(var(--accent))" 
-                    fill="hsl(var(--accent))" 
+                    stroke="hsl(var(--accent))"
+                    fill="hsl(var(--accent))"
                     fillOpacity={0.6}
                   />
                 </AreaChart>

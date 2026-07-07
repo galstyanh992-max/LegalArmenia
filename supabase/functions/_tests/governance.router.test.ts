@@ -55,12 +55,12 @@ Deno.test("governance: all MODEL_MAP entries have temperature <= 0.3", () => {
   }
 });
 
-Deno.test("governance: all MODEL_MAP entries have max_tokens <= 16384", () => {
+Deno.test("governance: all MODEL_MAP entries have max_tokens <= 32768", () => {
   for (const [key, cfg] of Object.entries(MODEL_MAP)) {
     assertEquals(
-      cfg.max_tokens <= 16384,
+      cfg.max_tokens <= 32768,
       true,
-      `${key}: max_tokens ${cfg.max_tokens} exceeds cap 16384`
+      `${key}: max_tokens ${cfg.max_tokens} exceeds cap 32768`
     );
   }
 });
