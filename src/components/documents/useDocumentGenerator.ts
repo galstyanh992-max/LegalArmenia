@@ -234,13 +234,8 @@ export function useDocumentGenerator(
       if (error) throw error;
       setTemplates(data?.length ? data : FALLBACK_DOCUMENT_TEMPLATES);
     } catch (error) {
-      console.error("Error fetching templates:", error);
+      console.warn("Document templates unavailable, using built-in fallback templates:", error);
       setTemplates(FALLBACK_DOCUMENT_TEMPLATES);
-      toast({
-        title: t("common:error"),
-        description: t("cases:template_loading_error"),
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
     }

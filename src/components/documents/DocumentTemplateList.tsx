@@ -197,13 +197,15 @@ export function DocumentTemplateList({
                 {categoryTemplates.map((template) => (
                   <button
                     key={template.id}
+                    type="button"
+                    aria-pressed={selectedTemplate?.id === template.id}
                     onClick={() => onSelect(template)}
                     className={cn(
-                      "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
-                      "hover:bg-accent hover:text-accent-foreground",
+                      "w-full text-left px-3 py-2 rounded-md text-sm transition-colors border",
+                      "hover:bg-accent hover:text-accent-foreground hover:border-primary/30",
                       selectedTemplate?.id === template.id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-transparent"
+                        ? "bg-primary text-primary-foreground border-primary shadow-[0_0_0_1px_hsl(var(--primary)/.35),0_8px_22px_hsl(var(--primary)/.18)]"
+                        : "bg-transparent border-transparent"
                     )}
                   >
                     {getTemplateName(template)}
