@@ -20,7 +20,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import {
-  IconScale,
+  PremiumBrandMark,
   IconPlus,
   IconLoader,
   IconLogout,
@@ -38,6 +38,20 @@ import {
   IconGavel,
   IconNote,
   IconBookText,
+  IconCasesPremium,
+  IconCalendarPremium,
+  IconDocumentsPremium,
+  IconTargetPremium,
+  IconCalculatorPremium,
+  IconMicPremium,
+  IconArchivePremium,
+  IconNotePremium,
+  IconDictionaryPremium,
+  IconTelegramPremium,
+  IconExternalPremium,
+  IconUsersPremium,
+  IconSearchPremium,
+  IconChartPremium,
 } from '@/components/icons/PremiumIcon';
 import { DocumentGeneratorDialog } from '@/components/documents/DocumentGeneratorDialog';
 import { ComplaintWizard } from '@/components/complaints/ComplaintWizard';
@@ -164,16 +178,16 @@ const Dashboard = () => {
   const canCreateCase = !!user;
 
   const sidebarItems = [
-    { icon: <IconFolderOpen size={20} />, label: t('cases:cases'), active: true, onClick: () => navigate('/dashboard') },
-    { icon: <IconCalendar size={20} />, label: t('calendar:calendar', 'Calendar'), onClick: () => navigate('/calendar') },
-    { icon: <IconMic size={20} />, label: t('audio:audio', 'Audio/Video'), onClick: () => navigate('/transcriptions') },
-    { icon: <IconFile size={20} />, label: t('common:documents', 'Documents'), onClick: () => setDocGeneratorOpen(true) },
-    { icon: <IconArchive size={20} />, label: t('common:my_documents'), onClick: () => navigate('/my-documents') },
-    { icon: <IconShieldAlert size={20} />, label: t('common:complaint'), onClick: () => setComplaintWizardOpen(true) },
-    { icon: <IconNote size={20} />, label: t('common:my_notes', 'My Notes'), onClick: () => setNotesOpen(true) },
-    { icon: <IconBookText size={20} />, label: t('dictionary:dictionary', 'Dictionary'), onClick: () => setDictOpen(true) },
-    { icon: <IconExternal size={20} />, label: 'E-request', onClick: () => window.open('https://e-request.am', '_blank') },
-    { icon: <IconSend size={20} />, label: 'Telegram', onClick: () => setTelegramOpen(true) },
+    { icon: <IconCasesPremium size={20} />, label: t('cases:cases'), active: true, onClick: () => navigate('/dashboard') },
+    { icon: <IconCalendarPremium size={20} />, label: t('calendar:calendar', 'Calendar'), onClick: () => navigate('/calendar') },
+    { icon: <IconMicPremium size={20} />, label: t('audio:audio', 'Audio/Video'), onClick: () => navigate('/transcriptions') },
+    { icon: <IconDocumentsPremium size={20} />, label: t('common:documents', 'Documents'), onClick: () => setDocGeneratorOpen(true) },
+    { icon: <IconArchivePremium size={20} />, label: t('common:my_documents'), onClick: () => navigate('/my-documents') },
+    { icon: <IconTargetPremium size={20} />, label: t('common:complaint'), onClick: () => setComplaintWizardOpen(true) },
+    { icon: <IconNotePremium size={20} />, label: t('common:my_notes', 'My Notes'), onClick: () => setNotesOpen(true) },
+    { icon: <IconDictionaryPremium size={20} />, label: t('dictionary:dictionary', 'Dictionary'), onClick: () => setDictOpen(true) },
+    { icon: <IconExternalPremium size={20} />, label: 'E-request', onClick: () => window.open('https://e-request.am', '_blank') },
+    { icon: <IconTelegramPremium size={20} />, label: 'Telegram', onClick: () => setTelegramOpen(true) },
   ];
 
   const Pill = ({
@@ -209,11 +223,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dark min-h-screen surface-bg lg:flex">
+    <div className="dark h-screen overflow-hidden surface-bg lg:flex">
       <aside className="premium-sidebar hidden lg:flex">
         <div className="flex items-center gap-3 px-5 py-7">
           <span className="text-[hsl(38,56%,63%)]">
-            <IconScale size={38} />
+            <PremiumBrandMark size={38} className="drop-shadow-[0_3px_14px_rgba(215,180,106,0.28)]" />
           </span>
           <span className="text-[15px] font-semibold uppercase tracking-[0.06em] text-[hsl(38_56%_68%)]">
             AI Legal Armenia
@@ -237,29 +251,39 @@ const Dashboard = () => {
 
         <div className="border-t border-white/10 px-4 py-5">
           <button className="nav-item-premium w-full" type="button">
-            <IconChart size={20} />
+            <IconChartPremium size={20} />
             <span>Settings</span>
           </button>
           <button className="nav-item-premium mt-1 w-full" type="button">
-            <IconBook size={20} />
+            <IconDictionaryPremium size={20} />
             <span>Help</span>
           </button>
           <div className="mt-6 flex items-center gap-3 px-2">
-            <div className="h-12 w-12 rounded-full border border-white/10 bg-[linear-gradient(145deg,#D7B46A,#25304A)]" />
+            <div className="h-12 w-12 rounded-full overflow-hidden border border-[rgba(215,180,106,0.3)] shadow-[0_0_12px_rgba(215,180,106,0.2)] flex-shrink-0 bg-[#0B1020]">
+              <img 
+                src={`/avatars/${isAdmin ? 'admin' : isClient ? 'client' : isAuditor ? 'auditor' : 'lawyer'}.png`} 
+                alt="Role Crest" 
+                className="w-full h-full object-cover"
+              />
+            </div>
             <div className="min-w-0">
-              <div className="truncate text-[15px] font-medium text-[hsl(213_30%_92%)]">E. Mason</div>
-              <div className="text-meta">Administrator</div>
+              <div className="truncate text-[15px] font-medium text-[hsl(213_30%_92%)]">
+                {user?.email?.split('@')[0] || 'E. Mason'}
+              </div>
+              <div className="text-meta">
+                {isAdmin ? 'Administrator' : isClient ? 'Client' : isAuditor ? 'Auditor' : 'Lawyer'}
+              </div>
             </div>
           </div>
         </div>
       </aside>
 
-      <div className="min-w-0 flex-1">
-      <header className="sticky top-0 z-20 glass-header">
+      <div className="min-w-0 flex-1 flex flex-col h-screen overflow-hidden">
+      <header className="shrink-0 z-20 glass-header">
         <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-2.5">
             <span className="text-[hsl(38,56%,63%)] lg:hidden">
-              <IconScale size={22} />
+              <PremiumBrandMark size={22} />
             </span>
             <h1 className="hidden text-section xs:block lg:hidden" style={{ fontSize: 22 }}>
               {t('common:app_name')}
@@ -278,7 +302,7 @@ const Dashboard = () => {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-[1500px] px-4 py-8 sm:py-10 lg:px-8 lg:py-12">
+      <main className="flex-1 overflow-y-auto mx-auto max-w-[1500px] w-full px-4 py-6 sm:py-8 lg:px-8 lg:py-10">
         {/* Page Header */}
         <div className="mb-8 flex flex-col gap-5">
           <div className="flex items-center justify-between">
@@ -300,7 +324,7 @@ const Dashboard = () => {
             <Sheet open={kbSearchOpen} onOpenChange={setKbSearchOpen}>
               <Pill
                 asChild
-                icon={<IconBook size={16} />}
+                icon={<IconSearchPremium size={16} />}
                 label={t('common:search', 'Search')}
               />
               <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel backdrop-blur-[8px]">
@@ -348,14 +372,14 @@ const Dashboard = () => {
                 </div>
               </SheetContent>
             </Sheet>
-            <Pill icon={<IconCalendar size={16} />} label={t('calendar:calendar', 'Calendar')} onClick={() => navigate('/calendar')} />
-            <Pill icon={<IconMic size={16} />} label={t('audio:audio', 'Audio')} onClick={() => navigate('/transcriptions')} />
-            <Pill icon={<IconFile size={16} />} label={t('common:documents', 'Documents')} onClick={() => setDocGeneratorOpen(true)} />
-            <Pill icon={<IconArchive size={16} />} label={t('common:my_documents')} onClick={() => navigate('/my-documents')} />
-            <Pill icon={<IconShieldAlert size={16} />} label={t('common:complaint')} onClick={() => setComplaintWizardOpen(true)} />
+            <Pill icon={<IconCalendarPremium size={16} />} label={t('calendar:calendar', 'Calendar')} onClick={() => navigate('/calendar')} />
+            <Pill icon={<IconMicPremium size={16} />} label={t('audio:audio', 'Audio')} onClick={() => navigate('/transcriptions')} />
+            <Pill icon={<IconDocumentsPremium size={16} />} label={t('common:documents', 'Documents')} onClick={() => setDocGeneratorOpen(true)} />
+            <Pill icon={<IconArchivePremium size={16} />} label={t('common:my_documents')} onClick={() => navigate('/my-documents')} />
+            <Pill icon={<IconTargetPremium size={16} />} label={t('common:complaint')} onClick={() => setComplaintWizardOpen(true)} />
             {/* Notes Editor */}
             <Sheet open={notesOpen} onOpenChange={setNotesOpen}>
-              <Pill asChild icon={<IconNote size={16} />} label={t('common:my_notes', 'Իմ գրառումներ')} />
+              <Pill asChild icon={<IconNotePremium size={16} />} label={t('common:my_notes', 'Իմ գրառումներ')} />
               <SheetContent className="w-full sm:max-w-2xl p-0 flex flex-col surface-panel" side="right">
                 <div className="h-full flex flex-col">
                   <NotesPanel />
@@ -364,7 +388,7 @@ const Dashboard = () => {
             </Sheet>
             {/* Dictionary */}
             <Sheet open={dictOpen} onOpenChange={setDictOpen}>
-              <Pill asChild icon={<IconBookText size={16} />} label={t('dictionary:dictionary', 'Բառարան')} />
+              <Pill asChild icon={<IconDictionaryPremium size={16} />} label={t('dictionary:dictionary', 'Բառարան')} />
               <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel">
                 <SheetHeader>
                   <SheetTitle>{t('dictionary:dictionary', 'Բառարան')}</SheetTitle>
@@ -377,10 +401,10 @@ const Dashboard = () => {
                 </div>
               </SheetContent>
             </Sheet>
-            <Pill icon={<IconExternal size={16} />} label="E-request" onClick={() => window.open('https://e-request.am', '_blank')} />
+            <Pill icon={<IconExternalPremium size={16} />} label="E-request" onClick={() => window.open('https://e-request.am', '_blank')} />
             {/* Telegram Uploads */}
             <Sheet open={telegramOpen} onOpenChange={setTelegramOpen}>
-              <Pill asChild icon={<IconSend size={16} />} label="Telegram" />
+              <Pill asChild icon={<IconTelegramPremium size={16} />} label="Telegram" />
               <SheetContent className="w-full sm:max-w-lg overflow-y-auto surface-panel">
                 <SheetHeader>
                   <SheetTitle>{t('common:telegram_files', 'Telegram Files')}</SheetTitle>
@@ -400,11 +424,11 @@ const Dashboard = () => {
             </Sheet>
             {/* KB Management - Admin only */}
             {isAdmin && (
-              <Pill icon={<IconBook size={16} />} label={t('kb:kb_short', 'KB')} onClick={() => navigate('/kb')} />
+              <Pill icon={<IconDictionaryPremium size={16} />} label={t('kb:kb_short', 'KB')} onClick={() => navigate('/kb')} />
             )}
             {isAdmin && (
               <Sheet>
-              <Pill asChild icon={<IconChart size={16} />} label={t('usage:usage')} />
+              <Pill asChild icon={<IconChartPremium size={16} />} label={t('usage:usage')} />
                 <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel">
                   <SheetHeader>
                     <SheetTitle>{t('usage:usage_title')}</SheetTitle>
@@ -423,14 +447,14 @@ const Dashboard = () => {
 
         {/* Dashboard Tabs for Auditors */}
         {isAuditor ? (
-          <Tabs defaultValue="team" className="space-y-6">
+          <Tabs defaultValue="team" className="space-y-4">
             <TabsList className="surface-panel rounded-[18px] p-2">
               <TabsTrigger value="team" className="gap-2 rounded-[14px]">
-                <IconUsers size={16} />
+                <IconUsersPremium size={16} />
                 {t('admin:my_team')}
               </TabsTrigger>
               <TabsTrigger value="cases" className="gap-2 rounded-[14px]">
-                <IconFolderOpen size={16} />
+                <IconCasesPremium size={16} />
                 {t('admin:cases')}
               </TabsTrigger>
             </TabsList>
@@ -439,7 +463,7 @@ const Dashboard = () => {
               <TeamStats />
             </TabsContent>
 
-            <TabsContent value="cases" className="space-y-6">
+            <TabsContent value="cases" className="space-y-4">
               {/* Filters */}
               <div className="case-toolbar">
                 {canCreateCase && (
@@ -458,13 +482,13 @@ const Dashboard = () => {
                 </div>
               ) : cases.length === 0 ? (
                 <div className="flex flex-col items-center justify-center surface-card py-16">
-                  <IconFolderOpen size={48} />
+                  <IconCasesPremium size={48} />
                   <p className="mt-4 text-card-title text-muted-foreground" style={{ fontSize: 18 }}>
                     {t('cases:no_cases')}
                   </p>
                 </div>
               ) : (
-                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {cases.map((caseItem) => (
                     <CaseCard
                       key={caseItem.id}
@@ -501,7 +525,7 @@ const Dashboard = () => {
               </div>
             ) : cases.length === 0 ? (
               <div className="flex flex-col items-center justify-center surface-card py-16">
-                <IconFolderOpen size={48} />
+                <IconCasesPremium size={48} />
                   <p className="mt-4 text-card-title text-muted-foreground" style={{ fontSize: 18 }}>
                     {t('cases:no_cases')}
                   </p>
@@ -513,7 +537,7 @@ const Dashboard = () => {
                 )}
               </div>
             ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {cases.map((caseItem) => (
                   <CaseCard
                     key={caseItem.id}
@@ -529,12 +553,6 @@ const Dashboard = () => {
               </div>
             )}
 
-            {/* Usage widget — rendered for all users; UsageMonitor itself is
-                role-aware and shows an admin-only placeholder for non-admins
-                without ever calling the metrics RPC. */}
-            <div className="mt-8">
-              <UsageMonitor budgetLimit={5.0} compact={true} />
-            </div>
           </>
         )}
 

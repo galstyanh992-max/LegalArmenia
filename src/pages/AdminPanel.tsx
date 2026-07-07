@@ -69,10 +69,10 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
       <AdminHeader email={user.email || ""} onSignOut={handleSignOut} />
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 py-6">
         <Tabs defaultValue="kb" className="space-y-6">
           <TabsList className="h-auto flex-wrap gap-1 p-1">
             <TabsTrigger value="kb" className="gap-1.5 px-2 py-1.5 text-xs sm:px-3 sm:text-sm">

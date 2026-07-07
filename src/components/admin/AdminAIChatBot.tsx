@@ -7,13 +7,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Loader2, Bot, User, X, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
+import { getFunctionUrl } from '@/lib/supabase-functions-url';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-ai-chat`;
+const CHAT_URL = getFunctionUrl('admin-ai-chat');
 
 const GREETING = `Привет! Я — генератор системных промптов на базе GPT-5.2.
 

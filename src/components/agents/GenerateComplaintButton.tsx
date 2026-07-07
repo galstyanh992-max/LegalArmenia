@@ -9,6 +9,7 @@ import { Loader2, FileText, CheckCircle2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { AgentAnalysisRun, EvidenceItem, AggregatedReport } from "./types";
+import { getFunctionUrl } from "@/lib/supabase-functions-url";
 
 interface GenerateComplaintButtonProps {
   caseId: string;
@@ -90,7 +91,6 @@ export function GenerateComplaintButton({
       ].filter(Boolean).join("\n\n");
 
       // Use fetch with long timeout instead of supabase.functions.invoke
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       const sessionData = await supabase.auth.getSession();
       const accessToken = sessionData.data.session?.access_token;
@@ -100,7 +100,7 @@ export function GenerateComplaintButton({
 
       let data: Record<string, unknown>;
       try {
-        const res = await fetch(`${supabaseUrl}/functions/v1/generate-complaint`, {
+        const res = await fetch(getFunctionUrl("generate-complaint"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

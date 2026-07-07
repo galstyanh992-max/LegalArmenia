@@ -20,9 +20,9 @@ const Index = () => {
   const { t } = useTranslation(['common', 'disclaimer']);
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-card/80 backdrop-blur-xl">
+      <header className="shrink-0 z-50 border-b border-border/50 bg-card/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-3">
             <img src={logo} alt="AI Legal Armenia" className="h-9 w-9 object-contain" />
@@ -42,7 +42,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <main className="relative">
+      <main className="relative flex-1 overflow-y-auto">
         {/* Background decoration */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-32 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
@@ -50,7 +50,7 @@ const Index = () => {
           <div className="absolute -bottom-40 -left-20 h-[500px] w-[500px] rounded-full bg-accent/30 blur-3xl" />
         </div>
 
-        <div className="container relative mx-auto px-4 py-16 sm:py-24 lg:py-32">
+        <div className="container relative mx-auto px-4 py-8 sm:py-12 lg:py-16">
           <div className="mx-auto max-w-3xl text-center">
             <motion.div
               initial="hidden"
@@ -165,7 +165,7 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-8">
+      <footer className="shrink-0 border-t border-border/50 py-4">
         <div className="container mx-auto px-4 text-center text-xs text-muted-foreground sm:text-sm">
           <p>{t('common:copyright')}</p>
           <p className="mt-2">{t('disclaimer:ra_data_law')}</p>

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { StickyNote, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { NotesPanel } from './NotesPanel';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { PremiumDocumentGlyph } from '@/components/icons/PremiumIcon';
 import {
   Sheet,
   SheetContent,
@@ -37,14 +38,16 @@ export function NotesBubble() {
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
             className={cn(
-              "group relative h-14 w-14 rounded-full bg-secondary text-secondary-foreground shadow-2xl",
+              "group relative h-14 w-14 overflow-hidden rounded-full text-[hsl(38,74%,76%)]",
+              "border border-white/10 bg-[radial-gradient(circle_at_34%_18%,rgba(255,255,255,0.11),transparent_34%),linear-gradient(145deg,#1c2437,#101725_70%)]",
               "flex items-center justify-center transition-all duration-300",
-              "hover:scale-110 hover:shadow-secondary/30 hover:shadow-2xl",
-              "animate-in zoom-in duration-300 border border-border"
+              "shadow-[0_10px_28px_rgba(0,0,0,0.32),0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)]",
+              "hover:scale-110 hover:shadow-[0_14px_34px_rgba(0,0,0,0.42),0_0_22px_rgba(215,180,106,0.16)]",
+              "animate-in zoom-in duration-300"
             )}
             aria-label={t('my_notes', '\u041c\u043e\u0438 \u0437\u0430\u043f\u0438\u0441\u0438')}
           >
-            <StickyNote className="h-6 w-6 transition-transform group-hover:scale-110" />
+            <PremiumDocumentGlyph size={27} className="relative z-10 drop-shadow-[0_2px_8px_rgba(215,180,106,0.24)] transition-transform group-hover:scale-110" />
           </button>
         </div>
       )}

@@ -271,11 +271,11 @@ const CaseDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
       <CaseDetailHeader userEmail={user?.email} onSignOut={signOut} />
 
       {/* Main Content - Mobile-first with safe areas */}
-      <main className="mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-safe max-w-full overflow-hidden lg:max-w-7xl">
+      <main className="flex-1 overflow-y-auto mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-4 lg:pt-6 pb-safe max-w-full lg:max-w-7xl">
         {/* Case Header - Premium mobile card */}
         <div className="card-premium p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="space-y-4">

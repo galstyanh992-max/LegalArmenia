@@ -54,9 +54,9 @@ const KnowledgeBasePage = () => {
   }, [categoryCounts]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b bg-card">
+      <header className="shrink-0 z-10 border-b bg-card">
         <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
             <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
@@ -79,7 +79,7 @@ const KnowledgeBasePage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+      <main className="flex-1 overflow-y-auto container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Back Button */}
         <Button variant="ghost" size="sm" className="mb-4" onClick={() => navigate('/dashboard')}>
           <ArrowLeft className="mr-2 h-4 w-4" />

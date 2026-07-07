@@ -4,6 +4,9 @@ import {
   GlyphColumns,
   GlyphShield,
   GlyphStamp,
+  GlyphFile,
+  GlyphFolder,
+  GlyphGavel,
   IconActionVertical,
   IconCalendar,
   IconFile,
@@ -45,7 +48,7 @@ const priorityCapsules: Record<string, string> = {
   urgent: 'capsule capsule-pending',
 };
 
-const glyphs = [GlyphBalance, IconFile, IconFolder, IconGavel, GlyphColumns, GlyphShield, GlyphStamp];
+const glyphs = [GlyphBalance, GlyphFile, GlyphFolder, GlyphGavel, GlyphColumns, GlyphShield, GlyphStamp];
 
 export function CaseCard({ caseData, onView, onEdit, onDelete }: CaseCardProps) {
   const { t } = useTranslation('cases');
@@ -108,9 +111,9 @@ export function CaseCard({ caseData, onView, onEdit, onDelete }: CaseCardProps) 
         </DropdownMenu>
       </div>
 
-      <div className="relative z-[1] mt-4">
+      <div className="relative z-[1] mt-3">
         {caseData.description && (
-          <p className="mb-4 line-clamp-2 text-body text-[hsl(215_18%_68%)]">
+          <p className="mb-3 line-clamp-2 text-body text-[hsl(215_18%_68%)]">
             {caseData.description}
           </p>
         )}
@@ -129,7 +132,7 @@ export function CaseCard({ caseData, onView, onEdit, onDelete }: CaseCardProps) 
           </span>
         </div>
 
-        <div className="mt-4 flex items-center gap-4 text-meta text-[hsl(215_18%_66%)]">
+        <div className="mt-3 flex items-center gap-4 text-meta text-[hsl(215_18%_66%)]">
           {caseData.court_date && (
             <div className="flex items-center gap-1">
               <IconCalendar className="h-3 w-3" />

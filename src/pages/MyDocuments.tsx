@@ -259,9 +259,9 @@ const MyDocuments = () => {
   // Using centralized getText from @/lib/i18n-utils
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b bg-card">
+      <header className="shrink-0 z-10 border-b bg-card">
         <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
@@ -295,7 +295,7 @@ const MyDocuments = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 py-6">
         {/* Page Header */}
         <div className="mb-6">
           <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">

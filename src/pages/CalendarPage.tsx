@@ -226,9 +226,9 @@ const CalendarPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="h-screen overflow-hidden bg-muted/30 flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b bg-card/95 backdrop-blur-sm shadow-soft">
+      <header className="shrink-0 z-20 border-b bg-card/95 backdrop-blur-sm shadow-soft">
         <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2 sm:gap-4">
             <Button
@@ -260,7 +260,7 @@ const CalendarPage = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 space-y-6">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 py-6 space-y-6">
 
         {/* Page title + actions */}
         <div className="flex items-start justify-between flex-wrap gap-3">

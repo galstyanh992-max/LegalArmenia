@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getReferencesText } from "@/lib/references-store";
+import { getFunctionUrl } from "@/lib/supabase-functions-url";
 
 // =============================================================================
 // TYPES
@@ -315,7 +316,6 @@ export function CaseComplaintGenerator({
         requestBody.referencesText = currentRefsText;
       }
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       const sessionData = await supabase.auth.getSession();
       const accessToken = sessionData.data.session?.access_token;
@@ -325,7 +325,7 @@ export function CaseComplaintGenerator({
 
       let data: Record<string, unknown>;
       try {
-        const res = await fetch(`${supabaseUrl}/functions/v1/generate-complaint`, {
+        const res = await fetch(getFunctionUrl("generate-complaint"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

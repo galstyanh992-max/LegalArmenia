@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { LegalChatBot } from './LegalChatBot';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { PremiumChatGlyph } from '@/components/icons/PremiumIcon';
 
 export function ChatBubble() {
   const { t } = useTranslation('ai');
@@ -36,15 +37,17 @@ export function ChatBubble() {
           <button
             onClick={handleOpen}
             className={cn(
-              "group relative h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-2xl",
+              "group relative h-14 w-14 overflow-hidden rounded-full text-[hsl(38,76%,72%)]",
+              "border border-[rgba(215,180,106,0.28)] bg-[radial-gradient(circle_at_30%_18%,rgba(255,231,177,0.22),transparent_34%),linear-gradient(145deg,#17233d,#071126_72%)]",
               "flex items-center justify-center transition-all duration-300",
-              "hover:scale-110 hover:shadow-primary/30 hover:shadow-2xl",
+              "shadow-[0_10px_28px_rgba(0,0,0,0.34),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]",
+              "hover:scale-110 hover:shadow-[0_14px_34px_rgba(0,0,0,0.42),0_0_24px_rgba(215,180,106,0.18)]",
               "animate-in zoom-in duration-300"
             )}
             aria-label={t('ai_name', 'AI Legal Chat')}
           >
-            <MessageCircle className="h-6 w-6 transition-transform group-hover:scale-110" />
-            <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping opacity-60" />
+            <PremiumChatGlyph size={27} className="relative z-10 drop-shadow-[0_2px_8px_rgba(215,180,106,0.28)] transition-transform group-hover:scale-110" />
+            <span className="absolute inset-0 rounded-full bg-[rgba(215,180,106,0.16)] animate-ping opacity-45" />
           </button>
         </div>
       )}

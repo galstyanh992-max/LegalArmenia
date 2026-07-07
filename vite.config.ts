@@ -29,6 +29,15 @@ export default defineConfig(({ mode }) => {
     server: {
       host: "::",
       port: 8080,
+      proxy: env.VITE_SUPABASE_URL
+        ? {
+            "/functions/v1": {
+              target: env.VITE_SUPABASE_URL,
+              changeOrigin: true,
+              secure: true,
+            },
+          }
+        : undefined,
       hmr: {
         overlay: false,
       },

@@ -308,9 +308,9 @@ const AudioTranscriptions = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b bg-card">
+      <header className="shrink-0 z-10 border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
@@ -331,7 +331,7 @@ const AudioTranscriptions = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 py-6">
         <div className="mb-6">
           <h2 className="flex items-center gap-2 text-2xl font-bold">
             <Mic className="h-6 w-6 text-primary" />

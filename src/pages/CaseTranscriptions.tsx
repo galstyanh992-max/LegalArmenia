@@ -45,7 +45,7 @@ export default function CaseTranscriptions() {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
       {/* Skip Link */}
       <a
         href="#main-content"
@@ -55,7 +55,7 @@ export default function CaseTranscriptions() {
       </a>
 
       {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-10">
+      <header className="border-b bg-card shrink-0 z-10">
         <div className="container mx-auto px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
             <Button
@@ -85,7 +85,7 @@ export default function CaseTranscriptions() {
       </header>
 
       {/* Main Content */}
-      <main id="main-content" className="container mx-auto px-4 py-4 sm:py-6 max-w-full">
+      <main id="main-content" className="flex-1 overflow-y-auto container mx-auto px-4 py-4 sm:py-6 max-w-full">
         <div className="mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-semibold text-foreground break-words">
             {caseData.title}
