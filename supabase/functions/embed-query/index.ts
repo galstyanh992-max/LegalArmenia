@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
-import { handleCors } from "../_shared/edge-security.ts";
+import { handleCors, isValidInternalCall } from "../_shared/edge-security.ts";
 
 // AI LEGAL ARMENIA — query embedding proxy.
 //
@@ -38,14 +38,16 @@ serve(async (req) => {
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
     if (!supabaseUrl || !anonKey) throw new Error("Supabase env not configured");
 
-    // Auth guard: only authenticated users may embed (prevents open abuse).
-    const authHeader = req.headers.get("Authorization") ?? "";
-    const authClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: { user }, error: authError } = await authClient.auth.getUser();
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers });
+    // Auth guard: internal edge calls use x-internal-key; browser calls require user JWT.
+    if (!isValidInternalCall(req)) {
+      const authHeader = req.headers.get("Authorization") ?? "";
+      const authClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user }, error: authError } = await authClient.auth.getUser();
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers });
+      }
     }
 
     const endpoint = Deno.env.get("EMBEDDING_ENDPOINT");

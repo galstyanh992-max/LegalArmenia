@@ -26,6 +26,8 @@ const KnowledgeBase = lazy(() => import("./pages/KnowledgeBase"));
 const KBDocumentDetail = lazy(() => import("./pages/KBDocumentDetail"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const Register = lazy(() => import("./pages/Register"));
+const Login = lazy(() => import("./pages/Login"));
 const MyDocuments = lazy(() => import("./pages/MyDocuments"));
 
 const queryClient = new QueryClient({
@@ -72,7 +74,14 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/landing" element={<Index />} />
-            <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+            <Route 
+              path="/login" 
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <Login />
+                </Suspense>
+              } 
+            />
             {/* ... keep existing code (all routes) */}
             <Route
               path="/dashboard"
@@ -149,6 +158,14 @@ const App = () => (
               element={
                 <Suspense fallback={<PageLoader />}>
                   <AdminLogin />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <Register />
                 </Suspense>
               }
             />

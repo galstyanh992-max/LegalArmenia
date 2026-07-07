@@ -47,47 +47,47 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
     temperature: 0.15,
     max_tokens: 14000,
     description: "Case analysis (GLM-5.2 primary; Claude Sonnet 4 fallback)",
-    fallback: "anthropic/claude-sonnet-4",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "multi-agent-analyze": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
     description: "Multi-agent analysis (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "anthropic/claude-3.5-sonnet",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "generate-complaint": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 14000,
     description: "Complaint drafting (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "anthropic/claude-3.5-sonnet",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "legal-chat": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
     description: "Legal chat (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "anthropic/claude-3.5-sonnet",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "analyze-files-for-complaint": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
     description: "File analysis (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "anthropic/claude-3.5-sonnet",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "generate-document": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 10000,
     description: "Documents (GLM-5.2 primary; Claude 3.5 Sonnet fallback)",
-    fallback: "anthropic/claude-3.5-sonnet",
+    fallback: "ollama/glm-5.2:cloud",
   },
 
   // ── Strict JSON ───────────────────────────────────────────────────────────
   "extract-case-fields": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.15,
     max_tokens: 16000,
     description: "Extract fields (Gemini 2.5 Pro)",
@@ -98,30 +98,30 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
     max_tokens: 200,
     json_mode: true,
     description: "KB keywords JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "google/gemini-2.5-pro",
+    fallback: "ollama/glm-5.2:cloud",
   },
 
   // ── Utilities ─────────────────────────────────────────────────────────────
   "audio-transcribe": {
-    model: "google/gemini-2.5-flash",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 16000,
     description: "Transcription (Gemini Flash)",
   },
   "echr-translate": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 8000,
     description: "ECHR translate (Claude 3.5 Sonnet)",
   },
   "legal-practice-enrich": {
-    model: "openai/gpt-4.1-mini",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
     description: "Enrich practice (OpenAI GPT-4.1 mini)",
   },
   "vector-search-rerank": {
-    model: "openai/gpt-4.1-mini",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 1000,
     description: "Rerank (OpenAI GPT-4.1 mini)",
@@ -129,31 +129,31 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
 
   // ── Bypass-only utilities ─────────────────────────────────────────────────
   "ocr-process": {
-    model: "google/gemini-2.5-flash",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 8000,
     description: "OCR vision (Gemini Flash, bypass:multimodal)",
   },
   "kb-scrape-batch": {
-    model: "google/gemini-2.5-flash",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 16000,
     description: "KB PDF scrape (Gemini Flash, bypass:multimodal)",
   },
   "kb-fetch-pdf-content": {
-    model: "google/gemini-2.5-flash",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 16000,
     description: "KB fetch PDF (Gemini Flash, bypass:multimodal)",
   },
   "legal-practice-import": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0,
     max_tokens: 8000,
     description: "Practice import extract (Gemini 2.5 Pro)",
   },
   "prompt-armor-repair": {
-    model: "google/gemini-2.5-pro",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0,
     max_tokens: 8000,
     description: "JSON repair (Gemini 2.5 Pro)",
@@ -161,15 +161,15 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
 
   // ── Embeddings (OpenAI only — always direct, no gateway) ──────────────────
   "generate-embeddings": {
-    model: "openai/text-embedding-3-small",
+    model: "armenian-text-embeddings-2-large",
     temperature: 0,
     max_tokens: 0,
-    description: "Embeddings (OpenAI direct)",
+    description: "Embeddings (Metric AI direct)",
   },
 
   // ── Admin utilities ─────────────────────────────────────────────────────
   "admin-ai-chat": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.3,
     max_tokens: 16000,
     description: "Admin AI chat (Claude 3.5 Sonnet)",
@@ -177,7 +177,7 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
 
   // ── Worker aliases ────────────────────────────────────────────────────────
   "practice-ai-enrich-worker": {
-    model: "openai/gpt-4.1-mini",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 16000,
     description: "Enrich practice worker (OpenAI GPT-4.1 mini)",
@@ -185,7 +185,7 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
 
   // ── Map-Reduce summarizer ─────────────────────────────────────────────────
   "map-reduce-summarize": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 4000,
     description: "Map-Reduce chunk summarizer (Claude 3.5 Sonnet)",
@@ -193,7 +193,7 @@ export const MODEL_MAP: Record<string, ModelConfig> = {
 
   // ── Translation ───────────────────────────────────────────────────────────
   "translate-to-armenian": {
-    model: "anthropic/claude-3.5-sonnet",
+    model: "ollama/glm-5.2:cloud",
     temperature: 0.1,
     max_tokens: 4096,
     description: "Legal translation to Armenian (Claude 3.5 Sonnet)",
@@ -216,7 +216,7 @@ const ROLE_OVERRIDES: Record<string, Partial<ModelConfig>> = {
     temperature: 0,
     max_tokens: 14000,
     description: "Deterministic draft (GLM-5.2 temp=0)",
-    fallback: "anthropic/claude-sonnet-4",
+    fallback: "ollama/glm-5.2:cloud",
   },
   // ── JSON roles (Gemini Pro) ─────────────────────────────────────────────
   "ai-analyze:precedent_citation": {
@@ -224,28 +224,28 @@ const ROLE_OVERRIDES: Record<string, Partial<ModelConfig>> = {
     temperature: 0.2,
     max_tokens: 8000,
     description: "Precedent JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "google/gemini-2.5-pro",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "ai-analyze:cross_exam": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 8000,
     description: "Cross-exam JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "google/gemini-2.5-pro",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "ai-analyze:deadline_rules": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 8000,
     description: "Deadlines JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "google/gemini-2.5-pro",
+    fallback: "ollama/glm-5.2:cloud",
   },
   "ai-analyze:law_update_summary": {
     model: "ollama/glm-5.2:cloud",
     temperature: 0.2,
     max_tokens: 8000,
     description: "Law update JSON (GLM-5.2 primary; Gemini 2.5 Pro fallback)",
-    fallback: "google/gemini-2.5-pro",
+    fallback: "ollama/glm-5.2:cloud",
   },
 };
 

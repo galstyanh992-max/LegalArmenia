@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { log, warn, err } from "../_shared/safe-logger.ts";
-import { handleCors, checkInternalAuth } from "../_shared/edge-security.ts";
+import { handleCors, checkInternalAuth, callInternalFunction } from "../_shared/edge-security.ts";
 import { applyTemporalValidation, buildTemporalWarnings, normalizeEffectiveDate } from "../_shared/temporal-validity-engine.ts";
 
 type SearchTables = "kb" | "practice" | "both";
@@ -192,50 +192,29 @@ function resolveRetrievalMode(hasSemanticRows: boolean, hasKeywordRows: boolean)
   return "keyword_only";
 }
 
-/**
- * Edge functions run on Supabase infrastructure and CANNOT reach a VPS via
- * localhost or a private/LAN IP. A non-routable EMBEDDING_ENDPOINT is the #1
- * deployment trap: semantic search silently degrades to BM25. Detect and warn loudly.
- */
-function isUnroutableEndpoint(url: string): boolean {
-  return /(127\.0\.0\.1|localhost|0\.0\.0\.0|\[?::1\]?|:\/\/10\.|:\/\/192\.168\.|:\/\/172\.(1[6-9]|2\d|3[01])\.)/i.test(url);
-}
-
 async function embedMetricQuery(text: string, requestId: string): Promise<number[] | null> {
-  const endpoint = Deno.env.get("EMBEDDING_ENDPOINT");
-  if (!endpoint) return null;
-  if (isUnroutableEndpoint(endpoint)) {
-    warn("vector-search", "EMBEDDING_ENDPOINT is NOT routable from Supabase Edge (localhost/private IP) - set a public HTTPS URL in Edge Secrets; semantic search is falling back to BM25", { requestId, endpoint });
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  if (!supabaseUrl) {
+    warn("vector-search", "SUPABASE_URL missing; embed-query unavailable", { requestId });
     return null;
   }
 
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  const apiKey = Deno.env.get("EMBEDDING_API_KEY");
-  if (apiKey) headers["X-API-Key"] = apiKey;
-
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20_000);
-    let res: Response;
-    try {
-      res = await fetch(`${endpoint.replace(/\/+$/, "")}/embed/query`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ texts: text }),
-        signal: controller.signal,
-      });
-    } finally {
-      clearTimeout(timeout);
-    }
+    const res = await callInternalFunction(
+      `${supabaseUrl}/functions/v1/embed-query`,
+      { text },
+      { requestId, timeoutMs: 25_000 },
+    );
     if (!res.ok) {
-      warn("vector-search", "Embedding endpoint failed", { requestId, status: res.status });
+      const errorText = await res.text().catch(() => "");
+      warn("vector-search", "embed-query failed", { requestId, status: res.status, error: errorText.substring(0, 120) });
       return null;
     }
-    const payload = await res.json() as { vectors?: number[][] };
-    const vector = payload.vectors?.[0];
+    const payload = await res.json() as { vector?: number[] };
+    const vector = payload.vector;
     return Array.isArray(vector) && vector.length === 1024 ? vector : null;
   } catch (error) {
-    warn("vector-search", "Embedding endpoint unavailable", { requestId, error: String(error) });
+    warn("vector-search", "embed-query unavailable", { requestId, error: String(error) });
     return null;
   }
 }

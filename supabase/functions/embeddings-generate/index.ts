@@ -15,7 +15,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 
 // ─── Config ────────────────────────────────────────────────────────────────
-const OPENAI_BASE_URL = "https://api.openai.com/v1";
+const OPENAI_BASE_URL = Deno.env.get("EMBEDDING_ENDPOINT") ?? Deno.env.get("OPENAI_BASE_URL") ?? "https://api.openai.com/v1";
 const DEFAULT_MODEL = "text-embedding-3-small";
 const MAX_BATCH_SIZE = 100;
 const MAX_CHARS_PER_TEXT = 6_000; // worst-case Armenian ≈ 1 char/token; model limit 8191
@@ -77,8 +77,7 @@ async function callOpenAIEmbeddings(
   model: string,
   dimensions?: number,
 ): Promise<{ vectors: number[][]; totalTokens: number }> {
-  const apiKey = Deno.env.get("OPENAI_API_KEY");
-  if (!apiKey) throw new Error("OPENAI_API_KEY not configured");
+  const apiKey = Deno.env.get("OPENAI_API_KEY") ?? Deno.env.get("EMBEDDING_API_KEY") ?? "dummy";
 
   const body: Record<string, unknown> = {
     model,

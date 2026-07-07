@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { getSignInCandidates } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -18,63 +18,50 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, Loader2 } from 'lucide-react';
+import { Shield, Loader2, ArrowRight } from 'lucide-react';
 
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required').max(50),
+  email: z.string().min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
 
-const AdminLogin = () => {
+const Login = () => {
   const { t } = useTranslation(['auth', 'common', 'errors']);
   const navigate = useNavigate();
-  const { signIn, isAdmin, user, loading: authLoading, isLoading: authIsLoading, checkAdmin } = useAuth();
+  const { signIn, user, loading: authLoading, isLoading: authIsLoading } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const loginAttemptRef = useRef(0);
   const hasRedirected = useRef(false);
 
-  const handleAdminRedirect = useCallback(async () => {
+  const handleRedirect = useCallback(() => {
     if (hasRedirected.current) return;
     if (!user) return;
-    
-    loginAttemptRef.current += 1;
-    const attempt = loginAttemptRef.current;
-    
-    try {
-      const adminStatus = await checkAdmin();
-      if (attempt !== loginAttemptRef.current) return;
-      
-      if (adminStatus) {
-        hasRedirected.current = true;
-        navigate('/admin', { replace: true });
-      }
-    } catch (error) {
-      console.error('Admin check failed:', error);
-    }
-  }, [user, checkAdmin, navigate]);
+    hasRedirected.current = true;
+    navigate('/dashboard', { replace: true });
+  }, [user, navigate]);
 
   useEffect(() => {
-    if (!authLoading && user && isAdmin && !hasRedirected.current) {
-      navigate('/admin', { replace: true });
+    if (!authLoading && user && !hasRedirected.current) {
+      handleRedirect();
     }
-  }, [user, isAdmin, authLoading, navigate]);
+  }, [user, authLoading, handleRedirect]);
 
   useEffect(() => {
     if (loginSuccess && user && !authIsLoading && !hasRedirected.current) {
       const timer = setTimeout(() => {
-        handleAdminRedirect();
+        handleRedirect();
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [loginSuccess, user, authIsLoading, handleAdminRedirect]);
+  }, [loginSuccess, user, authIsLoading, handleRedirect]);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { username: '', password: '' },
+    defaultValues: { email: '', password: '' },
   });
 
   const handleLogin = async (values: LoginValues) => {
@@ -85,7 +72,7 @@ const AdminLogin = () => {
     const currentAttempt = loginAttemptRef.current;
 
     try {
-      const candidates = getSignInCandidates(values.username);
+      const candidates = getSignInCandidates(values.email);
       let result: Awaited<ReturnType<typeof signIn>> | null = null;
       let lastError: unknown;
 
@@ -105,12 +92,10 @@ const AdminLogin = () => {
       
       if (result.user && currentAttempt === loginAttemptRef.current) {
         setLoginSuccess(true);
-        
-        setTimeout(async () => {
-          const adminStatus = await checkAdmin();
-          if (adminStatus && currentAttempt === loginAttemptRef.current && !hasRedirected.current) {
+        setTimeout(() => {
+          if (currentAttempt === loginAttemptRef.current && !hasRedirected.current) {
             hasRedirected.current = true;
-            navigate('/admin', { replace: true });
+            navigate('/dashboard', { replace: true });
           }
         }, 100);
       }
@@ -122,7 +107,7 @@ const AdminLogin = () => {
         title: t('errors:login_failed', 'Login failed'),
         description: isConnectionIssue
           ? `${t('errors:connection_lost', 'Connection lost')}. ${t('errors:try_again', 'Try again')}`
-          : t('invalid_credentials', 'Invalid username or password'),
+          : message, // Show the actual message to help debug (e.g. "Email not confirmed")
         variant: 'destructive',
       });
     } finally {
@@ -145,20 +130,20 @@ const AdminLogin = () => {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <Shield className="h-8 w-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Ադմին պանել</CardTitle>
-          <CardDescription>Միայն ադմինիստրատորների համար</CardDescription>
+          <CardTitle className="text-2xl">Մուտք</CardTitle>
+          <CardDescription>Մուտքագրեք ձեր տվյալները համակարգ մուտք գործելու համար</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('username')}</FormLabel>
+                    <FormLabel>Էլ․ հասցե (Email)</FormLabel>
                     <FormControl>
-                      <Input type="text" autoComplete="username" placeholder="admin" {...field} />
+                      <Input type="text" autoComplete="email" placeholder="example@mail.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -169,7 +154,7 @@ const AdminLogin = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('password')}</FormLabel>
+                    <FormLabel>Գաղտնաբառ (Password)</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
@@ -183,25 +168,24 @@ const AdminLogin = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full mt-6" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Մուտք
               </Button>
             </form>
           </Form>
         </CardContent>
+        <CardFooter className="flex justify-center border-t p-4">
+          <p className="text-sm text-muted-foreground flex items-center gap-2">
+            Չունե՞ք հաշիվ:
+            <Link to="/register" className="text-primary hover:underline font-medium inline-flex items-center">
+              Գրանցվել <ArrowRight className="ml-1 h-3 w-3" />
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
-
-      <div className="mt-6 flex flex-col items-center gap-2">
-        <p className="text-center text-sm text-muted-foreground">
-          Սա պաշտպանված տարածք է։ Չթույլատրված մուտքը արգելվում է։
-        </p>
-        <p className="text-center text-sm text-muted-foreground mt-2">
-          Չունե՞ք հաշիվ: <Link to="/register" className="text-primary hover:underline font-medium">Գրանցվել</Link>
-        </p>
-      </div>
     </div>
   );
 };
 
-export default AdminLogin;
+export default Login;

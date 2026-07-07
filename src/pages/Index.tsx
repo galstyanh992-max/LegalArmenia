@@ -31,8 +31,11 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <LanguageSwitcher />
-            <Button asChild size="sm" className="rounded-full px-5">
+            <Button asChild variant="outline" size="sm" className="rounded-full px-5">
               <Link to="/login">{t('common:login')}</Link>
+            </Button>
+            <Button asChild size="sm" className="rounded-full px-5">
+              <Link to="/register">{t('common:register', 'Register')}</Link>
             </Button>
           </div>
         </div>
@@ -105,9 +108,14 @@ const Index = () => {
               className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4"
             >
               <Button asChild size="lg" className="rounded-full px-8 text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-shadow">
-                <Link to="/login">
+                <Link to="/register">
                   {t('common:get_started')}
                   <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="rounded-full px-8 text-base">
+                <Link to="/login">
+                  {t('common:login')}
                 </Link>
               </Button>
             </motion.div>

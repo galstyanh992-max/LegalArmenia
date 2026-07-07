@@ -83,45 +83,35 @@ serve(async (req) => {
 
     const { messages } = await req.json();
 
-    // === STREAMING VIA CENTRALIZED GATEWAY-BYPASS ===
-    const { callStreamBypass } = await import("../_shared/gateway-bypass.ts");
+    // === USE UNIFIED AI CLIENT ===
+    const { AIClient } = await import("../_shared/ai-client.ts");
+    const ai = new AIClient();
 
-    const streamResult = await callStreamBypass(
-      [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...messages,
-      ],
-      {
-        functionName: "admin-ai-chat",
-        bypassReason: "streaming",
-        timeoutMs: 90000,
-      }
-    );
-    const response = streamResult.response;
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded, try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Payment required." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      return new Response(
-        JSON.stringify({ error: "AI gateway error" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    // Reconstruct prompt from messages
+    let prompt = "";
+    for (const msg of messages) {
+      prompt += `${msg.role}: ${msg.content}\n`;
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+    const aiResult = await ai.call({
+      system: SYSTEM_PROMPT,
+      prompt: prompt.trim(),
+    });
+
+    // Emit a single OpenAI-compatible streaming chunk so the frontend SSE
+    // parser (choices[0].delta.content) keeps working, then terminate stream.
+    const chunk = {
+      choices: [{ delta: { content: aiResult.text }, index: 0, finish_reason: "stop" }],
+    };
+    const sseBody = `data: ${JSON.stringify(chunk)}\n\ndata: [DONE]\n\n`;
+    return new Response(sseBody, {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "Connection": "keep-alive",
+      },
     });
   } catch (e) {
     console.error("admin-ai-chat error:", e);
