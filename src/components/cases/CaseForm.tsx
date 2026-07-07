@@ -40,6 +40,7 @@ import { Loader2, CalendarIcon, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Database } from '@/integrations/supabase/types';
+import { getFunctionUrl } from '@/lib/supabase-functions-url';
 
 type Case = Database['public']['Tables']['cases']['Row'];
 type CaseInsert = Database['public']['Tables']['cases']['Insert'];
@@ -315,10 +316,9 @@ export function CaseForm({
       const timeout = setTimeout(() => controller.abort(), 300_000);
 
       const session = (await supabase.auth.getSession()).data.session;
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      const resp = await fetch(`${supabaseUrl}/functions/v1/extract-case-form-fields`, {
+      const resp = await fetch(getFunctionUrl('extract-case-form-fields'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

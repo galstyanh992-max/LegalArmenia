@@ -55,6 +55,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import logo from '@/assets/logo.png';
 
 interface GeneratedDocument {
   id: string;
@@ -265,10 +266,14 @@ const MyDocuments = () => {
         <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5 text-[#D7B46A]" />
             </Button>
-            <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-            <h1 className="text-lg sm:text-xl font-bold">{t('common:app_name')}</h1>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={logo} alt="AI Legal Armenia" className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_2px_10px_rgba(215,180,106,0.3)]" />
+              <span className="text-xl sm:text-2xl font-serif tracking-wide text-[#D7B46A] hidden sm:block" style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontWeight: 600 }}>
+                AI Legal Armenia
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Telegram Settings */}
@@ -289,7 +294,7 @@ const MyDocuments = () => {
             </Sheet>
             <LanguageSwitcher />
             <Button variant="ghost" size="icon" onClick={() => signOut()}>
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-5 w-5 text-[#D7B46A]" />
             </Button>
           </div>
         </div>

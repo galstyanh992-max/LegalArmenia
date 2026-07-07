@@ -48,8 +48,6 @@ const priorityCapsules: Record<string, string> = {
   urgent: 'capsule capsule-pending',
 };
 
-const glyphs = [GlyphBalance, GlyphFile, GlyphFolder, GlyphGavel, GlyphColumns, GlyphShield, GlyphStamp];
-
 export function CaseCard({ caseData, onView, onEdit, onDelete }: CaseCardProps) {
   const { t } = useTranslation('cases');
 
@@ -67,12 +65,13 @@ export function CaseCard({ caseData, onView, onEdit, onDelete }: CaseCardProps) 
   };
 
   const courtDateCapsule = isCourtDateUrgent() ? 'capsule capsule-pending' : 'capsule capsule-court';
+  const glyphs = [GlyphBalance, GlyphFile, GlyphFolder, GlyphGavel, GlyphColumns, GlyphShield, GlyphStamp];
   const Glyph = glyphs[caseData.id.charCodeAt(0) % glyphs.length];
 
   return (
     <article className="case-card-premium">
       <span className="card-glyph">
-        <Glyph size={68} />
+        <Glyph size={48} />
       </span>
 
       <div className="relative z-[1] flex items-start justify-between gap-4">

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useCase } from '@/hooks/useCases';
 import { useAuth } from '@/hooks/useAuth';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import logo from '@/assets/logo.png';
 
 const AudioTranscriptionList = lazy(() =>
   import('@/components/audio/AudioTranscriptionList').then((m) => ({
@@ -65,9 +66,15 @@ export default function CaseTranscriptions() {
               aria-label={t('audio:back_to_case')}
               className="shrink-0 px-2 sm:px-3"
             >
-              <ArrowLeft className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">{t('audio:back_to_case')}</span>
+              <ArrowLeft className="h-4 w-4 sm:mr-2 text-[#D7B46A]" />
+              <span className="hidden sm:inline text-[#D7B46A]">{t('audio:back_to_case')}</span>
             </Button>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={logo} alt="AI Legal Armenia" className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_2px_10px_rgba(215,180,106,0.3)]" />
+              <span className="text-xl sm:text-2xl font-serif tracking-wide text-[#D7B46A] hidden sm:block" style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontWeight: 600 }}>
+                AI Legal Armenia
+              </span>
+            </div>
             <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">
               {t('audio:audio_title')}
             </h1>

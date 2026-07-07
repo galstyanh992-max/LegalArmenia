@@ -90,6 +90,7 @@ export function LegalChatBot({ isOpen: controlledIsOpen, onOpenChange, reference
         body: JSON.stringify({
           message: userMessage,
           conversationHistory: messages.slice(1), // Skip greeting
+          streamMode: 'legacy',
           ...(effectiveReferencesText?.trim() ? { referencesText: effectiveReferencesText } : {}),
         }),
       });

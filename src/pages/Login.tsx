@@ -18,7 +18,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, Loader2, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email is required'),
@@ -127,8 +128,8 @@ const Login = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background p-4">
       <Card className="w-full max-w-md border-primary/20 shadow-xl">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <Shield className="h-8 w-8 text-primary" />
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/5 border border-primary/10 shadow-soft">
+            <img src={logo} alt="Logo" className="h-12 w-12 object-contain drop-shadow-[0_2px_10px_rgba(215,180,106,0.3)]" />
           </div>
           <CardTitle className="text-2xl">Մուտք</CardTitle>
           <CardDescription>Մուտքագրեք ձեր տվյալները համակարգ մուտք գործելու համար</CardDescription>

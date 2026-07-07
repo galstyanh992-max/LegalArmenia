@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   Gavel,
 } from 'lucide-react';
+import logo from '@/assets/logo.png';
 const KnowledgeBasePage = () => {
   const { t } = useTranslation(['kb', 'common', 'disclaimer']);
   const navigate = useNavigate();
@@ -58,10 +59,12 @@ const KnowledgeBasePage = () => {
       {/* Header */}
       <header className="shrink-0 z-10 border-b bg-card">
         <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
-          <div className="flex items-center gap-2">
-            <Scale className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-            <h1 className="text-lg sm:text-xl font-bold hidden sm:block">{t('common:app_name')}</h1>
-          </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={logo} alt="AI Legal Armenia" className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_2px_10px_rgba(215,180,106,0.3)]" />
+              <span className="text-xl sm:text-2xl font-serif tracking-wide text-[#D7B46A] hidden sm:block" style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontWeight: 600 }}>
+                AI Legal Armenia
+              </span>
+            </div>
           <div className="flex items-center gap-2 sm:gap-4">
             {user && (
               <span className="hidden text-sm text-muted-foreground sm:block truncate max-w-[120px]">
@@ -71,7 +74,7 @@ const KnowledgeBasePage = () => {
             <LanguageSwitcher />
             {user && (
               <Button variant="ghost" size="icon" onClick={() => signOut()}>
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-5 w-5 text-[#D7B46A]" />
               </Button>
             )}
           </div>

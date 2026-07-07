@@ -36,14 +36,19 @@ import {
   Edit,
   Trash2,
   Loader2,
-  Brain,
   FilePlus,
   Music,
-  Bell,
-  Bot,
-  Download,
-  Search,
 } from 'lucide-react';
+import { 
+  IconNotePremium, 
+  IconArchivePremium, 
+  IconDocumentsPremium, 
+  IconCalendarPremium,
+  IconTargetPremium,
+  IconUsersPremium,
+  IconSearchPremium,
+  IconMicPremium
+} from '@/components/icons/PremiumIcon';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -306,7 +311,7 @@ const CaseDetail = () => {
                   onClick={() => setEditFormOpen(true)}
                   className="h-12 sm:h-11 rounded-xl text-mobile-sm sm:text-sm font-medium shadow-soft active:scale-[0.98] transition-transform"
                 >
-                  <Edit className="h-4 w-4 sm:h-5 sm:w-5 mr-2 shrink-0" />
+                  <IconNotePremium className="h-4 w-4 sm:h-5 sm:w-5 mr-2 shrink-0 text-[#D7B46A]" />
                   <span className="truncate">
                     {i18n.language === 'hy' ? '\u053D\u0574\u0562\u0561\u0563\u0580\u0565\u056C' : t('edit_case')}
                   </span>
@@ -317,7 +322,7 @@ const CaseDetail = () => {
                   onClick={() => setDeleteDialogOpen(true)}
                   className="h-12 sm:h-11 rounded-xl text-mobile-sm sm:text-sm font-medium shadow-soft active:scale-[0.98] transition-transform"
                 >
-                  <Trash2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 shrink-0" />
+                  <IconArchivePremium className="h-4 w-4 sm:h-5 sm:w-5 mr-2 shrink-0 text-[#D7B46A]" />
                   <span className="truncate">
                     {i18n.language === 'hy' ? '\u054B\u0576\u057B\u0565\u056C' : t('delete_case')}
                   </span>
@@ -333,7 +338,7 @@ const CaseDetail = () => {
                 onClick={handleExportFullReport}
                 className="w-full h-12 sm:h-11 rounded-xl text-mobile-sm sm:text-sm font-medium shadow-soft active:scale-[0.98] transition-transform"
               >
-                <Download className="h-4 w-4 sm:h-5 sm:w-5 mr-2 shrink-0" />
+                <IconDocumentsPremium className="h-4 w-4 sm:h-5 sm:w-5 mr-2 shrink-0 text-[#D7B46A]" />
                 <span className="truncate">
                   {i18n.language === 'hy' ? '\u053C\u056B\u0561\u056F\u0561\u057F\u0561\u0580 \u0566\u0565\u056F\u0578\u0582\u0575\u0581 (PDF)' : i18n.language === 'ru' ? '\u041F\u043E\u043B\u043D\u044B\u0439 \u043E\u0442\u0447\u0451\u0442 (PDF)' : 'Full Report (PDF)'}
                 </span>
@@ -365,40 +370,42 @@ const CaseDetail = () => {
                     value="details"
                     className="min-h-[44px] px-3 sm:px-4 rounded-lg text-mobile-sm sm:text-sm font-medium data-[state=active]:shadow-soft whitespace-nowrap"
                   >
-                    {t('common:details', 'Details')}
+                    <IconNotePremium className="h-4 w-4 mr-1 sm:mr-2 shrink-0 text-[#D7B46A]" />
+                    <span>{t('common:details', 'Details')}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="files"
                     className="min-h-[44px] px-3 sm:px-4 rounded-lg text-mobile-sm sm:text-sm font-medium data-[state=active]:shadow-soft whitespace-nowrap"
                   >
-                    {t('files')}
+                    <IconDocumentsPremium className="h-4 w-4 mr-1 sm:mr-2 shrink-0 text-[#D7B46A]" />
+                    <span>{t('files')}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="reminders"
                     className="min-h-[44px] px-3 sm:px-4 rounded-lg text-mobile-sm sm:text-sm font-medium data-[state=active]:shadow-soft whitespace-nowrap"
                   >
-                    <Bell className="h-4 w-4 mr-1 sm:mr-2 shrink-0" />
+                    <IconCalendarPremium className="h-4 w-4 mr-1 sm:mr-2 shrink-0 text-[#D7B46A]" />
                     <span>{t('reminders:reminders')}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="analysis"
                     className="min-h-[44px] px-3 sm:px-4 rounded-lg text-mobile-sm sm:text-sm font-medium data-[state=active]:shadow-soft whitespace-nowrap"
                   >
-                    <Brain className="h-4 w-4 mr-1 sm:mr-2 shrink-0" />
+                    <IconTargetPremium className="h-4 w-4 mr-1 sm:mr-2 shrink-0 text-[#D7B46A]" />
                     <span>{t('ai:analyze')}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="agents"
                     className="min-h-[44px] px-3 sm:px-4 rounded-lg text-mobile-sm sm:text-sm font-medium data-[state=active]:shadow-soft whitespace-nowrap"
                   >
-                    <Bot className="h-4 w-4 mr-1 sm:mr-2 shrink-0" />
+                    <IconUsersPremium className="h-4 w-4 mr-1 sm:mr-2 shrink-0 text-[#D7B46A]" />
                     <span>{t('ai:multi_agent_analysis', 'Multi-Agent')}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="search"
                     className="min-h-[44px] px-3 sm:px-4 rounded-lg text-mobile-sm sm:text-sm font-medium data-[state=active]:shadow-soft whitespace-nowrap"
                   >
-                    <Search className="h-4 w-4 mr-1 sm:mr-2 shrink-0" />
+                    <IconSearchPremium className="h-4 w-4 mr-1 sm:mr-2 shrink-0 text-[#D7B46A]" />
                     <span>{t('kb:search', 'Որոնում KB-ում')}</span>
                   </TabsTrigger>
                 </TabsList>
@@ -439,7 +446,7 @@ const CaseDetail = () => {
                           onClick={() => setPdfUploadOpen(true)}
                           className="h-11 rounded-xl text-mobile-sm sm:text-sm shadow-soft active:scale-[0.98] transition-transform"
                         >
-                          <FilePlus className="mr-2 h-4 w-4" />
+                          <IconDocumentsPremium className="mr-2 h-4 w-4 text-[#D7B46A]" />
                           <span className="truncate">{t('pdf_ocr')}</span>
                         </Button>
                         <Button
@@ -447,8 +454,8 @@ const CaseDetail = () => {
                           onClick={() => navigate(`/cases/${caseData.id}/transcriptions`)}
                           className="h-11 rounded-xl text-mobile-sm sm:text-sm shadow-soft active:scale-[0.98] transition-transform"
                         >
-                          <Music className="mr-2 h-4 w-4" />
-                          <span className="truncate">{t('audio_transcription', '\u0531\u0578\u0582\u0564\u056B\u0578')}</span>
+                          <IconMicPremium className="mr-2 h-4 w-4 text-[#D7B46A]" />
+                          <span className="truncate">{t('audio_transcription', 'Аудио')}</span>
                         </Button>
                       </div>
                     </div>

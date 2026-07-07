@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Wand2, Pencil, Save, X, AlertTriangle } from 'lucide-react';
+import { Loader2, Save, X, AlertTriangle } from 'lucide-react';
+import { IconNotePremium, PremiumChatGlyph } from '@/components/icons/PremiumIcon';
 import { getFunctionsInvokeErrorMessage, isNoDataForExtractionMessage } from '@/lib/functionsInvokeError';
 import { getFunctionUrl } from '@/lib/supabase-functions-url';
 
@@ -167,7 +168,7 @@ export function CaseFactsEditor({
           {!isEditingFields ? (
             <>
               <Button variant="outline" size="sm" onClick={handleStartEditFields}>
-                <Pencil className="mr-2 h-4 w-4" />
+                <IconNotePremium className="mr-2 h-4 w-4 text-[#D7B46A]" />
                 {t('cases:edit_fields', 'Edit')}
               </Button>
               <Button
@@ -183,7 +184,7 @@ export function CaseFactsEditor({
                   </>
                 ) : (
                   <>
-                    <Wand2 className="mr-2 h-4 w-4" />
+                    <PremiumChatGlyph className="mr-2 h-4 w-4 text-[#D7B46A]" />
                     {t('cases:auto_extract', 'Auto-extract')}
                   </>
                 )}

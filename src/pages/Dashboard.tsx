@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import logo from '@/assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 import type { Database } from '@/integrations/supabase/types';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -208,7 +209,7 @@ const Dashboard = () => {
       return (
         <SheetTrigger asChild>
           <button className={cls} type="button">
-            <span className="flex items-center justify-center">{icon}</span>
+            <span className="flex items-center justify-center text-[#D7B46A]">{icon}</span>
             <span className="text-xs sm:text-sm mt-1 sm:mt-0 sm:ml-1">{label}</span>
           </button>
         </SheetTrigger>
@@ -216,7 +217,7 @@ const Dashboard = () => {
     }
     return (
       <button className={cls} onClick={onClick} type="button">
-        <span className="flex items-center justify-center">{icon}</span>
+        <span className="flex items-center justify-center text-[#D7B46A]">{icon}</span>
         <span className="text-xs sm:text-sm mt-1 sm:mt-0 sm:ml-1">{label}</span>
       </button>
     );
@@ -226,10 +227,8 @@ const Dashboard = () => {
     <div className="dark h-screen overflow-hidden surface-bg lg:flex">
       <aside className="premium-sidebar hidden lg:flex">
         <div className="flex items-center gap-3 px-5 py-7">
-          <span className="text-[hsl(38,56%,63%)]">
-            <PremiumBrandMark size={38} className="drop-shadow-[0_3px_14px_rgba(215,180,106,0.28)]" />
-          </span>
-          <span className="text-[15px] font-semibold uppercase tracking-[0.06em] text-[hsl(38_56%_68%)]">
+          <img src={logo} alt="AI Legal Armenia" className="w-12 h-12 object-contain drop-shadow-[0_3px_14px_rgba(215,180,106,0.28)]" />
+          <span className="text-xl font-serif tracking-wide text-[#D7B46A]" style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontWeight: 600 }}>
             AI Legal Armenia
           </span>
         </div>
@@ -251,11 +250,11 @@ const Dashboard = () => {
 
         <div className="border-t border-white/10 px-4 py-5">
           <button className="nav-item-premium w-full" type="button">
-            <IconChartPremium size={20} />
+            <span className="text-[hsl(38_56%_70%)]"><IconChartPremium size={20} /></span>
             <span>Settings</span>
           </button>
           <button className="nav-item-premium mt-1 w-full" type="button">
-            <IconDictionaryPremium size={20} />
+            <span className="text-[hsl(38_56%_70%)]"><IconDictionaryPremium size={20} /></span>
             <span>Help</span>
           </button>
           <div className="mt-6 flex items-center gap-3 px-2">
@@ -283,7 +282,7 @@ const Dashboard = () => {
         <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-2.5">
             <span className="text-[hsl(38,56%,63%)] lg:hidden">
-              <PremiumBrandMark size={22} />
+              <img src={logo} alt="Logo" className="w-8 h-8 object-contain drop-shadow-md" />
             </span>
             <h1 className="hidden text-section xs:block lg:hidden" style={{ fontSize: 22 }}>
               {t('common:app_name')}

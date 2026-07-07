@@ -19,7 +19,7 @@ export function GlobalQueueBar() {
   const failed = recentTasks.filter(t => t.status === "failed");
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-72 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+    <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-50 w-72 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
       {/* Header */}
       <div
         className="flex items-center justify-between px-3 py-2 bg-muted/50 cursor-pointer"

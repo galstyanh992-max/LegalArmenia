@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Scale, ArrowLeft, LogOut } from 'lucide-react';
+import { ArrowLeft, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { NotificationBell } from '@/components/reminders';
+import logo from '@/assets/logo.png';
 
 interface CaseDetailHeaderProps {
   userEmail?: string;
@@ -20,8 +21,8 @@ export function CaseDetailHeader({ userEmail, onSignOut }: CaseDetailHeaderProps
       <header className="shrink-0 z-50 border-b border-border/50 bg-card/95 backdrop-blur-md supports-[backdrop-filter]:bg-card/80">
         <div className="container-mobile mx-auto flex h-14 sm:h-16 items-center justify-between">
           <div className="flex items-center gap-3">
-            <Scale className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
-            <h1 className="text-lg sm:text-xl font-bold hidden sm:block">{t('common:app_name')}</h1>
+            <img src={logo} alt="AI Legal Armenia" className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-[0_2px_10px_rgba(215,180,106,0.3)]" />
+            <h1 className="text-lg sm:text-xl font-bold hidden sm:block tracking-tight">{t('common:app_name')}</h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden md:block text-sm text-muted-foreground truncate max-w-[160px]">

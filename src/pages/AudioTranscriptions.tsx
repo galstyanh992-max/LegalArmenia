@@ -27,6 +27,11 @@ import {
   Clock,
   User,
 } from 'lucide-react';
+import logo from '@/assets/logo.png';
+import { 
+  IconMicPremium, 
+  IconDocumentsPremium 
+} from '@/components/icons/PremiumIcon';
 
 const SUPPORTED_AUDIO_FORMATS = [
   'audio/mpeg', 'audio/wav', 'audio/mp4', 'audio/x-m4a',
@@ -314,18 +319,20 @@ const AudioTranscriptions = () => {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5 text-[#D7B46A]" />
             </Button>
-            <div className="flex items-center gap-2">
-              <Scale className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-bold">{t('common:app_name')}</h1>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={logo} alt="AI Legal Armenia" className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_2px_10px_rgba(215,180,106,0.3)]" />
+              <span className="text-xl sm:text-2xl font-serif tracking-wide text-[#D7B46A] hidden sm:block" style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontWeight: 600 }}>
+                AI Legal Armenia
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">{user?.email}</span>
             <LanguageSwitcher />
             <Button variant="ghost" size="icon" onClick={() => signOut()}>
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-5 w-5 text-[#D7B46A]" />
             </Button>
           </div>
         </div>
@@ -334,7 +341,7 @@ const AudioTranscriptions = () => {
       <main className="flex-1 overflow-y-auto container mx-auto px-4 py-6">
         <div className="mb-6">
           <h2 className="flex items-center gap-2 text-2xl font-bold">
-            <Mic className="h-6 w-6 text-primary" />
+            <IconMicPremium className="h-6 w-6 text-[#D7B46A]" />
             {t('audio:audio_transcription')}
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -347,7 +354,7 @@ const AudioTranscriptions = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Upload className="h-5 w-5" />
+                <IconDocumentsPremium className="h-5 w-5 text-[#D7B46A]" />
                 {t('audio:upload_audio')}
               </CardTitle>
               <CardDescription>
@@ -401,7 +408,7 @@ const AudioTranscriptions = () => {
               {/* Selected File Info */}
               {selectedFile && (
                 <div className="flex items-center gap-2 rounded-lg border p-3">
-                  <FileAudio className="h-5 w-5 text-primary shrink-0" />
+                  <IconDocumentsPremium className="h-5 w-5 text-[#D7B46A] shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium break-all text-sm">{selectedFile.name}</p>
                     <p className="text-xs text-muted-foreground">
@@ -424,7 +431,7 @@ const AudioTranscriptions = () => {
                   </>
                 ) : (
                   <>
-                    <Mic className="mr-2 h-4 w-4" />
+                    <IconMicPremium className="mr-2 h-4 w-4 text-[#D7B46A]" />
                     {t('audio:transcribe')}
                   </>
                 )}
@@ -527,7 +534,7 @@ const AudioTranscriptions = () => {
                 )
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                  <Mic className="h-12 w-12 mb-4 opacity-50" />
+                  <IconMicPremium className="h-12 w-12 mb-4 text-[#D7B46A] opacity-50" />
                   <p>{t('audio:no_result')}</p>
                 </div>
               )}

@@ -154,6 +154,7 @@ html {
     height: 100%;
   }
 
+
   /* Utility class for breaking long text */
   .overflow-wrap-anywhere {
     overflow-wrap: anywhere;
@@ -164,6 +165,30 @@ html {
   html {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Custom Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(215, 180, 106, 0.25);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(215, 180, 106, 0.45);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(215, 180, 106, 0.25) transparent;
   }
 }
 
@@ -483,10 +508,10 @@ html:not(.light) {
   /* === Decorative corner glyph for case cards (Glowing Flat) === */
   .card-glyph {
     position: absolute;
-    right: 20px;
-    bottom: 14px;
-    width: 60px;
-    height: 60px;
+    right: 24px;
+    bottom: 20px;
+    width: 48px;
+    height: 48px;
     opacity: 0.8;
     color: hsl(38 56% 63%);
     pointer-events: none;

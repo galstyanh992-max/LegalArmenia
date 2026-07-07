@@ -1,6 +1,6 @@
 import { 
-  Gavel, Scale, Building2, Globe, FileText, ShieldAlert, UserCheck 
-} from "lucide-react";
+  IconGavel, IconScale, IconArchivePremium, IconShieldAlert, IconNotePremium, IconExternalPremium, IconUsersPremium 
+} from "@/components/icons/PremiumIcon";
 import type { ComplaintCategory, ComplaintType } from "./types";
 
 // =============================================================================
@@ -178,23 +178,23 @@ export const COMPLAINT_TYPES: ComplaintType[] = [
 // =============================================================================
 
 export const CATEGORY_ICONS = {
-  criminal: Gavel,
-  civil: Scale,
-  administrative: Building2,
-  anticorruption: ShieldAlert,
-  constitutional: FileText,
-  echr: Globe,
-  ombudsman: UserCheck
+  criminal: IconGavel,
+  civil: IconScale,
+  administrative: IconArchivePremium,
+  anticorruption: IconShieldAlert,
+  constitutional: IconNotePremium,
+  echr: IconExternalPremium,
+  ombudsman: IconUsersPremium
 } as const;
 
 export const CATEGORY_COLORS: Record<ComplaintCategory, string> = {
-  criminal: "text-red-500",
-  civil: "text-blue-500",
-  administrative: "text-amber-500",
-  anticorruption: "text-orange-600",
-  constitutional: "text-purple-500",
-  echr: "text-green-500",
-  ombudsman: "text-teal-500"
+  criminal: "text-[hsl(38_56%_63%)]",
+  civil: "text-[hsl(38_56%_63%)]",
+  administrative: "text-[hsl(38_56%_63%)]",
+  anticorruption: "text-[hsl(38_56%_63%)]",
+  constitutional: "text-[hsl(38_56%_63%)]",
+  echr: "text-[hsl(38_56%_63%)]",
+  ombudsman: "text-[hsl(38_56%_63%)]"
 };
 
 // =============================================================================

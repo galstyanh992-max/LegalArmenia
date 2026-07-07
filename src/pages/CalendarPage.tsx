@@ -16,10 +16,13 @@ import { useReminderNotificationChecker } from '@/components/reminders/useRemind
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import {
-  Loader2, Scale, Plus, ArrowLeft, Bell,
-  Gavel, Clock, Target, Users, HelpCircle, LogOut,
-  CalendarDays, CalendarCheck2
+  Loader2, Plus, ArrowLeft, Bell, LogOut,
 } from 'lucide-react';
+import { 
+  IconCasesPremium, IconNotePremium, IconCalendarPremium, IconTargetPremium,
+  IconGavel, IconUsersPremium, IconArchivePremium
+} from '@/components/icons/PremiumIcon';
+import logo from '@/assets/logo.png';
 import type { Database } from '@/integrations/supabase/types';
 import { useCases } from '@/hooks/useCases';
 
@@ -236,15 +239,14 @@ const CalendarPage = () => {
               size="icon"
               onClick={() => navigate('/dashboard')}
               className="rounded-xl hover:bg-muted"
-              aria-label={t('common:back')}
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5 text-[#D7B46A]" />
             </Button>
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-                <Scale className="h-4 w-4" />
-              </div>
-              <h1 className="text-lg sm:text-xl font-bold hidden sm:block tracking-tight">{t('common:app_name')}</h1>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={logo} alt="AI Legal Armenia" className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_2px_10px_rgba(215,180,106,0.3)]" />
+              <span className="text-xl sm:text-2xl font-serif tracking-wide text-[#D7B46A] hidden sm:block" style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontWeight: 600 }}>
+                AI Legal Armenia
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -254,16 +256,16 @@ const CalendarPage = () => {
             <NotificationBell />
             <LanguageSwitcher />
             <Button variant="ghost" size="icon" onClick={() => signOut()} className="rounded-xl hover:bg-destructive/10 hover:text-destructive">
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4 text-[#D7B46A]" />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto container mx-auto px-4 py-6 space-y-6">
+      <main className="flex-1 overflow-hidden container mx-auto px-2 py-2 sm:px-4 sm:py-3 flex flex-col gap-2 sm:gap-3">
 
         {/* Page title + actions */}
-        <div className="flex items-start justify-between flex-wrap gap-3">
+        <div className="flex shrink-0 items-start justify-between flex-wrap gap-2">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('court_sessions')}</h2>
             <p className="text-sm text-muted-foreground mt-0.5">{t('calendar:calendar')}</p>
@@ -290,43 +292,43 @@ const CalendarPage = () => {
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             {
-              icon: CalendarDays,
+              icon: IconCasesPremium,
               label: t('cases:cases'),
               value: cases.filter(c => c.court_date).length,
-              color: 'text-blue-500',
-              bg: 'bg-blue-500/10',
+              color: 'text-[hsl(38,56%,63%)]',
+              bg: 'bg-[hsl(38,56%,63%)]/10',
             },
             {
-              icon: Bell,
+              icon: IconNotePremium,
               label: t('reminders:reminders'),
               value: reminders.filter(r => r.status === 'active').length,
-              color: 'text-orange-500',
-              bg: 'bg-orange-500/10',
+              color: 'text-[hsl(38,56%,63%)]',
+              bg: 'bg-[hsl(38,56%,63%)]/10',
             },
             {
-              icon: CalendarCheck2,
+              icon: IconCalendarPremium,
               label: t('calendar:today', 'Сегодня'),
               value: events.filter(e => {
                 const d = e.start as Date;
                 const now = new Date();
                 return d.toDateString() === now.toDateString();
               }).length,
-              color: 'text-primary',
-              bg: 'bg-primary/10',
+              color: 'text-[hsl(38,56%,63%)]',
+              bg: 'bg-[hsl(38,56%,63%)]/10',
             },
             {
-              icon: Target,
+              icon: IconTargetPremium,
               label: 'Предстоящих',
               value: upcomingEvents,
-              color: 'text-emerald-500',
-              bg: 'bg-emerald-500/10',
+              color: 'text-[hsl(38,56%,63%)]',
+              bg: 'bg-[hsl(38,56%,63%)]/10',
             },
           ].map(({ icon: Icon, label, value, color, bg }) => (
-            <div key={label} className="bg-card border rounded-2xl p-4 flex items-center gap-3 shadow-soft">
-              <div className={`h-10 w-10 rounded-xl ${bg} flex items-center justify-center flex-shrink-0`}>
+            <div key={label} className="bg-card border rounded-xl p-2 sm:p-3 flex items-center gap-2 shadow-soft">
+              <div className={`h-8 w-8 rounded-lg ${bg} flex items-center justify-center flex-shrink-0`}>
                 <Icon className={`h-5 w-5 ${color}`} />
               </div>
               <div>
@@ -338,8 +340,8 @@ const CalendarPage = () => {
         </div>
 
         {/* Calendar card */}
-        <div className="bg-card border rounded-2xl shadow-soft overflow-hidden">
-          <div className="calendar-wrapper" style={{ height: 'calc(100vh - 380px)', minHeight: '520px' }}>
+        <div className="flex-1 min-h-0 bg-card border rounded-2xl shadow-soft overflow-hidden flex flex-col">
+          <div className="calendar-wrapper flex-1 min-h-0">
             <Calendar
               localizer={localizer}
               events={events}
@@ -360,7 +362,7 @@ const CalendarPage = () => {
         </div>
 
         {/* Legend */}
-        <div className="bg-card border rounded-2xl shadow-soft p-5 grid sm:grid-cols-2 gap-5">
+        <div className="bg-card border rounded-2xl shadow-soft p-3 sm:p-4 grid sm:grid-cols-2 gap-3 sm:gap-4 shrink-0">
           {/* Cases legend */}
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{t('cases:cases')}</p>
@@ -388,18 +390,18 @@ const CalendarPage = () => {
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{t('reminders:reminders')}</p>
             <div className="flex flex-wrap gap-2">
               {[
-                { color: '#ef4444', icon: Gavel, label: t('reminders:type_court_hearing') },
-                { color: '#f97316', icon: Clock, label: t('reminders:type_deadline') },
-                { color: '#3b82f6', icon: Target, label: t('reminders:type_task') },
-                { color: '#22c55e', icon: Users, label: t('reminders:type_meeting') },
-                { color: '#6b7280', icon: HelpCircle, label: t('reminders:type_other') },
+                { color: '#ef4444', icon: IconGavel, label: t('reminders:type_court_hearing') },
+                { color: '#f97316', icon: IconCalendarPremium, label: t('reminders:type_deadline') },
+                { color: '#3b82f6', icon: IconTargetPremium, label: t('reminders:type_task') },
+                { color: '#22c55e', icon: IconUsersPremium, label: t('reminders:type_meeting') },
+                { color: '#6b7280', icon: IconArchivePremium, label: t('reminders:type_other') },
               ].map(({ color, icon: Icon, label }) => (
                 <div
                   key={label}
                   className="flex items-center gap-1.5 bg-muted/50 rounded-lg px-2.5 py-1.5 border border-dashed border-border"
                 >
                   <div className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-                  <Icon className="h-3 w-3 text-muted-foreground" />
+                  <Icon className="h-3 w-3 text-[hsl(38,56%,63%)]" />
                   <span className="text-xs font-medium">{label}</span>
                 </div>
               ))}
