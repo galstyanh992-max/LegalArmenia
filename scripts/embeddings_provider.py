@@ -30,7 +30,9 @@ import threading
 from typing import List, Sequence, Union
 
 # All HF models/cache live on D:\AI_MODELS (never C:). Set before transformers import.
-_HF = os.environ.get("HF_HOME") or r"D:\AI_MODELS\HF_CACHE"
+# NOTE: default points at D:\AI_MODELS (the redundant HF_CACHE was removed); the
+# local model folders under METRIC/ and QWEN/ are loaded by path, so no cache is needed.
+_HF = os.environ.get("HF_HOME") or r"D:\AI_MODELS"
 os.environ.setdefault("HF_HOME", _HF)
 os.environ.setdefault("HUGGINGFACE_HUB_CACHE", _HF)
 os.environ.setdefault("TRANSFORMERS_CACHE", _HF)
@@ -40,7 +42,9 @@ try:
 except Exception:
     pass
 
-DEFAULT_MODEL = "Metric-AI/armenian-text-embeddings-2-large"
+# Load from the local model folder by default (offline, no HF download / cache).
+# Override with EMBEDDING_MODEL env if the weights live elsewhere.
+DEFAULT_MODEL = os.environ.get("EMBEDDING_MODEL") or r"D:\AI_MODELS\METRIC\armenian-text-embeddings-2-large"
 DEFAULT_DIM = 1024
 DEFAULT_MAXLEN = 512
 
