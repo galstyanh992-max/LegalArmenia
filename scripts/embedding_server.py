@@ -47,6 +47,28 @@ def _as_list(v) -> List[List[float]]:
     return [v] if v and isinstance(v[0], float) else v
 
 
+@app.get("/")
+def root():
+    p = None
+    try:
+        p = get_provider()
+    except Exception:
+        pass
+    info = {
+        "service": "AI Legal Armenia - Embeddings",
+        "status": "ok" if p else "loading",
+        "model": p.model_name if p else None,
+        "dimension": p.dimension if p else None,
+        "endpoints": {
+            "GET /health": "service health + model info",
+            "POST /embed/query": "embed texts for retrieval query (query prefix) - body {\"texts\":[..]}",
+            "POST /embed/passage": "embed texts for indexing (passage prefix) - body {\"texts\":[..]}",
+        },
+        "auth": "optional X-API-Key header (if EMBEDDING_API_KEY set)",
+    }
+    return info
+
+
 @app.get("/health")
 def health():
     try:

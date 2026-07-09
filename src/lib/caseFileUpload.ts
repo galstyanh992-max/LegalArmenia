@@ -25,7 +25,6 @@ export async function getNextCaseFileVersion(caseId: string, hash: string): Prom
     .from("case_files")
     .select("version")
     .eq("case_id", caseId)
-    .eq("hash_sha256", hash)
     .order("version", { ascending: false })
     .limit(1);
 
@@ -66,7 +65,6 @@ export async function uploadCaseFileWithMetadata({
       storage_path: finalStoragePath,
       file_type: finalContentType,
       file_size: file.size,
-      hash_sha256: hash,
       version,
       uploaded_by: userId,
     })

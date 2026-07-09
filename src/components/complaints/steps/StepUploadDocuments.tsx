@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { getComplaintTypeLabel } from "../constants";
+import { COMPLAINT_ACCEPT, COMPLAINT_SUPPORTED_LABEL } from "@/lib/uploadPolicies";
 import type { ComplaintType, UploadedFile } from "../types";
 
 // =============================================================================
@@ -64,7 +65,7 @@ export function StepUploadDocuments({
           type="file"
           id="complaint-file-upload"
           className="hidden"
-          accept=".pdf,.jpg,.jpeg,.png,.txt,.md,.docx"
+          accept={COMPLAINT_ACCEPT}
           onChange={onFileUpload}
           disabled={isProcessing}
           multiple
@@ -78,7 +79,7 @@ export function StepUploadDocuments({
           <span className="text-sm text-muted-foreground">
             {isProcessing 
               ? getText("\u054E\u0565\u0580\u056C\u0578\u0582\u056E\u057E\u0578\u0582\u0574 \u0567...", "Анализируем...", "Analyzing...")
-              : getText("PDF, \u057A\u0561\u057F\u056F\u0565\u0580\u0576\u0565\u0580, \u057F\u0565\u0584\u057D\u057F", "PDF, изображения, текст", "PDF, images, text")
+              : COMPLAINT_SUPPORTED_LABEL
             }
           </span>
         </label>

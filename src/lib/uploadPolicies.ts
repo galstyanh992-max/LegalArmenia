@@ -104,3 +104,30 @@ export function getAudioTranscriptionMime(file: Pick<File, "type" | "name">): st
 export function isAudioTranscriptionSupportedFile(file: Pick<File, "type" | "name" | "size">): boolean {
   return file.size <= AUDIO_TRANSCRIPTION_MAX_BYTES && getAudioTranscriptionMime(file) !== null;
 }
+
+export const COMPLAINT_MAX_BYTES = 10 * MB;
+export const COMPLAINT_ACCEPT = ".pdf,.jpg,.jpeg,.png,.txt,.md,.docx";
+export const COMPLAINT_SUPPORTED_LABEL = "PDF, JPG, PNG, TXT, MD, DOCX (max 10MB)";
+
+const COMPLAINT_IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png"]);
+
+export function getComplaintMime(file: Pick<File, "type" | "name">): string | null {
+  const extension = getFileExtension(file.name);
+  const type = file.type.toLowerCase();
+
+  if (extension === "txt" || extension === "md" || type === "text/plain" || type === "text/markdown") {
+    return type || (extension === "md" ? "text/markdown" : "text/plain");
+  }
+  if (extension === "pdf" || type === "application/pdf") return "application/pdf";
+  if (extension === "docx" || type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+    return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  }
+  if (COMPLAINT_IMAGE_EXTENSIONS.has(extension)) return IMAGE_MIME_BY_EXT[extension] || type;
+  if (type === "image/jpeg" || type === "image/png") return type;
+
+  return null;
+}
+
+export function isComplaintSupportedFile(file: Pick<File, "type" | "name" | "size">): boolean {
+  return file.size <= COMPLAINT_MAX_BYTES && getComplaintMime(file) !== null;
+}

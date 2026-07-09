@@ -582,6 +582,17 @@ export function CaseAIAnalysisPanel({
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                   <div className="flex items-center space-x-2">
                     <Switch
+                      id="role-advocate"
+                      checked={enabledRoles.advocate}
+                      onCheckedChange={(checked) => setEnabledRoles(prev => ({ ...prev, advocate: checked }))}
+                    />
+                    <Label htmlFor="role-advocate" className="text-sm cursor-pointer">
+                      {i18n.language === 'hy' ? 'Փաստաբան' : i18n.language === 'en' ? 'Advocate' : 'Адвокат'}
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch
                       id="role-prosecutor"
                       checked={enabledRoles.prosecutor}
                       onCheckedChange={(checked) => setEnabledRoles(prev => ({ ...prev, prosecutor: checked }))}

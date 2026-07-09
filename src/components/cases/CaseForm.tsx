@@ -334,7 +334,7 @@ export function CaseForm({
       }> = [];
 
       for (const file of pendingFiles.slice(0, 5)) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._\u0531-\u058F-]/g, '_');
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
         const storagePath = `${user.id}/autofill/${Date.now()}_${safeName}`;
         const mime = getAutofillMime(file);
         if (!mime) {
@@ -785,6 +785,9 @@ export function CaseForm({
                   files={pendingFiles}
                   onFilesChange={setPendingFiles}
                 />
+                <p className="text-xs text-amber-700 dark:text-amber-400 break-words">
+                  ⚠️ {t('disclaimer:ai_warning')}
+                </p>
                 {pendingFiles.length > 0 && (
                   <div className="space-y-2">
                     <Button

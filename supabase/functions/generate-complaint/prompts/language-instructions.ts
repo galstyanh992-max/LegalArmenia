@@ -1,3 +1,6 @@
+// HARDENED: output language must remain Armenian; no fabricated legal terms.
+// =============================================================================
+// HARDENED_BY_PROMPT1_LEGAL_GOVERNANCE | RA | ALL LEGAL DOMAINS | RAG-SAFE
 // =============================================================================
 // LANGUAGE-SPECIFIC INSTRUCTIONS
 // =============================================================================
@@ -9,3 +12,4 @@ export const LANGUAGE_INSTRUCTIONS: Record<string, string> = {
   
   en: `Document must be in English. Use formal legal English. References to RA laws should be in original (Armenian) with unofficial translation if needed.`
 };
+

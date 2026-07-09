@@ -393,6 +393,7 @@
         "npm:lucide-react@0.462",
         "npm:next-themes@0.3",
         "npm:pdf-parse@^2.4.5",
+        "npm:pg@^8.22.0",
         "npm:postcss@^8.5.16",
         "npm:react-big-calendar@^1.19.4",
         "npm:react-day-picker@^8.10.1",

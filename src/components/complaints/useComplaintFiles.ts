@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { COMPLAINT_MAX_BYTES, getFileExtension, getComplaintMime } from "@/lib/uploadPolicies";
 import type { UploadedFile } from "./types";
 
 // =============================================================================
@@ -27,18 +28,14 @@ export function useComplaintFiles({
     let tempStoragePath: string | null = null;
     
     try {
-      const isImage = file.type.startsWith("image/");
-      const isPdf = file.type === "application/pdf";
-      const isText = file.type.startsWith("text/") || file.name.endsWith(".txt") || file.name.endsWith(".md");
-      const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-                     file.name.endsWith(".docx");
-      const isOldDoc = file.type === "application/msword" || file.name.endsWith(".doc");
+      const extension = getFileExtension(file.name);
+      const isOldDoc = file.type === "application/msword" || extension === "doc";
+      const complaintMime = getComplaintMime(file);
+      const isText = complaintMime === "text/plain" || complaintMime === "text/markdown";
 
       let text = "";
 
-      if (isText) {
-        text = await file.text();
-      } else if (isOldDoc) {
+      if (isOldDoc) {
         const msg =
           lang === "hy" ? "DOC format is not supported. Please save as DOCX or PDF." :
           lang === "ru" ? "Формат DOC не поддерживается. Сохраните как DOCX или PDF." :
@@ -46,7 +43,11 @@ export function useComplaintFiles({
 
         toast.error(msg);
         return { ...fileState, status: "error", extractedText: "", errorMessage: msg };
-      } else if (isImage || isPdf || isDocx) {
+      }
+
+      if (isText) {
+        text = await file.text();
+      } else if (complaintMime) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Not authenticated");
 
@@ -120,7 +121,7 @@ export function useComplaintFiles({
     
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
-      if (file.size > 10 * 1024 * 1024) {
+      if (file.size > COMPLAINT_MAX_BYTES) {
         toast.error(getText(
           "\u0556\u0561\u0575\u056C\u0568 \u0579\u0561\u0583\u0561\u0566\u0561\u0576\u0581 \u0574\u0565\u056E \u0567 (10\u0544\u0532)",
           "Файл слишком большой (10МБ)",

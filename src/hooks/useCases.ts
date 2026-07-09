@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -103,6 +103,14 @@ export function useCases(filters: CaseFilters = {}) {
       // Try insert; on duplicate case_number, auto-append suffix
       let attempt = 0;
       let caseToInsert = pickWritableCaseFields(newCase as Record<string, unknown>) as CaseInsert;
+      
+      if (!caseToInsert.lawyer_id) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          caseToInsert.lawyer_id = user.id;
+        }
+      }
+      
       const maxAttempts = 10;
 
       while (attempt < maxAttempts) {

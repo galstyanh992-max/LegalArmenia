@@ -390,17 +390,13 @@ export function UserManagement() {
       toast({ title: 'Մուտքանունը պետք է լինի 3-20 նիշ (տառեր, թվեր, _)', variant: 'destructive' });
       return;
     }
-    // Validate auditor selection for lawyer role
-    if (newUserRole === 'lawyer' && !newUserAuditorId) {
-      toast({ title: 'Փաստաբանի համար պետք է ընտրել աուդիտոր', variant: 'destructive' });
-      return;
-    }
+    // Auditor selection for lawyer role is optional, no validation needed
     createUser.mutate({
       username: newUsername,
       password: newUserPassword,
       full_name: newUserName || undefined,
       role: newUserRole,
-      auditor_id: newUserRole === 'lawyer' ? newUserAuditorId : undefined,
+      auditor_id: newUserRole === 'lawyer' && newUserAuditorId ? newUserAuditorId : undefined,
     });
   };
 
@@ -718,7 +714,7 @@ export function UserManagement() {
               </div>
               {newUserRole === 'lawyer' && (
                 <div className="space-y-2">
-                  <Label htmlFor="auditor">Նշանակել աուդիտոր *</Label>
+                  <Label htmlFor="auditor">Նշանակել աուդիտոր (ընտրովի)</Label>
                   <Select value={newUserAuditorId} onValueChange={setNewUserAuditorId}>
                     <SelectTrigger>
                       <SelectValue placeholder="Ընտրել աուդիտոր" />

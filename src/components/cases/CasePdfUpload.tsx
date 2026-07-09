@@ -114,7 +114,7 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
     try {
       // 1. Upload file to storage
       const fileExt = getFileExtension(selectedFile.name);
-      const fileName = `case-${caseId}/${crypto.randomUUID()}.${fileExt}`;
+      const fileName = `${caseId}/${crypto.randomUUID()}.${fileExt}`;
       const contentType = getPdfOcrMime(selectedFile);
       if (!contentType) throw new Error(`Unsupported OCR file type. Supported: ${PDF_OCR_SUPPORTED_LABEL}`);
       
@@ -378,6 +378,9 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
                 )}
               </div>
 
+                <p className="text-xs text-amber-700 dark:text-amber-400 break-words">
+                  ⚠️ {t('disclaimer:ai_generated')}
+                </p>
               <div className="space-y-2">
                 <Label>{t('ocr:extracted_text')}</Label>
                 <Textarea
