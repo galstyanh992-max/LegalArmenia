@@ -1,0 +1,49 @@
+{
+  "notes": [
+    {
+      "step": "kb-failed-requests",
+      "fails": [
+        {
+          "status": 406,
+          "method": "GET",
+          "url": "https://avmgtsonawtzebvazgcr.supabase.co/rest/v1/profiles?select=*&id=eq.f1c68e91-9c55-4274-b453-d5b2dc68cb00",
+          "body": "{\"code\":\"PGRST116\",\"details\":\"The result contains 0 rows\",\"hint\":null,\"message\":\"Cannot coerce the result to a single JSON object\"}"
+        },
+        {
+          "status": 406,
+          "method": "GET",
+          "url": "https://avmgtsonawtzebvazgcr.supabase.co/rest/v1/profiles?select=*&id=eq.f1c68e91-9c55-4274-b453-d5b2dc68cb00",
+          "body": "{\"code\":\"PGRST116\",\"details\":\"The result contains 0 rows\",\"hint\":null,\"message\":\"Cannot coerce the result to a single JSON object\"}"
+        },
+        {
+          "status": 400,
+          "method": "GET",
+          "url": "https://avmgtsonawtzebvazgcr.supabase.co/rest/v1/knowledge_base?select=category&is_active=eq.true",
+          "body": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.category does not exist\"}"
+        },
+        {
+          "status": 400,
+          "method": "GET",
+          "url": "https://avmgtsonawtzebvazgcr.supabase.co/rest/v1/knowledge_base?select=*&is_active=eq.true&order=updated_at.desc&offset=0&limit=200",
+          "body": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.is_active does not exist\"}"
+        },
+        {
+          "status": 400,
+          "method": "GET",
+          "url": "https://avmgtsonawtzebvazgcr.supabase.co/rest/v1/knowledge_base?select=category&is_active=eq.true",
+          "body": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.category does not exist\"}"
+        },
+        {
+          "status": 400,
+          "method": "GET",
+          "url": "https://avmgtsonawtzebvazgcr.supabase.co/rest/v1/knowledge_base?select=*&is_active=eq.true&order=updated_at.desc&offset=0&limit=200",
+          "body": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.is_active does not exist\"}"
+        }
+      ]
+    },
+    {
+      "step": "kb-url",
+      "url": "http://localhost:8082/kb"
+    }
+  ]
+}

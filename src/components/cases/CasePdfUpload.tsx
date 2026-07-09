@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,16 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { uploadCaseFileWithMetadata, rollbackCaseFile } from '@/lib/caseFileUpload';
+import {
+  PDF_OCR_ACCEPT,
+  PDF_OCR_MAX_BYTES,
+  PDF_OCR_SUPPORTED_LABEL,
+  formatMaxBytes,
+  getFileExtension,
+  getPdfOcrMime,
+  isPdfOcrSupportedFile,
+} from '@/lib/uploadPolicies';
 import { 
   Upload, 
   FileText, 
@@ -52,23 +62,39 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
   const [aiAnalysis, setAiAnalysis] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [storageFileName, setStorageFileName] = useState<string | null>(null);
+  const storageFileNameRef = useRef<string | null>(null);
+  const attachedFileIdRef = useRef<string | null>(null);
+  const isAttachedRef = useRef(false);
+
+  const cleanupUploadedPdf = useCallback(async () => {
+    if (isAttachedRef.current) return;
+
+    const storagePath = storageFileNameRef.current;
+    const fileId = attachedFileIdRef.current;
+    if (!storagePath && !fileId) return;
+
+    storageFileNameRef.current = null;
+    attachedFileIdRef.current = null;
+    setStorageFileName(null);
+
+    await rollbackCaseFile(fileId, storagePath);
+  }, []);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file type
-    const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff'];
-    if (!validTypes.includes(file.type)) {
+    if (!isPdfOcrSupportedFile(file)) {
+      const typeSupported = getPdfOcrMime(file) !== null;
+      if (typeSupported) {
+        toast.error(`${t('ocr:file_too_large')} (${formatMaxBytes(PDF_OCR_MAX_BYTES)})`);
+        return;
+      }
       toast.error(t('ocr:unsupported_format'));
       return;
     }
 
-    // Check file size (50MB max)
-    if (file.size > 50 * 1024 * 1024) {
-      toast.error(t('ocr:file_too_large'));
-      return;
-    }
+    void cleanupUploadedPdf();
 
     setSelectedFile(file);
     setStatus('idle');
@@ -87,14 +113,17 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
 
     try {
       // 1. Upload file to storage
-      const fileExt = selectedFile.name.split('.').pop();
+      const fileExt = getFileExtension(selectedFile.name);
       const fileName = `case-${caseId}/${crypto.randomUUID()}.${fileExt}`;
+      const contentType = getPdfOcrMime(selectedFile);
+      if (!contentType) throw new Error(`Unsupported OCR file type. Supported: ${PDF_OCR_SUPPORTED_LABEL}`);
       
       const { error: uploadError } = await supabase.storage
         .from('case-files')
-        .upload(fileName, selectedFile);
+        .upload(fileName, selectedFile, { contentType });
 
       if (uploadError) throw uploadError;
+      storageFileNameRef.current = fileName;
       setStorageFileName(fileName);
       setProgress(30);
 
@@ -123,7 +152,7 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
         throw new Error(ocrData.error);
       }
 
-      setExtractedText(ocrData.extracted_text || '');
+      setExtractedText(ocrData.extracted_text || ocrData.text || '');
       setConfidence(ocrData.confidence_score || null);
       setProgress(100);
       setStatus('extracted');
@@ -137,6 +166,7 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
 
     } catch (err) {
       console.error('PDF upload error:', err);
+      await cleanupUploadedPdf();
       setStatus('error');
       setError(err instanceof Error ? err.message : 'Upload failed');
       toast.error(t('errors:upload_failed'));
@@ -198,21 +228,15 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data: fileData, error: insertError } = await supabase
-        .from('case_files')
-        .insert({
-          case_id: caseId,
-          filename: selectedFile.name,
-          original_filename: selectedFile.name,
-          storage_path: storageFileName,
-          file_type: selectedFile.type,
-          file_size: selectedFile.size,
-          uploaded_by: user.id,
-        })
-        .select()
-        .single();
-
-      if (insertError) throw insertError;
+      const { fileRecord: fileData } = await uploadCaseFileWithMetadata({
+        caseId,
+        file: selectedFile,
+        userId: user.id,
+        storagePath: storageFileName,
+        filename: storageFileName.split('/').pop() || selectedFile.name,
+        contentType: getPdfOcrMime(selectedFile) || selectedFile.type,
+      });
+      attachedFileIdRef.current = fileData.id;
 
       // If OCR was performed, save the result
       if (extractedText && fileData) {
@@ -226,9 +250,12 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
             language: DEFAULT_LANGUAGE,
           });
 
-        if (ocrError) console.error('OCR result save error:', ocrError);
+        if (ocrError) {
+          throw new Error(`OCR result save failed: ${ocrError.message}`);
+        }
       }
 
+      isAttachedRef.current = true;
       setStatus('success');
       toast.success(t('cases:file_attached_successfully'));
       
@@ -238,16 +265,18 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
 
       // Reset after a short delay
       setTimeout(() => {
-        handleClose();
+        void handleClose();
       }, SUCCESS_DIALOG_DELAY);
 
     } catch (err) {
       console.error('Attach file error:', err);
+      await cleanupUploadedPdf();
       toast.error(t('errors:attach_failed'));
     }
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(async () => {
+    await cleanupUploadedPdf();
     setSelectedFile(null);
     setExtractedText('');
     setAiAnalysis('');
@@ -255,12 +284,23 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
     setStatus('idle');
     setProgress(0);
     setError(null);
+    storageFileNameRef.current = null;
+    attachedFileIdRef.current = null;
+    isAttachedRef.current = false;
     setStorageFileName(null);
     onOpenChange(false);
+  }, [cleanupUploadedPdf, onOpenChange]);
+
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      void handleClose();
+      return;
+    }
+    onOpenChange(true);
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -280,7 +320,7 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
               <Input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.jpg,.jpeg,.png,.tiff"
+                accept={PDF_OCR_ACCEPT}
                 onChange={handleFileSelect}
                 className="flex-1"
                 disabled={status !== 'idle' && status !== 'extracted'}
@@ -291,6 +331,7 @@ export function CasePdfUpload({ open, onOpenChange, caseId, onSuccess }: CasePdf
                 {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
               </p>
             )}
+            <p className="text-xs text-muted-foreground">{PDF_OCR_SUPPORTED_LABEL}</p>
           </div>
 
           {/* Upload Button */}

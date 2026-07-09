@@ -4,6 +4,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import type { Database } from '@/integrations/supabase/types';
 import { legacyRetrievalUnsupported } from '@/lib/legacyRetrievalUnsupported';
+import { rollbackCaseFile, uploadCaseFileWithMetadata } from '@/lib/caseFileUpload';
+import {
+  AUDIO_TRANSCRIPTION_SUPPORTED_LABEL,
+  getAudioTranscriptionMime,
+  isAudioTranscriptionSupportedFile,
+} from '@/lib/uploadPolicies';
 
 type AudioTranscription = Database['public']['Tables']['audio_transcriptions']['Row'];
 type CaseFile = Database['public']['Tables']['case_files']['Row'];
@@ -11,30 +17,6 @@ type CaseFile = Database['public']['Tables']['case_files']['Row'];
 export interface TranscriptionWithFile extends AudioTranscription {
   case_files: Pick<CaseFile, 'original_filename' | 'storage_path' | 'case_id'> | null;
 }
-
-const SUPPORTED_AUDIO_FORMATS = [
-  'audio/mpeg',      // MP3
-  'audio/wav',       // WAV
-  'audio/mp4',       // M4A
-  'audio/x-m4a',     // M4A (alternative)
-  'audio/m4a',       // M4A (alternative)
-  'audio/aac',       // AAC
-  'audio/ogg',       // OGG
-  'audio/webm',      // WebM
-  'audio/flac',      // FLAC
-];
- 
- const SUPPORTED_VIDEO_FORMATS = [
-   'video/mp4',       // MP4
-   'video/quicktime', // MOV
-   'video/webm',      // WebM
-   'video/x-msvideo', // AVI
-   'video/x-matroska',// MKV
- ];
- 
- const ALL_SUPPORTED_FORMATS = [...SUPPORTED_AUDIO_FORMATS, ...SUPPORTED_VIDEO_FORMATS];
-
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
 export function useAudioTranscriptions(caseId: string | undefined) {
   const { toast } = useToast();
@@ -69,116 +51,89 @@ export function useAudioTranscriptions(caseId: string | undefined) {
   // Upload and transcribe audio
   const uploadAndTranscribe = useMutation({
     mutationFn: async ({ file, caseId }: { file: File; caseId: string }) => {
-      // Validate file type
-       if (!ALL_SUPPORTED_FORMATS.includes(file.type)) {
-        throw new Error(t('audio:unsupported_format'));
-      }
-
-      // Validate file size
-      if (file.size > MAX_FILE_SIZE) {
-        throw new Error(t('audio:file_too_large'));
+      if (!isAudioTranscriptionSupportedFile(file)) {
+        const contentType = getAudioTranscriptionMime(file);
+        throw new Error(
+          contentType
+            ? `${t('audio:file_too_large')} Supported: ${AUDIO_TRANSCRIPTION_SUPPORTED_LABEL}.`
+            : `${t('audio:unsupported_format')}. Supported: ${AUDIO_TRANSCRIPTION_SUPPORTED_LABEL}.`
+        );
       }
 
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Generate UUID for file
-      const fileId = crypto.randomUUID();
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      const storagePath = `${caseId}/${fileId}.${fileExt}`;
+      let storagePath: string | null = null;
+      let fileRecordId: string | null = null;
+      let finalized = false;
 
-      // Normalize MIME type for M4A files (browser may report x-m4a which storage rejects)
-      let contentType = file.type;
-      if (fileExt === 'm4a' || file.type === 'audio/x-m4a' || file.type === 'audio/m4a') {
-        contentType = 'audio/mp4';
-      }
+      try {
+        const contentType = getAudioTranscriptionMime(file);
+        if (!contentType) throw new Error(t('audio:unsupported_format'));
 
-      // Upload to storage with correct content type
-      const { error: uploadError } = await supabase.storage
-        .from('case-files')
-        .upload(storagePath, file, {
-          contentType,
-        });
+        const uploadResult = await uploadCaseFileWithMetadata({ caseId, file, userId: user.id, contentType });
+        storagePath = uploadResult.storagePath;
+        fileRecordId = uploadResult.fileRecord.id;
 
-      if (uploadError) throw uploadError;
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+          .from('case-files')
+          .createSignedUrl(storagePath, 3600);
 
-      // Create case_files record
-      const { data: fileRecord, error: dbError } = await supabase
-        .from('case_files')
-        .insert({
-          case_id: caseId,
-          filename: `${fileId}.${fileExt}`,
-          original_filename: file.name,
-          storage_path: storagePath,
-          file_type: file.type,
-          file_size: file.size,
-          hash_sha256: '', // Will be computed
-          version: 1,
-          uploaded_by: user.id,
-        })
-        .select()
-        .single();
+        if (signedUrlError || !signedUrlData?.signedUrl) {
+          throw signedUrlError || new Error('Failed to get signed URL');
+        }
 
-      if (dbError) {
-        await supabase.storage.from('case-files').remove([storagePath]);
-        throw dbError;
-      }
+        let transcriptionResult: { confidence_score?: number; error?: string; success?: boolean; [key: string]: unknown } | null = null;
+        let lastError: Error | null = null;
 
-      // Get signed URL for the audio file
-      const { data: signedUrlData } = await supabase.storage
-        .from('case-files')
-        .createSignedUrl(storagePath, 3600);
+        for (let attempt = 0; attempt < 2; attempt++) {
+          try {
+            const { data, error: fnError } = await supabase.functions
+              .invoke('audio-transcribe', {
+                body: {
+                  audioUrl: signedUrlData.signedUrl,
+                  fileName: file.name,
+                  caseId,
+                  fileId: fileRecordId,
+                },
+              });
 
-      if (!signedUrlData?.signedUrl) {
-        throw new Error('Failed to get signed URL');
-      }
+            if (fnError) {
+              const msg = fnError.message || String(fnError);
+              if (msg.includes('Failed to send') && attempt < 1) {
+                await new Promise(r => setTimeout(r, 3000));
+                continue;
+              }
+              throw new Error(msg);
+            }
 
-      // Call edge function for transcription (with retry for transient failures)
-      let transcriptionResult: { confidence_score?: number; [key: string]: unknown } | null = null;
-      let lastError: Error | null = null;
-
-      for (let attempt = 0; attempt < 2; attempt++) {
-        try {
-          const { data, error: fnError } = await supabase.functions
-            .invoke('audio-transcribe', {
-              body: {
-                audioUrl: signedUrlData.signedUrl,
-                fileName: file.name,
-                caseId,
-                fileId: fileRecord.id,
-              },
-            });
-
-          if (fnError) {
-            // "Failed to send a request to the Edge Function" = network/timeout
-            const msg = fnError.message || String(fnError);
-            if (msg.includes('Failed to send') && attempt < 1) {
+            transcriptionResult = data;
+            break;
+          } catch (err) {
+            lastError = err instanceof Error ? err : new Error(String(err));
+            if (attempt < 1) {
               await new Promise(r => setTimeout(r, 3000));
               continue;
             }
-            throw new Error(msg);
-          }
-
-          transcriptionResult = data;
-          break;
-        } catch (err) {
-          lastError = err instanceof Error ? err : new Error(String(err));
-          if (attempt < 1) {
-            await new Promise(r => setTimeout(r, 3000));
-            continue;
           }
         }
-      }
 
-      if (!transcriptionResult) {
-        throw lastError || new Error(t('audio:processing_failed'));
-      }
+        if (!transcriptionResult || transcriptionResult.error || transcriptionResult.success === false) {
+          throw lastError || new Error(transcriptionResult?.error || t('audio:processing_failed'));
+        }
 
-      return {
-        fileRecord,
-        transcription: transcriptionResult,
-      };
+        finalized = true;
+        return {
+          fileRecord: uploadResult.fileRecord,
+          transcription: transcriptionResult,
+        };
+      } catch (error) {
+        if (!finalized) {
+          await rollbackCaseFile(fileRecordId, storagePath);
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['audio-transcriptions', caseId] });
@@ -199,6 +154,10 @@ export function useAudioTranscriptions(caseId: string | undefined) {
         description: error.message,
         variant: 'destructive',
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['audio-transcriptions', caseId] });
+      queryClient.invalidateQueries({ queryKey: ['case-files', caseId] });
     },
   });
 

@@ -24,6 +24,6 @@
   "add_to_case": "Add to Case",
   "ocr_history": "OCR History",
   "no_ocr_results": "No OCR results yet",
-  "file_too_large": "File is too large. Maximum size: 50MB",
+  "file_too_large": "File is too large. Maximum size: 15MB",
   "unsupported_format": "Unsupported file format"
 }

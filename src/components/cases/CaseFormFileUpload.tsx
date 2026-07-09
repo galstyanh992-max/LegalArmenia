@@ -5,10 +5,16 @@ import { Input } from '@/components/ui/input';
 import { 
   Upload, 
   FileText, 
-  Trash2,
   File,
   X
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import {
+  CASE_FILE_ACCEPT,
+  CASE_FILE_MAX_BYTES,
+  CASE_FILE_SUPPORTED_LABEL,
+  formatMaxBytes,
+} from '@/lib/uploadPolicies';
 
 interface CaseFormFileUploadProps {
   files: File[];
@@ -36,8 +42,8 @@ function formatFileSize(bytes: number): string {
 
 export function CaseFormFileUpload({ files, onFilesChange }: CaseFormFileUploadProps) {
   const { t } = useTranslation(['cases', 'common']);
+  const { toast } = useToast();
 
-  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
   const MAX_FILES = 20;
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,8 +51,13 @@ export function CaseFormFileUpload({ files, onFilesChange }: CaseFormFileUploadP
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const validFiles = Array.from(selectedFiles).filter(file => {
-      if (file.size > MAX_FILE_SIZE) {
-        return false; // silently skip oversized
+      if (file.size > CASE_FILE_MAX_BYTES) {
+        toast({
+          title: t('common:error', 'Error'),
+          description: `${file.name}: max ${formatMaxBytes(CASE_FILE_MAX_BYTES)}`,
+          variant: 'destructive',
+        });
+        return false;
       }
       return true;
     });
@@ -56,7 +67,7 @@ export function CaseFormFileUpload({ files, onFilesChange }: CaseFormFileUploadP
     
     // Reset input
     e.target.value = '';
-  }, [files, onFilesChange]);
+  }, [files, onFilesChange, t, toast]);
 
   const removeFile = useCallback((index: number) => {
     const newFiles = files.filter((_, i) => i !== index);
@@ -85,14 +96,14 @@ export function CaseFormFileUpload({ files, onFilesChange }: CaseFormFileUploadP
                   multiple
                   className="hidden"
                   onChange={handleFileSelect}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp3,.wav,.m4a,.txt"
+                  accept={CASE_FILE_ACCEPT}
                 />
               </label>
             </Button>
             <span className="text-sm text-muted-foreground"> {t('common:or')} drag & drop</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            PDF, DOCX, JPG, PNG, MP3, WAV, M4A, TXT
+            {CASE_FILE_SUPPORTED_LABEL} (max {formatMaxBytes(CASE_FILE_MAX_BYTES)})
           </p>
         </div>
       </div>

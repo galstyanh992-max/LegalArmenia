@@ -104,6 +104,34 @@ interface FileRef {
   size: number;
 }
 
+const AUTOFILL_BUCKET = "case-files";
+const AUTOFILL_MAX_FILE_SIZE = 15 * 1024 * 1024;
+const AUTOFILL_IMAGE_MIMES = new Set(["image/jpeg", "image/png", "image/tiff"]);
+const AUTOFILL_IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "tif", "tiff"]);
+
+type AutofillKind = "pdf" | "image";
+
+function fileExtension(fileName: string): string {
+  return fileName.split(".").pop()?.toLowerCase() || "";
+}
+
+function supportedAutofillFile(fileRef: FileRef): { kind: AutofillKind; mime: string } | null {
+  const mime = (fileRef.mime || "").toLowerCase();
+  const ext = fileExtension(fileRef.name || fileRef.path);
+
+  if (mime === "application/pdf" || ext === "pdf") {
+    return { kind: "pdf", mime: "application/pdf" };
+  }
+
+  if (AUTOFILL_IMAGE_MIMES.has(mime) || AUTOFILL_IMAGE_EXTENSIONS.has(ext)) {
+    if (ext === "png" || mime === "image/png") return { kind: "image", mime: "image/png" };
+    if (ext === "tif" || ext === "tiff" || mime === "image/tiff") return { kind: "image", mime: "image/tiff" };
+    return { kind: "image", mime: "image/jpeg" };
+  }
+
+  return null;
+}
+
 serve(async (req) => {
   const cors = handleCors(req);
   if (cors.errorResponse) return cors.errorResponse;
@@ -147,9 +175,28 @@ serve(async (req) => {
     const visionParts: Array<Record<string, unknown>> = [];
 
     for (const fileRef of files.slice(0, 5)) {
-      // Security: verify the file path belongs to the requesting user
-      if (!fileRef.path.startsWith(`${userId}/`)) {
+      const supported = supportedAutofillFile(fileRef);
+
+      if (fileRef.bucket !== AUTOFILL_BUCKET) {
+        return json({ success: false, error: "Unsupported storage bucket" }, 400);
+      }
+
+      if (!fileRef.path.startsWith(`${userId}/autofill/`)) {
         return json({ success: false, error: "Access denied to file: " + fileRef.name }, 403);
+      }
+
+      if (!supported) {
+        return json({
+          success: false,
+          error: `Unsupported file type for autofill: ${fileRef.name}. Supported: PDF, JPG, PNG, TIFF.`,
+        }, 400);
+      }
+
+      if (Number.isFinite(fileRef.size) && fileRef.size > AUTOFILL_MAX_FILE_SIZE) {
+        return json({
+          success: false,
+          error: `File too large for autofill: ${fileRef.name}. Max 15MB.`,
+        }, 413);
       }
 
       const { data: blob, error: dlError } = await adminClient.storage
@@ -163,28 +210,30 @@ serve(async (req) => {
 
       const bytes = new Uint8Array(await blob.arrayBuffer());
 
-      if (fileRef.mime.startsWith("image/")) {
+      if (bytes.byteLength > AUTOFILL_MAX_FILE_SIZE) {
+        return json({
+          success: false,
+          error: `File too large for autofill: ${fileRef.name}. Max 15MB.`,
+        }, 413);
+      }
+
+      if (supported.kind === "image") {
         // Image → multimodal vision
         const b64 = bytesToBase64(bytes);
         visionParts.push(
           { type: "text", text: `[Изображение: "${fileRef.name}"]` },
-          { type: "image_url", image_url: { url: `data:${fileRef.mime};base64,${b64}` } },
+          { type: "image_url", image_url: { url: `data:${supported.mime};base64,${b64}` } },
         );
-      } else if (fileRef.mime === "application/pdf") {
+      } else if (supported.kind === "pdf") {
         // PDF → send as image_url with data URI (GPT-5 supports PDF input)
         const b64 = bytesToBase64(bytes);
         visionParts.push(
           { type: "text", text: `[PDF: "${fileRef.name}"]` },
-          { type: "image_url", image_url: { url: `data:${fileRef.mime};base64,${b64}` } },
+          { type: "image_url", image_url: { url: `data:${supported.mime};base64,${b64}` } },
         );
       } else {
-        // Text-based files (DOCX, TXT etc.) — decode as text
-        try {
-          const decoded = new TextDecoder().decode(bytes);
-          textParts.push(`--- \u0556\u0561\u0575\u056C: "${fileRef.name}" ---\n${decoded}`);
-        } catch {
-          console.warn(`Could not decode file ${fileRef.name}`);
-        }
+        // Defensive fallback; unsupported files are rejected before download.
+        return json({ success: false, error: `Unsupported file type for autofill: ${fileRef.name}` }, 400);
       }
     }
 

@@ -69,8 +69,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Database } from '@/integrations/supabase/types';
-
-type AppRole = Database['public']['Enums']['app_role'];
+import { AppRole } from '@/lib/auth';
 
 interface UserWithRoles {
   id: string;

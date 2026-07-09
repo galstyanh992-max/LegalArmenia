@@ -6,6 +6,32 @@ import { recordAiMetric } from "../_shared/ai-metrics.ts";
 const CONFIDENCE_THRESHOLD = 0.50;
 const MAX_FILE_SIZE_MB = 25;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+const ALLOWED_AUDIO_MIME_BY_EXTENSION: Record<string, string> = {
+  mp3: "audio/mpeg",
+  wav: "audio/wav",
+  m4a: "audio/mp4",
+  ogg: "audio/ogg",
+};
+const AUDIO_MIME_NORMALIZATION: Record<string, string> = {
+  "audio/mpeg": "audio/mpeg",
+  "audio/mp3": "audio/mpeg",
+  "audio/wav": "audio/wav",
+  "audio/x-wav": "audio/wav",
+  "audio/wave": "audio/wav",
+  "audio/mp4": "audio/mp4",
+  "audio/x-m4a": "audio/mp4",
+  "audio/m4a": "audio/mp4",
+  "audio/ogg": "audio/ogg",
+};
+
+function fileExtension(fileName: string): string {
+  return fileName.split(".").pop()?.toLowerCase() || "";
+}
+
+function normalizeAudioMime(mime: string | null): string | null {
+  if (!mime) return null;
+  return AUDIO_MIME_NORMALIZATION[mime.split(";")[0].trim().toLowerCase()] || null;
+}
 
 serve(async (req) => {
   // === CORS via centralized handler ===
@@ -52,6 +78,17 @@ serve(async (req) => {
       });
     }
 
+    const expectedMime = ALLOWED_AUDIO_MIME_BY_EXTENSION[fileExtension(fileName || "")];
+    if (!expectedMime) {
+      return new Response(JSON.stringify({
+        error: "Unsupported audio type. Supported: MP3, WAV, M4A, OGG.",
+        error_code: "unsupported_audio_type",
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // === SSRF PROTECTION: Only allow Supabase Storage URLs ===
     try {
       const parsedUrl = new URL(audioUrl);
@@ -81,8 +118,16 @@ serve(async (req) => {
     // Check file size via HEAD request (avoids downloading the whole file just for size check)
     const headResponse = await fetch(audioUrl, { method: "HEAD" });
     const contentLength = headResponse.headers.get("content-length");
+    const responseMime = normalizeAudioMime(headResponse.headers.get("content-type"));
     const fileSize = contentLength ? parseInt(contentLength, 10) : 0;
     console.log(`File size: ${(fileSize / 1024 / 1024).toFixed(2)} MB`);
+
+    if (responseMime && responseMime !== expectedMime) {
+      return new Response(JSON.stringify({
+        error: "Audio MIME type does not match the allowed upload contract.",
+        error_code: "unsupported_audio_type",
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     if (fileSize > MAX_FILE_SIZE_BYTES) {
       return new Response(JSON.stringify({
@@ -225,6 +270,7 @@ serve(async (req) => {
 
       if (insertError) {
         console.error("Failed to save transcription:", insertError);
+        throw new Error("Failed to save transcription");
       } else {
         transcriptionRecord = data;
       }

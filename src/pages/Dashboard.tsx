@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import logo from '@/assets/logo.png';
 import { useNavigate } from 'react-router-dom';
@@ -18,8 +18,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCases, type CaseFilters as CaseFiltersType } from '@/hooks/useCases';
 import { useKnowledgeBase, type KBFilters as KBFiltersType } from '@/hooks/useKnowledgeBase';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { uploadCaseFileWithMetadata } from '@/lib/caseFileUpload';
+import { CASE_FILE_MAX_BYTES } from '@/lib/uploadPolicies';
 import {
   PremiumBrandMark,
   IconPlus,
@@ -83,6 +84,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 type Case = Database['public']['Tables']['cases']['Row'];
 
@@ -107,47 +115,20 @@ const Dashboard = () => {
 
   const [kbFilters, setKbFilters] = useState<KBFiltersType>({ page: 1, pageSize: 10 });
 
-  const { cases, isLoading, createCase, updateCase, deleteCase } = useCases(filters);
+  const { cases, isLoading, isError, refetch, createCase, updateCase, deleteCase } = useCases(filters);
   const { documents: kbDocuments, isLoading: kbLoading } = useKnowledgeBase(kbFilters);
 
   // Helper function to upload files after case creation
-  const MAX_UPLOAD_SIZE = 50 * 1024 * 1024; // 50MB
-
   const uploadFilesToCase = async (caseId: string, files: File[]) => {
+    if (!user?.id) throw new Error('Not authenticated');
+
     for (const file of files) {
-      if (file.size > MAX_UPLOAD_SIZE) {
+      if (file.size > CASE_FILE_MAX_BYTES) {
         console.warn(`Skipping oversized file: ${file.name} (${file.size} bytes)`);
         continue;
       }
 
-      const fileId = crypto.randomUUID();
-      const fileExt = file.name.split('.').pop();
-      const storagePath = `${caseId}/${fileId}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('case-files')
-        .upload(storagePath, file);
-
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        continue;
-      }
-
-      const { error: dbError } = await supabase.from('case_files').insert({
-        case_id: caseId,
-        filename: `${fileId}.${fileExt}`,
-        original_filename: file.name,
-        storage_path: storagePath,
-        file_type: file.type || 'application/octet-stream',
-        file_size: file.size,
-        version: 1,
-        uploaded_by: user?.id,
-      });
-
-      if (dbError) {
-        await supabase.storage.from('case-files').remove([storagePath]);
-        throw dbError;
-      }
+      await uploadCaseFileWithMetadata({ caseId, file, userId: user.id });
     }
   };
 
@@ -385,7 +366,7 @@ const Dashboard = () => {
                       <span className="text-[hsl(38,56%,63%)]">
                         <IconGavel size={18} />
                       </span>
-                      {t('kb:tab_practice', 'Դատական պրակտիկա')}
+                      {t('kb:tab_practice', 'ФґХЎХїХЎХЇХЎХ¶ ХєЦЂХЎХЇХїХ«ХЇХЎ')}
                     </h3>
                     <KBSearchPanel />
                   </div>
@@ -399,7 +380,7 @@ const Dashboard = () => {
             <Pill icon={<IconTargetPremium size={16} />} label={t('common:complaint')} onClick={() => setComplaintWizardOpen(true)} />
             {/* Notes Editor */}
             <Sheet open={notesOpen} onOpenChange={setNotesOpen}>
-              <Pill asChild icon={<IconNotePremium size={16} />} label={t('common:my_notes', 'Իմ գրառումներ')} />
+              <Pill asChild icon={<IconNotePremium size={16} />} label={t('common:my_notes', 'Ф»Хґ ХЈЦЂХЎХјХёЦ‚ХґХ¶ХҐЦЂ')} />
               <SheetContent className="w-full sm:max-w-2xl p-0 flex flex-col surface-panel" side="right">
                 <div className="h-full flex flex-col">
                   <NotesPanel />
@@ -408,12 +389,12 @@ const Dashboard = () => {
             </Sheet>
             {/* Dictionary */}
             <Sheet open={dictOpen} onOpenChange={setDictOpen}>
-              <Pill asChild icon={<IconDictionaryPremium size={16} />} label={t('dictionary:dictionary', 'Բառարան')} />
+              <Pill asChild icon={<IconDictionaryPremium size={16} />} label={t('dictionary:dictionary', 'ФІХЎХјХЎЦЂХЎХ¶')} />
               <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel">
                 <SheetHeader>
-                  <SheetTitle>{t('dictionary:dictionary', 'Բառարան')}</SheetTitle>
+                  <SheetTitle>{t('dictionary:dictionary', 'ФІХЎХјХЎЦЂХЎХ¶')}</SheetTitle>
                   <SheetDescription>
-                    {t('dictionary:search_placeholder', 'Որոնել բառ...')}
+                    {t('dictionary:search_placeholder', 'Х€ЦЂХёХ¶ХҐХ¬ ХўХЎХј...')}
                   </SheetDescription>
                 </SheetHeader>
                 <div className="mt-6">
@@ -422,36 +403,30 @@ const Dashboard = () => {
               </SheetContent>
             </Sheet>
             <Pill icon={<IconExternalPremium size={16} />} label="E-request" onClick={() => window.open('https://e-request.am', '_blank')} />
-            {/* AI Analysis */}
-            <Sheet open={aiAnalysisOpen} onOpenChange={setAiAnalysisOpen}>
-              <Pill asChild icon={<IconAiAnalysisPremium size={16} />} label={t('dashboard:ai_analysis', 'AI Analysis')} />
-              <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel" side="right">
-                <SheetHeader>
-                  <SheetTitle>{t('dashboard:ai_analysis', 'AI Analysis')}</SheetTitle>
-                  <SheetDescription>
-                    {t('dashboard:ai_analysis_desc', 'Analyze facts and legal questions')}
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="mt-6 h-[calc(100vh-120px)]">
+            {/* AI Analysis - full screen */}
+            <Dialog open={aiAnalysisOpen} onOpenChange={setAiAnalysisOpen}>
+              <DialogContent className="max-w-none w-screen h-screen sm:rounded-none p-0 flex flex-col gap-0 surface-panel">
+                <DialogHeader className="px-6 py-4 border-b border-border/50 shrink-0">
+                  <DialogTitle className="text-xl">{t('dashboard:ai_analysis', 'AI Analysis')}</DialogTitle>
+                  <DialogDescription>{t('dashboard:ai_analysis_desc', 'Analyze facts and legal questions')}</DialogDescription>
+                </DialogHeader>
+                <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
                   <StandaloneAIAnalysis />
                 </div>
-              </SheetContent>
-            </Sheet>
-            {/* Multi-Agent Analysis */}
-            <Sheet open={multiAgentOpen} onOpenChange={setMultiAgentOpen}>
-              <Pill asChild icon={<IconMultiAgentPremium size={16} />} label={t('dashboard:multi_agent', 'Multi-agent Analysis')} />
-              <SheetContent className="w-full sm:max-w-3xl overflow-y-auto surface-panel" side="right">
-                <SheetHeader>
-                  <SheetTitle>{t('dashboard:multi_agent', 'Multi-agent Analysis')}</SheetTitle>
-                  <SheetDescription>
-                    {t('dashboard:multi_agent_desc', 'Run comprehensive multi-agent legal analysis')}
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="mt-6 h-[calc(100vh-120px)]">
+              </DialogContent>
+            </Dialog>
+            {/* Multi-Agent Analysis - full screen */}
+            <Dialog open={multiAgentOpen} onOpenChange={setMultiAgentOpen}>
+              <DialogContent className="max-w-none w-screen h-screen sm:rounded-none p-0 flex flex-col gap-0 surface-panel">
+                <DialogHeader className="px-6 py-4 border-b border-border/50 shrink-0">
+                  <DialogTitle className="text-xl">{t('dashboard:multi_agent', 'Multi-agent Analysis')}</DialogTitle>
+                  <DialogDescription>{t('dashboard:multi_agent_desc', 'Run comprehensive multi-agent legal analysis')}</DialogDescription>
+                </DialogHeader>
+                <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
                   <StandaloneMultiAgent />
                 </div>
-              </SheetContent>
-            </Sheet>
+              </DialogContent>
+            </Dialog>
             {/* Telegram Uploads */}
             <Sheet open={telegramOpen} onOpenChange={setTelegramOpen}>
               <Pill asChild icon={<IconTelegramPremium size={16} />} label="Telegram" />
@@ -530,6 +505,17 @@ const Dashboard = () => {
                 <div className="flex items-center justify-center py-16">
                   <IconLoader size={32} />
                 </div>
+              ) : isError ? (
+                <div className="flex flex-col items-center justify-center surface-card py-16">
+                  <IconShieldAlert size={48} />
+                  <p className="mt-4 text-card-title text-muted-foreground" style={{ fontSize: 18 }}>
+                    {t('errors:load_failed')}
+                  </p>
+                  <button className="btn-gold mt-5" onClick={() => refetch()}>
+                    <IconLoader size={18} />
+                    {t('errors:try_again')}
+                  </button>
+                </div>
               ) : cases.length === 0 ? (
                 <div className="flex flex-col items-center justify-center surface-card py-16">
                   <IconCasesPremium size={48} />
@@ -573,6 +559,17 @@ const Dashboard = () => {
               <div className="flex items-center justify-center py-16">
                 <IconLoader size={32} />
               </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center surface-card py-16">
+                <IconShieldAlert size={48} />
+                <p className="mt-4 text-card-title text-muted-foreground" style={{ fontSize: 18 }}>
+                  {t('errors:load_failed')}
+                </p>
+                <button className="btn-gold mt-5" onClick={() => refetch()}>
+                  <IconLoader size={18} />
+                  {t('errors:try_again')}
+                </button>
+              </div>
             ) : cases.length === 0 ? (
               <div className="flex flex-col items-center justify-center surface-card py-16">
                 <IconCasesPremium size={48} />
@@ -609,7 +606,7 @@ const Dashboard = () => {
         {/* Legal Disclaimer */}
         <div className="mt-8 surface-card p-4" style={{ borderColor: 'rgba(217,160,60,0.28)' }}>
           <p className="text-body" style={{ color: 'hsl(38,70%,72%)' }}>
-            {'⚠️'} {t('disclaimer:main')}
+            {'вљ пёЏ'} {t('disclaimer:main')}
           </p>
         </div>
       </main>

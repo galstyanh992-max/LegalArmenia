@@ -3,9 +3,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Database } from '@/integrations/supabase/types';
+import { AppRole, narrowAppRole } from '@/lib/auth';
 
-type AppRole = Database['public']['Enums']['app_role'];
-type Profile = Database['public']['Tables']['profiles']['Row'];
+type Profile = Database['public']['Views']['profiles']['Row'];
 
 interface UseAuthReturn {
   user: User | null;
@@ -97,7 +97,7 @@ export function useAuth(): UseAuthReturn {
         console.error('Error fetching roles:', error);
         return [] as AppRole[];
       }
-      return (data || []).map((row) => row.role as AppRole);
+      return (data || []).map((row) => narrowAppRole(row.role)).filter((r): r is AppRole => r !== null);
     },
     enabled: !!user,
     staleTime: 30 * 1000,
@@ -144,7 +144,7 @@ export function useAuth(): UseAuthReturn {
         .from('user_roles')
         .select('role')
         .eq('user_id', user.id)
-        .eq('role', 'admin' as AppRole)
+        .eq('role', 'admin')
         .maybeSingle();
       if (error) {
         console.error('Error checking admin role:', error);

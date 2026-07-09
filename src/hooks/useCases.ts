@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -55,7 +55,7 @@ export function useCases(filters: CaseFilters = {}) {
   const { t } = useTranslation('cases');
   const queryClient = useQueryClient();
 
-  const { data: cases, isLoading, error } = useQuery({
+  const { data: cases, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['cases', filters],
     queryFn: async () => {
       let query = supabase
@@ -196,6 +196,8 @@ export function useCases(filters: CaseFilters = {}) {
     cases: cases || [],
     isLoading,
     error,
+    isError,
+    refetch,
     createCase,
     updateCase,
     deleteCase,

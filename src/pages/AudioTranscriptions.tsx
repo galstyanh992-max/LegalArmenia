@@ -12,6 +12,13 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { rollbackCaseFile, uploadCaseFileWithMetadata } from '@/lib/caseFileUpload';
+import {
+  AUDIO_TRANSCRIPTION_ACCEPT,
+  AUDIO_TRANSCRIPTION_SUPPORTED_LABEL,
+  getAudioTranscriptionMime,
+  isAudioTranscriptionSupportedFile,
+} from '@/lib/uploadPolicies';
 import { 
   ArrowLeft, 
   Scale, 
@@ -32,17 +39,6 @@ import {
   IconMicPremium, 
   IconDocumentsPremium 
 } from '@/components/icons/PremiumIcon';
-
-const SUPPORTED_AUDIO_FORMATS = [
-  'audio/mpeg', 'audio/wav', 'audio/mp4', 'audio/x-m4a',
-  'audio/m4a', 'audio/aac', 'audio/ogg', 'audio/webm', 'audio/flac',
-];
-const SUPPORTED_VIDEO_FORMATS = [
-  'video/mp4', 'video/quicktime', 'video/webm',
-  'video/x-msvideo', 'video/x-matroska',
-];
-const ALL_SUPPORTED_FORMATS = [...SUPPORTED_AUDIO_FORMATS, ...SUPPORTED_VIDEO_FORMATS];
-const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
 // ── Dialogue parser ──────────────────────────────────────────────────
 
@@ -130,7 +126,8 @@ const AudioTranscriptions = () => {
     if (!transcriptionResult?.transcription || !user) return;
     setIsSavingDoc(true);
     try {
-      const caseTitle = cases.find(c => c.id === selectedCaseId)?.title || '';
+      const targetCaseId = selectedCaseId && selectedCaseId !== 'none' ? selectedCaseId : '';
+      const caseTitle = cases.find(c => c.id === targetCaseId)?.title || '';
       const date = new Date().toLocaleDateString('ru-RU');
       const fileName = selectedFile?.name || 'audio';
 
@@ -148,7 +145,7 @@ const AudioTranscriptions = () => {
         title,
         content_text: contentText,
         status: 'draft',
-        case_id: selectedCaseId || null,
+        case_id: targetCaseId || null,
         metadata: {
           type: 'transcription',
           language: transcriptionResult.language_detected,
@@ -177,15 +174,13 @@ const AudioTranscriptions = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const fileExt = file.name.split('.').pop()?.toLowerCase();
-    const isM4A = fileExt === 'm4a';
-
-    if (!ALL_SUPPORTED_FORMATS.includes(file.type) && !isM4A) {
+    if (!isAudioTranscriptionSupportedFile(file)) {
+      const contentType = getAudioTranscriptionMime(file);
+      if (contentType) {
+        toast({ title: `${t('audio:file_too_large')} Supported: ${AUDIO_TRANSCRIPTION_SUPPORTED_LABEL}.`, variant: 'destructive' });
+        return;
+      }
       toast({ title: t('audio:unsupported_format'), variant: 'destructive' });
-      return;
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      toast({ title: t('audio:file_too_large'), variant: 'destructive' });
       return;
     }
 
@@ -201,48 +196,29 @@ const AudioTranscriptions = () => {
     setIsUploading(true);
     setTranscriptionResult(null);
 
+    let storagePath: string | null = null;
+    let dbFileId: string | null = null;
+    let finalized = false;
+    const targetCaseId = selectedCaseId && selectedCaseId !== 'none' ? selectedCaseId : '';
+
     try {
       const fileId = crypto.randomUUID();
       const fileExt = selectedFile.name.split('.').pop()?.toLowerCase();
 
-      let contentType = selectedFile.type;
-      if (fileExt === 'm4a' || contentType === 'audio/x-m4a' || contentType === 'audio/m4a') {
-        contentType = 'audio/mp4';
-      }
+      const contentType = getAudioTranscriptionMime(selectedFile);
+      if (!contentType || !fileExt) throw new Error(t('audio:unsupported_format'));
 
       let signedUrl: string;
-      let dbFileId: string | null = null;
 
-      if (selectedCaseId) {
-        // Upload linked to a case
-        const storagePath = `${selectedCaseId}/${fileId}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage
-          .from('case-files')
-          .upload(storagePath, selectedFile, { contentType });
-        if (uploadError) throw uploadError;
-
-        const { data: fileRecord, error: dbError } = await supabase
-          .from('case_files')
-          .insert({
-            case_id: selectedCaseId,
-            filename: `${fileId}.${fileExt}`,
-            original_filename: selectedFile.name,
-            storage_path: storagePath,
-            file_type: contentType,
-            file_size: selectedFile.size,
-            hash_sha256: '',
-            version: 1,
-            uploaded_by: user.id,
-          })
-          .select()
-          .single();
-
-        if (dbError) {
-          await supabase.storage.from('case-files').remove([storagePath]);
-          throw dbError;
-        }
-
-        dbFileId = fileRecord.id;
+      if (targetCaseId) {
+        const uploadResult = await uploadCaseFileWithMetadata({
+          caseId: targetCaseId,
+          file: selectedFile,
+          userId: user.id,
+          contentType,
+        });
+        storagePath = uploadResult.storagePath;
+        dbFileId = uploadResult.fileRecord.id;
 
         const { data: urlData } = await supabase.storage
           .from('case-files')
@@ -251,7 +227,7 @@ const AudioTranscriptions = () => {
         signedUrl = urlData.signedUrl;
       } else {
         // Standalone upload — no case required
-        const storagePath = `${user.id}/standalone/${fileId}.${fileExt}`;
+        storagePath = `${user.id}/standalone/${fileId}.${fileExt}`;
         const { error: uploadError } = await supabase.storage
           .from('case-files')
           .upload(storagePath, selectedFile, { contentType });
@@ -268,12 +244,23 @@ const AudioTranscriptions = () => {
         body: {
           audioUrl: signedUrl,
           fileName: selectedFile.name,
-          caseId: selectedCaseId || null,
+          caseId: targetCaseId || null,
           fileId: dbFileId,
         },
       });
 
       if (fnError) throw fnError;
+      if (result?.error || result?.success === false) {
+        throw new Error(result.error || t('audio:processing_failed'));
+      }
+
+      if (!targetCaseId && storagePath) {
+        const { error: cleanupError } = await supabase.storage.from('case-files').remove([storagePath]);
+        if (cleanupError) console.warn('Standalone audio cleanup failed:', { storagePath });
+        storagePath = null;
+      }
+
+      finalized = true;
 
       setTranscriptionResult({
         success: true,
@@ -292,6 +279,14 @@ const AudioTranscriptions = () => {
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
       console.error('Transcription error:', error);
+      if (!finalized) {
+        if (targetCaseId) {
+          await rollbackCaseFile(dbFileId, storagePath);
+        } else if (storagePath) {
+          const { error: cleanupError } = await supabase.storage.from('case-files').remove([storagePath]);
+          if (cleanupError) console.warn('Standalone audio rollback cleanup failed:', { storagePath });
+        }
+      }
       setTranscriptionResult({
         success: false,
         error: error instanceof Error ? error.message : t('errors:transcription_failed'),
@@ -358,7 +353,7 @@ const AudioTranscriptions = () => {
                 {t('audio:upload_audio')}
               </CardTitle>
               <CardDescription>
-                {t('audio:supported_formats')}
+                {AUDIO_TRANSCRIPTION_SUPPORTED_LABEL}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -399,7 +394,7 @@ const AudioTranscriptions = () => {
                 <Input
                   ref={fileInputRef}
                   type="file"
-                  accept="audio/*,video/*,.m4a,.mp3,.wav,.ogg,.webm,.flac,.aac,.mp4,.mov,.avi,.mkv"
+                  accept={AUDIO_TRANSCRIPTION_ACCEPT}
                   onChange={handleFileSelect}
                   disabled={isUploading}
                 />

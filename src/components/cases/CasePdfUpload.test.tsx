@@ -56,7 +56,7 @@ describe('CasePdfUpload', () => {
   it('should accept correct file types', () => {
     render(<CasePdfUpload {...mockProps} />);
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-    expect(fileInput.accept).toBe('.pdf,.jpg,.jpeg,.png,.tiff');
+    expect(fileInput.accept).toBe('.pdf,.jpg,.jpeg,.png,.tiff,.tif');
   });
 
   it('should not render when closed', () => {

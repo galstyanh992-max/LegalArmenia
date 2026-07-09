@@ -3,15 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import type { Database } from '@/integrations/supabase/types';
+import { uploadCaseFileWithMetadata } from '@/lib/caseFileUpload';
 
 type CaseFile = Database['public']['Tables']['case_files']['Row'];
-
-async function computeSHA256(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 export function useCaseFiles(caseId: string | undefined) {
   const { toast } = useToast();
@@ -36,65 +30,11 @@ export function useCaseFiles(caseId: string | undefined) {
 
   const uploadFile = useMutation({
     mutationFn: async ({ file, caseId }: { file: File; caseId: string }) => {
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Generate UUID for file
-      const fileId = crypto.randomUUID();
-      const fileExt = file.name.split('.').pop();
-      const storagePath = `${caseId}/${fileId}.${fileExt}`;
-
-      // Compute SHA-256 hash
-      const hash = await computeSHA256(file);
-
-      // Check for existing file with same hash (versioning)
-      const { data: existingFiles } = await supabase
-        .from('case_files')
-        .select('version')
-        .eq('case_id', caseId)
-        .eq('hash_sha256', hash)
-        .order('version', { ascending: false })
-        .limit(1);
-
-      const version = existingFiles && existingFiles.length > 0 
-        ? existingFiles[0].version + 1 
-        : 1;
-
-      // Upload to storage
-      const { error: uploadError } = await supabase.storage
-        .from('case-files')
-        .upload(storagePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Determine file type
-      const fileType = file.type || 'application/octet-stream';
-
-      // Create database record
-      const { data, error: dbError } = await supabase
-        .from('case_files')
-        .insert({
-          case_id: caseId,
-          filename: `${fileId}.${fileExt}`,
-          original_filename: file.name,
-          storage_path: storagePath,
-          file_type: fileType,
-          file_size: file.size,
-          hash_sha256: hash,
-          version,
-          uploaded_by: user.id,
-        })
-        .select()
-        .single();
-
-      if (dbError) {
-        // Rollback storage upload
-        await supabase.storage.from('case-files').remove([storagePath]);
-        throw dbError;
-      }
-
-      return data;
+      const { fileRecord } = await uploadCaseFileWithMetadata({ caseId, file, userId: user.id });
+      return fileRecord;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-files', caseId] });

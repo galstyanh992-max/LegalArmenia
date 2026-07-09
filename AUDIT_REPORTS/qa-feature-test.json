@@ -1,0 +1,102 @@
+{
+  "notes": [
+    {
+      "step": "after-register",
+      "url": "http://localhost:8082/dashboard",
+      "errs": []
+    },
+    {
+      "step": "dashboard-buttons",
+      "buttons": [
+        "Дела",
+        "Календарь",
+        "Аудио/Видео",
+        "Документы",
+        "Мои док.",
+        "Жалобы",
+        "Мои записи",
+        "Словарь",
+        "E-request",
+        "Telegram",
+        "Аи Анализ",
+        "Многоагентный анализ",
+        "Settings",
+        "Help",
+        "Select language 🇷🇺 Русский",
+        "Поиск",
+        "Календарь",
+        "Аудио/Видео",
+        "Документы",
+        "Мои док.",
+        "Жалобы",
+        "Мои записи",
+        "Словарь",
+        "E-request",
+        "Telegram",
+        "Новое дело",
+        "Фильтр по статусу",
+        "Фильтр по приоритету",
+        "Новые"
+      ]
+    },
+    {
+      "step": "ai-pill-clicked",
+      "label": "Аи Анализ"
+    },
+    {
+      "step": "ai-dialog-state",
+      "dialogs": [
+        {
+          "cls": "fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] border bg-background shadow-lg",
+          "w": 1440,
+          "h": 900,
+          "vw": 1440,
+          "vh": 900,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "step": "ai-dialog-labels",
+      "labels": [
+        "Привязка к делу",
+        "Факты дела",
+        "Правовой вопрос",
+        "Прокурор",
+        "Судья",
+        "Агрегатор"
+      ]
+    },
+    {
+      "step": "ai-dialog-comboboxes",
+      "count": 1,
+      "triggers": [
+        "flex h-12 items-center justify-between rounded-[14px] border"
+      ]
+    },
+    {
+      "step": "ma-pill-clicked",
+      "label": "Многоагентный анализ"
+    },
+    {
+      "step": "ma-dialog-state",
+      "dialogs": [
+        {
+          "cls": "fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] border bg-background shadow-lg",
+          "w": 1440,
+          "h": 900,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "step": "ma-dialog-labels",
+      "labels": [
+        "Привязка к делу",
+        "Факты дела",
+        "Пропускать готовые",
+        "Выбрать все"
+      ]
+    }
+  ]
+}

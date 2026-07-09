@@ -3,10 +3,10 @@
    "audio_title": "Audio & Video Transcription",
    "audio_transcription": "Audio/Video Transcription",
   "upload_audio": "Upload Audio/Video",
-  "upload_audio_video": "Upload Audio or Video File",
-  "upload_description": "Upload audio or video files to transcribe them automatically",
-  "supported_formats": "Supported: MP3, WAV, M4A, OGG, FLAC, MP4, MOV, WebM, AVI",
-   "supported_formats_video": "Supported: MP3, WAV, M4A, OGG, FLAC, MP4, MOV, WebM, AVI",
+  "upload_audio_video": "Upload Audio File",
+  "upload_description": "Upload audio files to transcribe them automatically",
+  "supported_formats": "Supported: MP3, WAV, M4A, OGG (max 25MB)",
+  "supported_formats_video": "Supported: MP3, WAV, M4A, OGG (max 25MB)",
   "processing": "Transcribing audio...",
   "processing_complete": "Transcription complete!",
   "processing_failed": "Transcription failed",
@@ -31,7 +31,7 @@
   "pause_audio": "Pause Audio",
   "audio_history": "Transcription History",
    "no_transcriptions": "No audio/video transcriptions yet",
-  "file_too_large": "File is too large. Maximum size: 100MB",
+  "file_too_large": "File is too large. Maximum size: 25MB",
   "unsupported_format": "Unsupported audio format",
   "low_quality_warning": "Audio quality is low, transcription may be inaccurate",
    "transcriptions_list": "Audio/Video Transcriptions",
@@ -55,5 +55,5 @@
   "select_case_placeholder": "Choose a case...",
   "audio_file": "Audio/Video File",
   "result": "Result",
-  "no_result": "Upload an audio or video file to see the transcription result"
+  "no_result": "Upload an audio file to see the transcription result"
 }

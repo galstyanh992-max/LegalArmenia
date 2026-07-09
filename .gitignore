@@ -59,3 +59,4 @@ temp/
 *.timestamp-*.mjs
 
 .vercel
+.codebuddy

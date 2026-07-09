@@ -1,0 +1,8 @@
+{
+  "url": "http://localhost:8082/admin/login",
+  "body": "Skip to main content Ադմին պանել Միայն ադմինիստրատորների համար Имя пользователя Пароль Մուտք Սա պաշտպանված տարածք է։ Չթույլատրված մուտքը արգելվում է։ Չունե՞ք հաշիվ: Գրանցվել",
+  "errs": [
+    "CONSOLE:Failed to load resource: the server responded with a status of 406 ()"
+  ],
+  "authOk": false
+}

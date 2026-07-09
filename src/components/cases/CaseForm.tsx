@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { supabase } from '@/integrations/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,9 +42,18 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Database } from '@/integrations/supabase/types';
 import { getFunctionUrl } from '@/lib/supabase-functions-url';
+import {
+  AUTOFILL_SUPPORTED_LABEL,
+  getAutofillMime,
+  isAutofillSupportedFile,
+} from '@/lib/uploadPolicies';
 
 type Case = Database['public']['Tables']['cases']['Row'];
 type CaseInsert = Database['public']['Tables']['cases']['Insert'];
+
+function isAutofillTempPath(path: string): boolean {
+  return /^[^/]+\/autofill\//.test(path);
+}
 
 // Stage definitions - unified for all case types as per requirements
 const CASE_STAGES = [
@@ -150,6 +159,7 @@ export function CaseForm({
   // extractedFacts/LegalQuestion no longer needed - fields are in the form schema
   const [autoFillProgress, setAutoFillProgress] = useState(0);
   const [autoFillStage, setAutoFillStage] = useState('');
+  const autofillTempPathsRef = useRef<string[]>([]);
 
   const caseFormSchema = z.object({
     case_number: z.string().optional().default(''),
@@ -192,6 +202,30 @@ export function CaseForm({
 
   // Watch case_type to update party_role options dynamically
   const watchedCaseType = form.watch('case_type');
+
+  const cleanupAutofillTempFiles = useCallback(async () => {
+    const paths = autofillTempPathsRef.current.filter(isAutofillTempPath);
+    if (paths.length === 0) return;
+
+    autofillTempPathsRef.current = [];
+    const { error } = await supabase.storage.from('case-files').remove(paths);
+    if (error) {
+      console.warn('Autofill temp cleanup failed:', { count: paths.length });
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      void cleanupAutofillTempFiles();
+    };
+  }, [cleanupAutofillTempFiles]);
+
+  const handleDialogOpenChange = useCallback((nextOpen: boolean) => {
+    if (!nextOpen) {
+      void cleanupAutofillTempFiles();
+    }
+    onOpenChange(nextOpen);
+  }, [cleanupAutofillTempFiles, onOpenChange]);
 
   useEffect(() => {
     if (initialData) {
@@ -252,6 +286,17 @@ export function CaseForm({
       toast({ title: t('add_files_first'), variant: 'destructive' });
       return;
     }
+
+    const unsupportedFile = pendingFiles.slice(0, 5).find(file => !isAutofillSupportedFile(file));
+    if (unsupportedFile) {
+      toast({
+        title: t('auto_fill_failed'),
+        description: `Unsupported file type for autofill. Supported: ${AUTOFILL_SUPPORTED_LABEL}.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsAutoFilling(true);
     setAutoFillProgress(0);
     setAutoFillStage(t('uploading_files'));
@@ -274,6 +319,7 @@ export function CaseForm({
         setAutoFillStage(stage);
       }, at)
     );
+    let requestTimeout: ReturnType<typeof setTimeout> | undefined;
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
@@ -290,7 +336,10 @@ export function CaseForm({
       for (const file of pendingFiles.slice(0, 5)) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._\u0531-\u058F-]/g, '_');
         const storagePath = `${user.id}/autofill/${Date.now()}_${safeName}`;
-        const mime = file.type || 'application/octet-stream';
+        const mime = getAutofillMime(file);
+        if (!mime) {
+          throw new Error(`Unsupported file type for autofill: ${file.name}`);
+        }
 
         const { error: uploadError } = await supabase.storage
           .from('case-files')
@@ -304,6 +353,7 @@ export function CaseForm({
           throw new Error(`Upload failed: ${file.name}`);
         }
 
+        autofillTempPathsRef.current.push(storagePath);
         fileRefs.push({
           bucket: 'case-files',
           path: storagePath,
@@ -314,7 +364,7 @@ export function CaseForm({
       }
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 300_000);
+      requestTimeout = setTimeout(() => controller.abort(), 300_000);
 
       const session = (await supabase.auth.getSession()).data.session;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -329,7 +379,6 @@ export function CaseForm({
         body: JSON.stringify({ files: fileRefs }),
         signal: controller.signal,
       });
-      clearTimeout(timeout);
 
       const data = await resp.json();
       if (!resp.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
@@ -367,14 +416,16 @@ export function CaseForm({
         variant: 'destructive',
       });
     } finally {
+      if (requestTimeout) clearTimeout(requestTimeout);
       timers.forEach(clearTimeout);
+      await cleanupAutofillTempFiles();
       setIsAutoFilling(false);
       setTimeout(() => {
         setAutoFillProgress(0);
         setAutoFillStage('');
       }, 2000);
     }
-  }, [pendingFiles, form, t, toast]);
+  }, [pendingFiles, form, t, toast, cleanupAutofillTempFiles]);
 
   const handleSubmit = (values: CaseFormValues) => {
     onSubmit({
@@ -398,7 +449,7 @@ export function CaseForm({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
@@ -750,6 +801,9 @@ export function CaseForm({
                       )}
                       {isAutoFilling ? t('auto_filling') : t('auto_fill_from_files')}
                     </Button>
+                    <p className="text-xs text-muted-foreground text-center">
+                      Autofill supports: {AUTOFILL_SUPPORTED_LABEL}
+                    </p>
                     {(isAutoFilling || autoFillProgress > 0) && (
                       <div className="space-y-1">
                         <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
@@ -772,7 +826,7 @@ export function CaseForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleDialogOpenChange(false)}
               >
                 {t('common:cancel')}
               </Button>

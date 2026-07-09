@@ -7,6 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAudioTranscriptions } from '@/hooks/useAudioTranscriptions';
 import type { Database } from '@/integrations/supabase/types';
+import {
+  AUDIO_TRANSCRIPTION_ACCEPT,
+  AUDIO_TRANSCRIPTION_SUPPORTED_LABEL,
+} from '@/lib/uploadPolicies';
 
 type CaseFile = Database['public']['Tables']['case_files']['Row'];
 type AudioTranscription = Database['public']['Tables']['audio_transcriptions']['Row'];
@@ -20,8 +24,6 @@ interface AudioUploadProps {
   caseId: string;
   onTranscriptionComplete?: (result: TranscriptionResult) => void;
 }
-
- const ACCEPTED_FORMATS = '.mp3,.wav,.m4a,.ogg,.webm,.flac,.mp4,.mov,.avi,.mkv';
 
 export function AudioUpload({ caseId, onTranscriptionComplete }: AudioUploadProps) {
   const { t } = useTranslation(['audio', 'common']);
@@ -102,7 +104,7 @@ export function AudioUpload({ caseId, onTranscriptionComplete }: AudioUploadProp
           <Input
             ref={fileInputRef}
             type="file"
-            accept={ACCEPTED_FORMATS}
+            accept={AUDIO_TRANSCRIPTION_ACCEPT}
             onChange={handleInputChange}
             className="hidden"
             aria-hidden="true"
@@ -118,9 +120,9 @@ export function AudioUpload({ caseId, onTranscriptionComplete }: AudioUploadProp
             <div className="flex flex-col items-center gap-3">
               <Upload className="h-10 w-10 text-muted-foreground" />
               <div>
-                 <p className="text-sm font-medium">{t('audio:upload_audio_video')}</p>
+                 <p className="text-sm font-medium">{t('audio:upload_audio')}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                   {t('audio:supported_formats_video')}
+                   {AUDIO_TRANSCRIPTION_SUPPORTED_LABEL}
                 </p>
               </div>
             </div>

@@ -1,0 +1,18 @@
+{
+  "notes": [
+    {
+      "step": "after-register",
+      "url": "http://localhost:8082/dashboard"
+    },
+    {
+      "step": "after-dashboard-reload",
+      "url": "http://localhost:8082/dashboard"
+    },
+    {
+      "step": "localStorage-auth-keys",
+      "lsKeys": [
+        "sb-avmgtsonawtzebvazgcr-auth-token"
+      ]
+    }
+  ]
+}

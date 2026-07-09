@@ -1,0 +1,49 @@
+{
+  "notes": [
+    {
+      "step": "landing-clean-console-errors",
+      "errs": []
+    },
+    {
+      "step": "landing-controls",
+      "langSelCount": 2,
+      "samples": [
+        "<button class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-backgroun",
+        "<button class=\"flex h-10 items-center gap-2 rounded-[10px] border border-white/10 bg-[#0F1523] px-3 text-sm text-[hsl(21"
+      ]
+    },
+    {
+      "step": "login-bad-creds-toast",
+      "url": "http://localhost:8082/login",
+      "sonnerText": "[no sonner]",
+      "toasts": [
+        "<li role=\"status\" aria-live=\"off\" aria-atomic=\"true\" tabindex=\"0\" data-state=\"open\" data-swipe-direction=\"right\" class=\"group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-"
+      ],
+      "bodySample": "Login failed Invalid login credentials Skip to main content Մուտք Մուտքագրեք ձեր տվյալները համակարգ մուտք գործելու համար Էլ․ հասցե (Email) Գաղտնաբառ (Password) Մուտք Չունե՞ք հաշիվ: Գրանցվել"
+    },
+    {
+      "step": "register-mismatch-validation",
+      "url": "http://localhost:8082/register",
+      "formMsgs": [
+        "Անուն Ազգանուն",
+        "Full name is required",
+        "Էլ․ հասցե (Email)",
+        "Invalid email address",
+        "Հաստատել գաղտնաբառը",
+        "Passwords don't match"
+      ]
+    },
+    {
+      "step": "register-empty-validation",
+      "url": "http://localhost:8082/register",
+      "formMsgs": [
+        "Անուն Ազգանուն",
+        "Full name is required",
+        "Էլ․ հասցե (Email)",
+        "Invalid email address",
+        "Գաղտնաբառ (Password)",
+        "Password must be at least 6 characters"
+      ]
+    }
+  ]
+}

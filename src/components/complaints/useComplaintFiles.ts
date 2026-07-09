@@ -24,6 +24,7 @@ export function useComplaintFiles({
   // Process single file
   const processFile = useCallback(async (fileState: UploadedFile): Promise<UploadedFile> => {
     const { file } = fileState;
+    let tempStoragePath: string | null = null;
     
     try {
       const isImage = file.type.startsWith("image/");
@@ -57,6 +58,7 @@ export function useComplaintFiles({
           .upload(fileName, file);
 
         if (uploadError) throw uploadError;
+        tempStoragePath = fileName;
 
         // Retry signed URL generation
         let signedUrl: string | null = null;
@@ -89,8 +91,6 @@ export function useComplaintFiles({
         if (error) throw error;
         text = data.text || data.extracted_text || "";
 
-        // Cleanup
-        await supabase.storage.from("case-files").remove([fileName]);
       } else {
         throw new Error("Unsupported file type");
       }
@@ -101,6 +101,13 @@ export function useComplaintFiles({
       const errorMessage = error instanceof Error ? error.message : "Processing failed";
       toast.error(errorMessage);
       return { ...fileState, status: "error", extractedText: "", errorMessage };
+    } finally {
+      if (tempStoragePath) {
+        const { error } = await supabase.storage.from("case-files").remove([tempStoragePath]);
+        if (error) {
+          console.warn("Complaint temp file cleanup failed:", { tempStoragePath });
+        }
+      }
     }
   }, [lang]);
 

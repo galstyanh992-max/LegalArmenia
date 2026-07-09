@@ -1,0 +1,20 @@
+{
+  "notes": [
+    {
+      "step": "after-register",
+      "url": "http://localhost:8082/dashboard",
+      "blockedCases": 2
+    },
+    {
+      "step": "cases-error-state",
+      "hasLoadFailed": true,
+      "hasTryAgain": true,
+      "retryBtn": "Попробовать снова",
+      "pageErrs": []
+    },
+    {
+      "step": "after-retry",
+      "pageErrsAfter": []
+    }
+  ]
+}

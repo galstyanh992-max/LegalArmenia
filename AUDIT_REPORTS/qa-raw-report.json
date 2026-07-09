@@ -1,0 +1,454 @@
+{
+  "startedAt": "2026-07-09T03:43:53.895Z",
+  "base": "http://localhost:8082",
+  "pages": [
+    {
+      "route": "/",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/landing",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/login",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/login",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": false,
+      "textSample": "Skip to main content Մուտք Մուտքագրեք ձեր տվյալները համակարգ մուտք գործելու համար Էլ․ հասցե (Email) Գաղտնաբառ (Password) Մուտք Չունե՞ք հաշիվ: Գրանցվել",
+      "error": null
+    },
+    {
+      "route": "/register",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/register",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": false,
+      "textSample": "Skip to main content Գրանցում Ստեղծել նոր հաշիվ LegalArmenia համակարգում Անուն Ազգանուն Էլ․ հասցե (Email) Գաղտնաբառ (Password) Հաստատել գաղտնաբառը Գրանցվել Արդեն ունե՞ք հաշիվ: Մուտք",
+      "error": null
+    },
+    {
+      "route": "/admin/login",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/admin/login",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": false,
+      "textSample": "Skip to main content Ադմին պանել Միայն ադմինիստրատորների համար Имя пользователя Пароль Մուտք Սա պաշտպանված տարածք է։ Չթույլատրված մուտքը արգելվում է։ Չունե՞ք հաշիվ: Գրանցվել",
+      "error": null
+    },
+    {
+      "route": "/not-a-real-route",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/not-a-real-route",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": false,
+      "textSample": "Skip to main content 404 Oops! Page not found Return to Home",
+      "error": null
+    },
+    {
+      "route": "/dashboard",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/calendar",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/cases/test-id",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/transcriptions",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/kb",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/kb/test-id",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    },
+    {
+      "route": "/admin",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/admin/login",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": false,
+      "textSample": "Skip to main content Ադմին պանել Միայն ադմինիստրատորների համար Имя пользователя Пароль Մուտք Սա պաշտպանված տարածք է։ Չթույլատրված մուտքը արգելվում է։ Չունե՞ք հաշիվ: Գրանցվել",
+      "error": null
+    },
+    {
+      "route": "/my-documents",
+      "status": 200,
+      "finalUrl": "http://localhost:8082/landing",
+      "title": "AI Legal Armenia | Իրավական ԱԻ Հայաստան",
+      "hasMain": true,
+      "textSample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В",
+      "error": null
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "http://localhost:8082/not-a-real-route",
+      "type": "error",
+      "text": "404 Error: User attempted to access non-existent route: /not-a-real-route"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    }
+  ],
+  "pageErrors": [],
+  "networkErrors": [],
+  "failedRequests": [
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/legal-chat"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/kb-search"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/dictionary-search"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/generate-complaint"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/ai-analyze"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/audio-transcribe"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/ocr-process"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/admin-create-user"
+    }
+  ],
+  "edgeFunctionCalls": [
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/legal-chat"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/kb-search"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/dictionary-search"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/generate-complaint"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/ai-analyze"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/audio-transcribe"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/ocr-process"
+    },
+    {
+      "url": "http://localhost:8082/landing",
+      "status": 401,
+      "method": "POST",
+      "responseUrl": "http://localhost:8082/functions/v1/admin-create-user"
+    }
+  ],
+  "notes": [
+    {
+      "step": "login-form-inputs",
+      "inputs": [
+        {
+          "type": "text",
+          "name": "email",
+          "placeholder": "example@mail.com",
+          "id": ":r0:-form-item"
+        },
+        {
+          "type": "password",
+          "name": "password",
+          "placeholder": "••••••••",
+          "id": ":r1:-form-item"
+        }
+      ]
+    },
+    {
+      "step": "login-bad-creds-result",
+      "url": "http://localhost:8082/login",
+      "bodySample": "Skip to main content Մուտք Մուտքագրեք ձեր տվյալները համակարգ մուտք գործելու համար Էլ․ հասցե (Email) Գաղտնաբառ (Password) Մուտք Չունե՞ք հաշիվ: Գրանցվել"
+    },
+    {
+      "step": "register-form-inputs",
+      "inputs": [
+        {
+          "type": "text",
+          "name": "fullName",
+          "placeholder": "Արամ Արամյան",
+          "id": ":r0:-form-item"
+        },
+        {
+          "type": "email",
+          "name": "email",
+          "placeholder": "example@mail.com",
+          "id": ":r1:-form-item"
+        },
+        {
+          "type": "password",
+          "name": "password",
+          "placeholder": "••••••••",
+          "id": ":r2:-form-item"
+        },
+        {
+          "type": "password",
+          "name": "confirmPassword",
+          "placeholder": "••••••••",
+          "id": ":r3:-form-item"
+        }
+      ]
+    },
+    {
+      "step": "admin-login-form-inputs",
+      "inputs": [
+        {
+          "type": "text",
+          "name": "username",
+          "placeholder": "admin",
+          "id": ":r0:-form-item"
+        },
+        {
+          "type": "password",
+          "name": "password",
+          "placeholder": "••••••••",
+          "id": ":r1:-form-item"
+        }
+      ]
+    },
+    {
+      "step": "landing-links",
+      "links": [
+        {
+          "text": "Skip to main content",
+          "href": "http://localhost:8082/landing#main-content"
+        },
+        {
+          "text": "Вход",
+          "href": "http://localhost:8082/login"
+        },
+        {
+          "text": "Register",
+          "href": "http://localhost:8082/register"
+        },
+        {
+          "text": "Начать",
+          "href": "http://localhost:8082/register"
+        },
+        {
+          "text": "Вход",
+          "href": "http://localhost:8082/login"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "step": "landing-headings",
+      "headings": [
+        "H1: AI Legal Armenia",
+        "H2: AI Legal платформа для Армении",
+        "H3: 4 Правовые роли",
+        "H3: AI Анализ",
+        "H3: Правовая база знаний"
+      ]
+    },
+    {
+      "step": "landing-images",
+      "images": [
+        {
+          "src": "http://localhost:8082/src/assets/logo.png",
+          "alt": "AI Legal Armenia",
+          "naturalW": 1024
+        },
+        {
+          "src": "http://localhost:8082/src/assets/logo.png",
+          "alt": "AI Legal Armenia",
+          "naturalW": 1024
+        }
+      ],
+      "count": 2
+    },
+    {
+      "step": "edge-function-unauth-probes",
+      "probes": [
+        {
+          "fn": "legal-chat",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        },
+        {
+          "fn": "kb-search",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        },
+        {
+          "fn": "dictionary-search",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        },
+        {
+          "fn": "generate-complaint",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        },
+        {
+          "fn": "ai-analyze",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        },
+        {
+          "fn": "audio-transcribe",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        },
+        {
+          "fn": "ocr-process",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        },
+        {
+          "fn": "admin-create-user",
+          "status": 401,
+          "body": "{\"code\":\"UNAUTHORIZED_NO_AUTH_HEADER\",\"message\":\"Missing authorization header\"}"
+        }
+      ]
+    },
+    {
+      "step": "protected-redirect-dashboard",
+      "finalUrl": "http://localhost:8082/landing",
+      "bodySample": "Skip to main content AI Legal Armenia Toggle theme Select language 🇷🇺 Русский Вход Register AI-Powered Legal Platform AI Legal платформа для Армении Интеллектуальный правовой анализ на базе AI. Доступ к Гражданскому кодексу, Уголовному кодексу, судебной практике и правовым комментариям. Начать В"
+    }
+  ],
+  "endedAt": "2026-07-09T03:44:34.595Z"
+}

@@ -20,6 +20,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { BulkOcrButton } from './BulkOcrButton';
 import { FileNotes } from './FileNotes';
 import {
+  CASE_FILE_ACCEPT,
+  CASE_FILE_MAX_BYTES,
+  CASE_FILE_SUPPORTED_LABEL,
+  formatMaxBytes,
+} from '@/lib/uploadPolicies';
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -112,16 +118,13 @@ export function CaseFileUpload({ caseId }: CaseFileUploadProps) {
   });
 
   const existingOcrFileIds = new Set(ocrResults?.map(r => r.file_id) || []);
-  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-  const ALLOWED_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'audio/mpeg', 'audio/wav', 'audio/x-m4a', 'text/plain'];
-
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     for (const file of Array.from(selectedFiles)) {
-      if (file.size > MAX_FILE_SIZE) {
-        toast.error(`${file.name}: ${t('ocr:file_too_large', 'File too large (max 50MB)')}`);
+      if (file.size > CASE_FILE_MAX_BYTES) {
+        toast.error(`${file.name}: ${t('ocr:file_too_large', 'File too large')} (${formatMaxBytes(CASE_FILE_MAX_BYTES)})`);
         continue;
       }
       await uploadFile.mutateAsync({ file, caseId });
@@ -172,12 +175,12 @@ export function CaseFileUpload({ caseId }: CaseFileUploadProps) {
               multiple
               className="hidden"
               onChange={handleFileSelect}
-              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp3,.wav,.m4a,.txt"
+              accept={CASE_FILE_ACCEPT}
             />
           </label>
         </Button>
         <span className="text-xs text-muted-foreground">
-          PDF, DOCX, JPG, PNG, MP3, WAV, M4A, TXT
+          {CASE_FILE_SUPPORTED_LABEL} (max {formatMaxBytes(CASE_FILE_MAX_BYTES)})
         </span>
       </div>
 

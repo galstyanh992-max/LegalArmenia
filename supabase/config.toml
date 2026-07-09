@@ -1,109 +1,181 @@
 project_id = "avmgtsonawtzebvazgcr"
 
+# -----------------------------------------------------------------------------
+# Edge Functions security classification
+# -----------------------------------------------------------------------------
+# verify_jwt = true  => Supabase validates the Authorization Bearer JWT before
+#                      invoking the function. Use for browser-facing endpoints.
+# verify_jwt = false => function receives anonymous calls and MUST perform its
+#                      own authentication/authorization. Permitted only for:
+#                        - public webhooks with signature verification
+#                        - internal service-to-service calls using x-internal-key
+#                        - legacy/disabled stubs that return 410
+# -----------------------------------------------------------------------------
+
+# Telegram notification worker: internal-only, requires x-internal-key
 [functions.send-telegram-notification]
 verify_jwt = false
 
+# Reminder notification worker: internal-only, requires x-internal-key
 [functions.process-reminder-notifications]
 verify_jwt = false
 
+# Telegram webhook: public by design, validates X-Telegram-Bot-Api-Secret-Token
 [functions.telegram-webhook]
 verify_jwt = false
 
+# AI-generated complaint: browser-facing, validates Authorization Bearer JWT
 [functions.generate-complaint]
+verify_jwt = true
 
-
+# AI-generated document: browser-facing, validates Authorization Bearer JWT
 [functions.generate-document]
-verify_jwt = false
+verify_jwt = true
 
+# AI case analysis: browser-facing, validates Authorization Bearer JWT
 [functions.ai-analyze]
-verify_jwt = false
+verify_jwt = true
 
+# Multi-agent analysis: browser-facing, validates Authorization Bearer JWT
 [functions.multi-agent-analyze]
+verify_jwt = true
 
+# OCR processing: browser-facing, validates Authorization Bearer JWT
 [functions.ocr-process]
-verify_jwt = false
+verify_jwt = true
 
+# Audio transcription: browser-facing, validates Authorization Bearer JWT
 [functions.audio-transcribe]
+verify_jwt = true
 
+# Legal chat: browser-facing, validates Authorization Bearer JWT
 [functions.legal-chat]
-verify_jwt = false
+verify_jwt = true
 
+# Case field extraction: browser-facing, validates Authorization Bearer JWT
 [functions.extract-case-fields]
+verify_jwt = true
 
+# Case form field extraction: browser-facing, validates Authorization Bearer JWT
 [functions.extract-case-form-fields]
-verify_jwt = false
+verify_jwt = true
 
-
+# File analysis for complaint: browser-facing, validates Authorization Bearer JWT
 [functions.analyze-files-for-complaint]
+verify_jwt = true
 
+# Legacy import pipeline (disabled, returns 410)
 [functions.legal-practice-import]
 verify_jwt = false
 
+# Rechunk backfill worker: internal-only, requires x-internal-key
 [functions.rechunk-backfill]
 verify_jwt = false
 
+# Practice enrichment worker: internal-only, requires x-internal-key
 [functions.legal-practice-enrich]
 verify_jwt = false
 
+# Vector search proxy: internal-only, requires x-internal-key
 [functions.vector-search]
 verify_jwt = false
 
+# Document normalizer: internal-only, requires x-internal-key
 [functions.legal-document-normalizer]
 verify_jwt = false
 
+# Text chunker: internal-only, requires x-internal-key
 [functions.legal-chunker]
 verify_jwt = false
 
+# Norm reference extractor: internal-only, requires x-internal-key
 [functions.norm-ref-extractor]
 verify_jwt = false
 
+# KB table screenshots (legacy/disabled stub, returns 410)
 [functions.kb-table-screenshots]
 verify_jwt = false
 
+# Document ingestion: internal-only, requires x-internal-key
 [functions.ingest-document]
 verify_jwt = false
 
+# Unified corpus search: browser-facing, validates Authorization Bearer JWT
 [functions.kb-unified-search]
-verify_jwt = false
+verify_jwt = true
 
+# Embedding generation: internal or authenticated user (dual auth)
 [functions.embeddings-generate]
 verify_jwt = false
 
+# ECHR import (legacy/disabled stub, returns 410)
 [functions.echr-import]
+verify_jwt = false
 
+# Query embedding proxy: dual auth (x-internal-key OR Bearer JWT)
 [functions.embed-query]
 verify_jwt = false
 
+# Dictionary search: browser-facing, validates Authorization Bearer JWT
 [functions.dictionary-search]
+verify_jwt = true
 
+# Dictionary import validation: admin-only, validates Authorization Bearer JWT + admin role
 [functions.dictionary-import-validate]
+verify_jwt = true
 
+# Dictionary import run: admin-only, validates Authorization Bearer JWT + admin role
+[functions.dictionary-import-run]
+verify_jwt = true
+
+# Practice chunk worker: internal-only, requires x-internal-key
 [functions.practice-chunk-worker]
 verify_jwt = false
 
+# Practice chunk enqueue: internal-only, requires x-internal-key
 [functions.practice-chunk-enqueue]
 verify_jwt = false
 
+# Practice pipeline orchestrator: internal-only, requires x-internal-key
 [functions.practice-pipeline-orchestrator]
 verify_jwt = false
 
+# Practice embed worker: internal-only, requires x-internal-key
 [functions.practice-embed-worker]
 verify_jwt = false
 
+# Practice AI enrich worker: internal-only, requires x-internal-key
 [functions.practice-ai-enrich-worker]
 verify_jwt = false
 
+# Eval runner: admin-only, validates Authorization Bearer JWT + admin role
 [functions.eval-runner]
+verify_jwt = true
 
-[functions.dictionary-import-run]
-
+# Admin AI chat: admin-only, validates Authorization Bearer JWT + admin role
 [functions.admin-ai-chat]
+verify_jwt = true
 
+# Admin user creation: admin-only, validates Authorization Bearer JWT + admin role
+[functions.admin-create-user]
+verify_jwt = true
+
+# Admin user deletion: admin-only, validates Authorization Bearer JWT + admin role
+[functions.admin-delete-user]
+verify_jwt = true
+
+# Admin password reset: admin-only, validates Authorization Bearer JWT + admin role
+[functions.admin-reset-password]
+verify_jwt = true
+
+# Data export: admin-only, validates Authorization Bearer JWT + admin role
 [functions.export-data]
+verify_jwt = true
 
+# Data sync to live (legacy/disabled stub, returns 410)
 [functions.data-sync-to-live]
 verify_jwt = false
 
-
+# Pipeline scheduler tick: internal-only, requires x-internal-key
 [functions.pipeline-tick]
 verify_jwt = false

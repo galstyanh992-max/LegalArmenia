@@ -1,0 +1,182 @@
+{
+  "notes": [
+    {
+      "step": "openapi",
+      "openApi": {
+        "status": 401,
+        "len": 101,
+        "body": "{\"message\":\"Invalid API key\",\"hint\":\"Only the `service_role` API key can be used for this endpoint.\"}"
+      }
+    },
+    {
+      "step": "kb-col-probe",
+      "indiv": [
+        {
+          "col": "id",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "title",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "content_text",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.content_text does not exist\"}"
+        },
+        {
+          "col": "category",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.category does not exist\"}"
+        },
+        {
+          "col": "is_active",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.is_active does not exist\"}"
+        },
+        {
+          "col": "created_at",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "updated_at",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "source_name",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.source_name does not exist\"}"
+        },
+        {
+          "col": "source_url",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "version_date",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.version_date does not exist\"}"
+        },
+        {
+          "col": "article_number",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.article_number does not exist\"}"
+        },
+        {
+          "col": "content_domain",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.content_domain does not exist\"}"
+        },
+        {
+          "col": "doc_type",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.doc_type does not exist\"}"
+        },
+        {
+          "col": "type",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.type does not exist\"}"
+        },
+        {
+          "col": "status",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.status does not exist\"}"
+        },
+        {
+          "col": "domain",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.domain does not exist\"}"
+        },
+        {
+          "col": "source_type",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.source_type does not exist\"}"
+        }
+      ]
+    },
+    {
+      "step": "documents-col-probe",
+      "indivD": [
+        {
+          "col": "id",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.id does not exist\"}"
+        },
+        {
+          "col": "title",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.title does not exist\"}"
+        },
+        {
+          "col": "content_text",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.content_text does not exist\"}"
+        },
+        {
+          "col": "content_domain",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "doc_type",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.doc_type does not exist\"}"
+        },
+        {
+          "col": "status",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.status does not exist\"}"
+        },
+        {
+          "col": "source_name",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.source_name does not exist\"}"
+        },
+        {
+          "col": "source_url",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.source_url does not exist\"}"
+        },
+        {
+          "col": "version_date",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.version_date does not exist\"}"
+        },
+        {
+          "col": "effective_from",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "effective_to",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "created_at",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "updated_at",
+          "status": 200,
+          "err": ""
+        },
+        {
+          "col": "category",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.category does not exist\"}"
+        },
+        {
+          "col": "is_active",
+          "status": 400,
+          "err": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column documents.is_active does not exist\"}"
+        }
+      ]
+    }
+  ]
+}

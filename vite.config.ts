@@ -105,5 +105,44 @@ export default defineConfig(({ mode }) => {
       },
       dedupe: ["react", "react-dom", "react/jsx-runtime"],
     },
+    build: {
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            if (id.includes("node_modules")) {
+              const after = id.split("node_modules/")[1];
+              if (!after) return "vendor";
+              const parts = after.split("/");
+              const pkg = parts[0].startsWith("@") ? `${parts[0]}/${parts[1]}` : parts[0];
+
+              if (pkg.includes("jspdf") || pkg.includes("html2canvas")) { return "pdf-render"; } if (pkg.includes("docx") || pkg.includes("pdf-parse") || pkg.includes("file-saver")) {
+                return "pdf-office";
+              }
+              if (pkg.includes("recharts")) return "charts";
+              if (pkg.includes("react-big-calendar") || pkg.includes("react-day-picker") || pkg.includes("date-fns")) {
+                return "calendar-date";
+              }
+              if (pkg.includes("framer-motion")) return "animation";
+              if (pkg.includes("@tiptap") || pkg.includes("lucide-react") || pkg.includes("prosemirror")) {
+                return "editor-icons";
+              }
+              if (pkg.includes("react") || pkg.includes("react-router-dom") || pkg.includes("react-dom")) {
+                return "react-vendor";
+              }
+              if (pkg.includes("@radix-ui") || pkg.includes("cmdk") || pkg.includes("vaul")) {
+                return "ui-vendor";
+              }
+              if (pkg.includes("@supabase")) return "supabase";
+              if (pkg.includes("react-markdown") || pkg.includes("remark") || pkg.includes("rehype") || pkg.includes("micromark")) {
+                return "markdown";
+              }
+
+              return `vendor-${pkg.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
+            }
+          },
+        },
+      },
+    },
   };
 });

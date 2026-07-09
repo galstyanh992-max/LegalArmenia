@@ -58,6 +58,92 @@ type TelegramUploadsTable = {
   insert: (row: TelegramUploadRow) => PromiseLike<{ error: unknown | null }>;
 };
 
+type TelegramUploadsCountTable = {
+  select: (
+    columns: string,
+    options: { count: "exact"; head: true },
+  ) => {
+    eq: (column: string, value: unknown) => {
+      gte: (column: string, value: unknown) => PromiseLike<{
+        count: number | null;
+        error: { message?: string } | null;
+      }>;
+    };
+  };
+};
+
+const TELEGRAM_UPLOAD_MAX_BYTES = 20 * 1024 * 1024;
+const TELEGRAM_UPLOADS_PER_HOUR = 10;
+const TELEGRAM_ALLOWED_MIME_BY_EXTENSION: Record<string, string> = {
+  pdf: "application/pdf",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  tif: "image/tiff",
+  tiff: "image/tiff",
+  txt: "text/plain",
+};
+
+function telegramFileExtension(fileName: string): string {
+  return fileName.split(".").pop()?.toLowerCase() || "";
+}
+
+function normalizeTelegramMime(mimeType: string): string {
+  const normalized = mimeType.split(";")[0].trim().toLowerCase();
+  if (normalized === "image/jpg") return "image/jpeg";
+  return normalized;
+}
+
+function validateTelegramUpload(
+  originalFilename: string,
+  mimeType: string,
+  fileSize: number | undefined,
+): { ok: true; extension: string; mimeType: string } | { ok: false; message: string } {
+  const extension = telegramFileExtension(originalFilename);
+  const allowedMime = TELEGRAM_ALLOWED_MIME_BY_EXTENSION[extension];
+  const normalizedMime = normalizeTelegramMime(mimeType || "");
+
+  if (!allowedMime || normalizedMime !== allowedMime) {
+    return {
+      ok: false,
+      message: "❌ Unsupported file type. Supported: PDF, DOCX, JPG, PNG, TIFF, TXT.",
+    };
+  }
+
+  if (fileSize && fileSize > TELEGRAM_UPLOAD_MAX_BYTES) {
+    return {
+      ok: false,
+      message: "❌ File is too large. Maximum size: 20 MB.",
+    };
+  }
+
+  return { ok: true, extension, mimeType: allowedMime };
+}
+
+async function checkTelegramUploadRateLimit(
+  supabase: TelegramSupabaseClient,
+  chatId: number,
+): Promise<{ allowed: true } | { allowed: false; message: string }> {
+  const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const uploadsTable = supabase.from("telegram_uploads") as TelegramUploadsCountTable;
+  const { count, error } = await uploadsTable
+    .select("id", { count: "exact", head: true })
+    .eq("telegram_chat_id", chatId.toString())
+    .gte("created_at", since);
+
+  if (error) {
+    console.error("Telegram rate limit check failed:", { message: error.message });
+    return { allowed: false, message: "❌ Upload temporarily unavailable. Please try again later." };
+  }
+
+  if ((count || 0) >= TELEGRAM_UPLOADS_PER_HOUR) {
+    return { allowed: false, message: "❌ Upload rate limit reached. Try again later." };
+  }
+
+  return { allowed: true };
+}
+
 /**
  * Validate X-Telegram-Bot-Api-Secret-Token header.
  * Returns null if valid, or an error Response if invalid.
@@ -175,8 +261,8 @@ serve(async (req) => {
 3. Файл автоматически сохранится в вашей папке
 
 <b>Поддерживаемые форматы:</b>
-📷 Фотографии (JPG, PNG)
-📄 Документы (PDF, DOCX, и др.)
+📷 Фотографии (JPG, PNG, TIFF)
+📄 Документы (PDF, DOCX, TXT)
 
 Максимальный размер: 20 МБ`;
 
@@ -358,7 +444,19 @@ async function handleFileUpload(
     return;
   }
 
-  if (fileSize && fileSize > 20 * 1024 * 1024) {
+  const validation = validateTelegramUpload(originalFilename, mimeType, fileSize);
+  if (!validation.ok) {
+    await sendTelegramMessage(botToken, chatId, validation.message);
+    return;
+  }
+
+  const rateLimit = await checkTelegramUploadRateLimit(supabase, chatId);
+  if (!rateLimit.allowed) {
+    await sendTelegramMessage(botToken, chatId, rateLimit.message);
+    return;
+  }
+
+  if (fileSize && fileSize > TELEGRAM_UPLOAD_MAX_BYTES) {
     await sendTelegramMessage(botToken, chatId, "❌ Файл слишком большой. Максимальный размер: 20 МБ.");
     return;
   }
@@ -384,14 +482,18 @@ async function handleFileUpload(
     }
 
     const fileBuffer = await fileResponse.arrayBuffer();
+    if (fileBuffer.byteLength > TELEGRAM_UPLOAD_MAX_BYTES) {
+      await sendTelegramMessage(botToken, chatId, "❌ File is too large. Maximum size: 20 MB.");
+      return;
+    }
 
-    const fileExt = originalFilename.split('.').pop() || 'bin';
-    const storagePath = `${profile.id}/${crypto.randomUUID()}.${fileExt}`;
+    const storedFilename = `${crypto.randomUUID()}.${validation.extension}`;
+    const storagePath = `${profile.id}/${storedFilename}`;
 
     const { error: uploadError } = await supabase.storage
       .from("telegram-uploads")
       .upload(storagePath, fileBuffer, {
-        contentType: mimeType,
+        contentType: validation.mimeType,
         upsert: false,
       });
 
@@ -401,11 +503,11 @@ async function handleFileUpload(
     const { error: dbError } = await telegramUploadsTable.insert({
         user_id: profile.id,
         telegram_chat_id: chatId.toString(),
-        filename: `${crypto.randomUUID()}.${fileExt}`,
+        filename: storedFilename,
         original_filename: originalFilename,
         storage_path: storagePath,
-        file_type: mimeType,
-        file_size: fileSize,
+        file_type: validation.mimeType,
+        file_size: fileBuffer.byteLength,
         caption: caption,
       });
 

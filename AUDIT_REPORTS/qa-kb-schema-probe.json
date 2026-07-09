@@ -1,0 +1,34 @@
+{
+  "notes": [
+    {
+      "step": "schema-probes",
+      "results": [
+        {
+          "q": "knowledge_base?select=id,title,updated_at&limit=1",
+          "status": 200,
+          "body": "[]"
+        },
+        {
+          "q": "knowledge_base?select=*&limit=1",
+          "status": 200,
+          "body": "[]"
+        },
+        {
+          "q": "documents?select=*&limit=1",
+          "status": 200,
+          "body": "[]"
+        },
+        {
+          "q": "knowledge_base?select=id&limit=1",
+          "status": 200,
+          "body": "[]"
+        },
+        {
+          "q": "knowledge_base?select=id,title,category,is_active,created_at,content_text,source_name,source_url,version_date,article_number&limit=1",
+          "status": 400,
+          "body": "{\"code\":\"42703\",\"details\":null,\"hint\":null,\"message\":\"column knowledge_base.category does not exist\"}"
+        }
+      ]
+    }
+  ]
+}
