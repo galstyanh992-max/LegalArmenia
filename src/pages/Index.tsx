@@ -123,9 +123,9 @@ const Index = () => {
             {/* Features */}
             <div className="mt-16 grid gap-5 sm:gap-6 md:grid-cols-3 lg:mt-24">
               {[
-                { icon: Shield, key: 'roles', color: 'text-primary', bg: 'bg-primary/10' },
-                { icon: Brain, key: 'analysis', color: 'text-primary', bg: 'bg-accent' },
-                { icon: Scale, key: 'kb', color: 'text-primary', bg: 'bg-secondary' },
+                { icon: Shield, key: 'roles' },
+                { icon: Brain, key: 'analysis' },
+                { icon: Scale, key: 'kb' },
               ].map((feature, i) => (
                 <motion.div
                   key={feature.key}
@@ -133,15 +133,16 @@ const Index = () => {
                   animate="visible"
                   custom={5 + i}
                   variants={fadeUp}
-                  className="group relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-elevated"
+                  className="group relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-6 sm:p-8 transition-all duration-500 hover:border-accent/40 hover:shadow-[0_8px_30px_rgba(215,180,106,0.12)] hover:-translate-y-1"
                 >
-                  <div className={`mb-4 inline-flex rounded-xl ${feature.bg} p-3`}>
-                    <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                  <div className="mb-6 relative inline-flex items-center justify-center rounded-2xl p-4 bg-gradient-to-br from-[#F8EDB2] via-[#D7B46A] to-[#9E7728] shadow-[0_4px_20px_rgba(215,180,106,0.3)] group-hover:shadow-[0_8px_25px_rgba(215,180,106,0.5)] transition-all duration-500 transform group-hover:scale-110">
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <feature.icon className="h-7 w-7 sm:h-8 sm:w-8 text-[#0F1423] relative z-10 drop-shadow-md" strokeWidth={1.5} />
                   </div>
-                  <h3 className="mb-2 text-base font-semibold sm:text-lg">
+                  <h3 className="mb-3 text-lg font-bold sm:text-xl group-hover:text-accent transition-colors duration-300">
                     {t(`common:feature_${feature.key}`)}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                     {t(`common:feature_${feature.key}_desc`)}
                   </p>
                 </motion.div>

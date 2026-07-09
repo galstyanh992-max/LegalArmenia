@@ -487,3 +487,28 @@ export const IconLoader = ({ size = 20, ...p }: IconProps) => (
     <path d="M12 4a8 8 0 1 0 8 8" opacity="0.9" />
   </svg>
 );
+
+export const IconAiAnalysisPremium = ({ size = 20, ...p }: IconProps) => (
+  <svg {...base(size)} {...p}>
+    <path d="M9 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" opacity="0.9" />
+    <path d="M17 6l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5z" opacity="0.6" />
+    <circle cx="13" cy="14" r="4" />
+    <path d="M16 17l4 4" />
+    <circle cx="13" cy="14" r="1.5" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export const IconMultiAgentPremium = ({ size = 20, ...p }: IconProps) => (
+  <svg {...base(size)} {...p}>
+    <circle cx="12" cy="6" r="3" />
+    <circle cx="6" cy="16" r="3" opacity="0.8" />
+    <circle cx="18" cy="16" r="3" opacity="0.8" />
+    <path d="M10 8.5L7.5 13.5" opacity="0.6" />
+    <path d="M14 8.5l2.5 5" opacity="0.6" />
+    <path d="M9 16h6" opacity="0.6" />
+    <circle cx="12" cy="6" r="1" fill="currentColor" stroke="none" />
+    <circle cx="6" cy="16" r="1" fill="currentColor" stroke="none" />
+    <circle cx="18" cy="16" r="1" fill="currentColor" stroke="none" />
+  </svg>
+);
+

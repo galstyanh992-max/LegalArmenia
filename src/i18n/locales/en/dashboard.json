@@ -34,5 +34,9 @@
   "role_lawyer": "Lawyer",
   "role_client": "Client",
   "role_auditor": "Auditor",
-  "manage_cases": "Manage your legal cases"
+  "manage_cases": "Manage your legal cases",
+  "ai_analysis": "AI Analysis",
+  "ai_analysis_desc": "Analyze facts and legal questions",
+  "multi_agent": "Multi-agent Analysis",
+  "multi_agent_desc": "Run comprehensive multi-agent legal analysis"
 }

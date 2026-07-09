@@ -280,9 +280,9 @@ const CaseDetail = () => {
       <CaseDetailHeader userEmail={user?.email} onSignOut={signOut} />
 
       {/* Main Content - Mobile-first with safe areas */}
-      <main className="flex-1 overflow-y-auto mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-4 lg:pt-6 pb-safe max-w-full lg:max-w-7xl">
+      <main className="flex-1 overflow-y-auto mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-4 lg:pt-6 pb-2 lg:pb-6 max-w-full w-full">
         {/* Case Header - Premium mobile card */}
-        <div className="card-premium p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="card-premium p-4 sm:p-6 mb-4 sm:mb-4 shrink-0">
           <div className="space-y-4">
             {/* Title Section */}
             <div>
@@ -349,7 +349,7 @@ const CaseDetail = () => {
 
         {/* Court Date Reminder Suggestion */}
         {caseData.court_date && (
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-4 sm:mb-4 shrink-0">
             <CourtDateReminderSuggestion
               caseId={caseData.id}
               caseTitle={caseData.title}
@@ -361,7 +361,7 @@ const CaseDetail = () => {
         {/* Case Details & Tabs - Stack on mobile, grid on desktop */}
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-3 w-full min-w-0">
           {/* Main Content */}
-          <div className="lg:col-span-2 min-w-0 overflow-hidden">
+          <div className="lg:col-span-2 min-w-0">
             <Tabs defaultValue="details" className="w-full min-w-0">
               {/* Tab Navigation - Horizontal scroll on mobile */}
               <div className="overflow-x-auto scrollbar-thin pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">

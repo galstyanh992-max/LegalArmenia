@@ -23,6 +23,33 @@ function escapeLikePattern(input: string): string {
   return input.replace(/[%_\\]/g, '\\$&');
 }
 
+const writableCaseColumns = [
+  'case_number',
+  'title',
+  'description',
+  'status',
+  'lawyer_id',
+  'client_id',
+  'case_type',
+  'current_stage',
+  'priority',
+  'court_name',
+  'court_date',
+  'facts',
+  'legal_question',
+  'party_role',
+  'appeal_party_role',
+  'notes',
+] as const;
+
+function pickWritableCaseFields<T extends Record<string, unknown>>(value: T) {
+  const result: Record<string, unknown> = {};
+  for (const key of writableCaseColumns) {
+    if (key in value) result[key] = value[key];
+  }
+  return result;
+}
+
 export function useCases(filters: CaseFilters = {}) {
   const { toast } = useToast();
   const { t } = useTranslation('cases');
@@ -75,7 +102,7 @@ export function useCases(filters: CaseFilters = {}) {
     mutationFn: async (newCase: CaseInsert) => {
       // Try insert; on duplicate case_number, auto-append suffix
       let attempt = 0;
-      let caseToInsert = { ...newCase };
+      let caseToInsert = pickWritableCaseFields(newCase as Record<string, unknown>) as CaseInsert;
       const maxAttempts = 10;
 
       while (attempt < maxAttempts) {
@@ -90,7 +117,7 @@ export function useCases(filters: CaseFilters = {}) {
         if (error.message?.includes('cases_case_number_active_key') && attempt < maxAttempts - 1) {
           attempt++;
           caseToInsert = {
-            ...newCase,
+            ...caseToInsert,
             case_number: `${newCase.case_number}-${attempt}`,
           };
           continue;
@@ -118,9 +145,10 @@ export function useCases(filters: CaseFilters = {}) {
 
   const updateCase = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: CaseUpdate }) => {
+      const writableUpdates = pickWritableCaseFields(updates as Record<string, unknown>) as CaseUpdate;
       const { data, error } = await supabase
         .from('cases')
-        .update(updates)
+        .update(writableUpdates)
         .eq('id', id)
         .select()
         .single();

@@ -57,12 +57,5 @@ temp/
 **/.fuse_hidden*
 
 *.timestamp-*.mjs
-node_modules/
-dist/
-.env
-.env.*
 
-node_modules/
-dist/.env.env.*
-*.timestamp-*.mjs
-
+.vercel

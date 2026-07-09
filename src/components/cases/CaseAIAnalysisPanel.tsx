@@ -111,6 +111,7 @@ export function CaseAIAnalysisPanel({
   // Load previously saved analyses
   useEffect(() => {
     const loadSavedAnalyses = async () => {
+      if (caseId === 'standalone') return;
       ignoreSavedAnalysesLoadRef.current = false;
       setLoadingSavedAnalyses(true);
       try {
@@ -166,6 +167,7 @@ export function CaseAIAnalysisPanel({
 
 
   const handleSaveAnalysis = useCallback(async (role: AIRole) => {
+    if (caseId === 'standalone') return;
     if (!results[role]) return;
     
     setSavingAnalysisRole(role);

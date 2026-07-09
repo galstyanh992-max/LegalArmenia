@@ -53,11 +53,15 @@ import {
   IconUsersPremium,
   IconSearchPremium,
   IconChartPremium,
+  IconAiAnalysisPremium,
+  IconMultiAgentPremium,
 } from '@/components/icons/PremiumIcon';
 import { DocumentGeneratorDialog } from '@/components/documents/DocumentGeneratorDialog';
 import { ComplaintWizard } from '@/components/complaints/ComplaintWizard';
 import { NotesPanel } from '@/components/notes/NotesPanel';
 import { DictionarySearch } from '@/components/dictionary/DictionarySearch';
+import { StandaloneAIAnalysis } from '@/components/standalone/StandaloneAIAnalysis';
+import { StandaloneMultiAgent } from '@/components/standalone/StandaloneMultiAgent';
 import { KBSearchFilters } from '@/components/kb/KBSearchFilters';
 import { KBSearchPanel } from '@/components/kb/KBSearchPanel';
 import { KBDocumentCard } from '@/components/kb/KBDocumentCard';
@@ -98,6 +102,8 @@ const Dashboard = () => {
   const [notesOpen, setNotesOpen] = useState(false);
   const [dictOpen, setDictOpen] = useState(false);
   const [telegramOpen, setTelegramOpen] = useState(false);
+  const [aiAnalysisOpen, setAiAnalysisOpen] = useState(false);
+  const [multiAgentOpen, setMultiAgentOpen] = useState(false);
 
   const [kbFilters, setKbFilters] = useState<KBFiltersType>({ page: 1, pageSize: 10 });
 
@@ -127,7 +133,7 @@ const Dashboard = () => {
         continue;
       }
 
-      await supabase.from('case_files').insert({
+      const { error: dbError } = await supabase.from('case_files').insert({
         case_id: caseId,
         filename: `${fileId}.${fileExt}`,
         original_filename: file.name,
@@ -137,24 +143,37 @@ const Dashboard = () => {
         version: 1,
         uploaded_by: user?.id,
       });
+
+      if (dbError) {
+        await supabase.storage.from('case-files').remove([storagePath]);
+        throw dbError;
+      }
     }
   };
 
   const handleCreateCase = (data: Database['public']['Tables']['cases']['Insert'], files?: File[]) => {
     const caseData = {
       ...data,
-      client_id: user?.id,
+      ...(isClient ? { client_id: user?.id } : { lawyer_id: user?.id }),
     };
     createCase.mutate(caseData, {
       onSuccess: async (newCase) => {
-        if (files && files.length > 0 && newCase?.id) {
-          await uploadFilesToCase(newCase.id, files);
+        try {
+          if (files && files.length > 0 && newCase?.id) {
+            await uploadFilesToCase(newCase.id, files);
+            toast({
+              title: t('cases:file_uploaded'),
+              variant: 'default',
+            });
+          }
+          setFormOpen(false);
+        } catch (error) {
           toast({
-            title: t('cases:file_uploaded'),
-            variant: 'default',
+            title: t('errors:operation_failed'),
+            description: error instanceof Error ? error.message : 'Upload failed',
+            variant: 'destructive',
           });
         }
-        setFormOpen(false);
       },
     });
   };
@@ -189,6 +208,8 @@ const Dashboard = () => {
     { icon: <IconDictionaryPremium size={20} />, label: t('dictionary:dictionary', 'Dictionary'), onClick: () => setDictOpen(true) },
     { icon: <IconExternalPremium size={20} />, label: 'E-request', onClick: () => window.open('https://e-request.am', '_blank') },
     { icon: <IconTelegramPremium size={20} />, label: 'Telegram', onClick: () => setTelegramOpen(true) },
+    { icon: <IconAiAnalysisPremium size={20} />, label: t('dashboard:ai_analysis', 'AI Analysis'), onClick: () => setAiAnalysisOpen(true) },
+    { icon: <IconMultiAgentPremium size={20} />, label: t('dashboard:multi_agent', 'Multi-agent Analysis'), onClick: () => setMultiAgentOpen(true) },
   ];
 
   const Pill = ({
@@ -279,7 +300,7 @@ const Dashboard = () => {
 
       <div className="min-w-0 flex-1 flex flex-col h-screen overflow-hidden">
       <header className="shrink-0 z-20 glass-header">
-        <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-full items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-2.5">
             <span className="text-[hsl(38,56%,63%)] lg:hidden">
               <img src={logo} alt="Logo" className="w-8 h-8 object-contain drop-shadow-md" />
@@ -301,7 +322,7 @@ const Dashboard = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto mx-auto max-w-[1500px] w-full px-4 py-6 sm:py-8 lg:px-8 lg:py-10">
+      <main className="flex-1 overflow-y-auto mx-auto max-w-full w-full px-4 py-6 sm:py-8 lg:px-8 lg:py-10">
         {/* Page Header */}
         <div className="mb-8 flex flex-col gap-5">
           <div className="flex items-center justify-between">
@@ -401,6 +422,36 @@ const Dashboard = () => {
               </SheetContent>
             </Sheet>
             <Pill icon={<IconExternalPremium size={16} />} label="E-request" onClick={() => window.open('https://e-request.am', '_blank')} />
+            {/* AI Analysis */}
+            <Sheet open={aiAnalysisOpen} onOpenChange={setAiAnalysisOpen}>
+              <Pill asChild icon={<IconAiAnalysisPremium size={16} />} label={t('dashboard:ai_analysis', 'AI Analysis')} />
+              <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel" side="right">
+                <SheetHeader>
+                  <SheetTitle>{t('dashboard:ai_analysis', 'AI Analysis')}</SheetTitle>
+                  <SheetDescription>
+                    {t('dashboard:ai_analysis_desc', 'Analyze facts and legal questions')}
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="mt-6 h-[calc(100vh-120px)]">
+                  <StandaloneAIAnalysis />
+                </div>
+              </SheetContent>
+            </Sheet>
+            {/* Multi-Agent Analysis */}
+            <Sheet open={multiAgentOpen} onOpenChange={setMultiAgentOpen}>
+              <Pill asChild icon={<IconMultiAgentPremium size={16} />} label={t('dashboard:multi_agent', 'Multi-agent Analysis')} />
+              <SheetContent className="w-full sm:max-w-3xl overflow-y-auto surface-panel" side="right">
+                <SheetHeader>
+                  <SheetTitle>{t('dashboard:multi_agent', 'Multi-agent Analysis')}</SheetTitle>
+                  <SheetDescription>
+                    {t('dashboard:multi_agent_desc', 'Run comprehensive multi-agent legal analysis')}
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="mt-6 h-[calc(100vh-120px)]">
+                  <StandaloneMultiAgent />
+                </div>
+              </SheetContent>
+            </Sheet>
             {/* Telegram Uploads */}
             <Sheet open={telegramOpen} onOpenChange={setTelegramOpen}>
               <Pill asChild icon={<IconTelegramPremium size={16} />} label="Telegram" />

@@ -26,6 +26,7 @@ const ANON_KEY = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") || Deno.env.get("
 const TEST_EMAIL = Deno.env.get("TEST_USER_EMAIL");
 const TEST_PASSWORD = Deno.env.get("TEST_USER_PASSWORD");
 const OCR_URL = `${SUPABASE_URL}/functions/v1/ocr-process`;
+const BROWSER_ORIGIN = "http://localhost:8080";
 
 // ─── Auth helper ────────────────────────────────────────────────────────
 
@@ -70,7 +71,7 @@ Deno.test("ocr-process: call without Authorization is rejected (401)", async () 
 
   const response = await fetch(OCR_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Origin: BROWSER_ORIGIN, apikey: ANON_KEY! },
     body: JSON.stringify({ fileUrl: "https://example.com/test.pdf", fileName: "test.pdf" }),
   });
 
@@ -84,8 +85,11 @@ Deno.test("ocr-process: call without Authorization is rejected (401)", async () 
 Deno.test("ocr-process: OPTIONS preflight returns 200 with CORS headers", async () => {
   if (skipIfNoUrl()) return;
 
-  const response = await fetch(OCR_URL, { method: "OPTIONS" });
-  assertEquals(response.status, 200);
+  const response = await fetch(OCR_URL, {
+    method: "OPTIONS",
+    headers: { Origin: BROWSER_ORIGIN, apikey: ANON_KEY! },
+  });
+  assertEquals(response.status, 204);
   assertExists(response.headers.get("access-control-allow-origin"));
   await response.text();
 });
@@ -97,7 +101,7 @@ Deno.test("ocr-process: error response matches normalized schema", async () => {
 
   const response = await fetch(OCR_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Origin: BROWSER_ORIGIN, apikey: ANON_KEY! },
     body: JSON.stringify({ fileUrl: "https://example.com/test.pdf", fileName: "test.pdf" }),
   });
 
@@ -177,7 +181,7 @@ Deno.test("ocr-process: x-request-id header present in error response", async ()
 
   const response = await fetch(OCR_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Origin: BROWSER_ORIGIN, apikey: ANON_KEY! },
     body: JSON.stringify({ fileUrl: "https://example.com/test.pdf", fileName: "test.pdf" }),
   });
 

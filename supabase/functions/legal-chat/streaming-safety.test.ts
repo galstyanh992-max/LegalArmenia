@@ -23,9 +23,10 @@ Deno.test("legal-chat safe streaming - safe mode does not emit raw token chunks 
   )?.[0] ?? "";
 
   assertStringIncludes(transformBlock, 'if (streamMode === "legacy")');
-  assertStringIncludes(
-    transformBlock,
-    'controller.enqueue(encoder.encode(line + "\\n"))',
+  assert(
+    /if\s*\(streamMode === "legacy"\)\s*\{\s*controller\.enqueue\(encoder\.encode\(line \+ "\\n"\)\);\s*\}/
+      .test(transformBlock),
+    "legacy mode should forward SSE lines",
   );
   assertEquals(
     transformBlock.includes(
@@ -33,9 +34,10 @@ Deno.test("legal-chat safe streaming - safe mode does not emit raw token chunks 
     ),
     false,
   );
-  assertStringIncludes(
-    transformBlock,
-    'if (streamMode === "legacy") {\n            controller.enqueue(chunk);',
+  assert(
+    /if\s*\(streamMode === "legacy"\)\s*\{\s*controller\.enqueue\(chunk\);\s*\}/
+      .test(transformBlock),
+    "legacy mode should forward raw chunks only in decode fallback",
   );
 });
 
@@ -122,9 +124,10 @@ Deno.test("legal-chat legacy streaming - old token forwarding is preserved and m
 
   assertStringIncludes(text, "streaming_safety_mode: streamingSafetyMode");
   assertStringIncludes(text, "legacy_unverified_streaming");
-  assertStringIncludes(
-    text,
-    'if (streamMode === "legacy") {\n              controller.enqueue(encoder.encode(line + "\\n"));',
+  assert(
+    /if\s*\(streamMode === "legacy"\)\s*\{\s*controller\.enqueue\(encoder\.encode\(line \+ "\\n"\)\);\s*\}/
+      .test(text),
+    "legacy mode should preserve old token forwarding",
   );
 });
 

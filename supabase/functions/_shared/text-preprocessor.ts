@@ -177,6 +177,7 @@ function isGarbled(line: string): boolean {
   const trimmed = line.trim();
   if (trimmed.length < 4 || trimmed.length > 30) return false;
   if (!GARBLED_LINE_RE.test(trimmed)) return false;
+  if (/(.)\1{2,}/i.test(trimmed)) return true;
 
   // Check if it's a real word — real words have varied characters
   const uniqueChars = new Set(trimmed.toLowerCase()).size;

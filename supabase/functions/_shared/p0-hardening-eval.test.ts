@@ -15,6 +15,7 @@ import { assertEquals, assert } from "https://deno.land/std@0.224.0/assert/mod.t
 
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL") || Deno.env.get("SUPABASE_URL");
 const SUPABASE_ANON_KEY = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") || Deno.env.get("SUPABASE_ANON_KEY");
+const BROWSER_ORIGIN = "http://localhost:8080";
 
 const skip = !SUPABASE_URL || !SUPABASE_ANON_KEY;
 
@@ -33,6 +34,7 @@ async function callFn(
       headers: {
         "Content-Type": "application/json",
         "apikey": SUPABASE_ANON_KEY!,
+        "Origin": BROWSER_ORIGIN,
         ...(opts?.headers || {}),
       },
       body: body ? JSON.stringify(body) : undefined,
@@ -52,7 +54,7 @@ Deno.test({
   async fn() {
     const resp = await callFn("ai-analyze", null, {
       method: "OPTIONS",
-      headers: { "Origin": "https://app.example.com" },
+      headers: { "Origin": BROWSER_ORIGIN },
     });
     await resp.text(); // consume body
 
@@ -117,7 +119,7 @@ Deno.test({
   async fn() {
     const resp = await callFn("legal-chat", null, {
       method: "OPTIONS",
-      headers: { "Origin": "https://app.example.com" },
+      headers: { "Origin": BROWSER_ORIGIN },
     });
     await resp.text();
 
@@ -136,7 +138,7 @@ Deno.test({
   async fn() {
     const resp = await callFn("generate-document", null, {
       method: "OPTIONS",
-      headers: { "Origin": "https://app.example.com" },
+      headers: { "Origin": BROWSER_ORIGIN },
     });
     await resp.text();
     assertEquals(resp.status, 204);

@@ -363,10 +363,13 @@ Deno.test("validateInternalRequest: no secret configured -> 500", async () => {
   });
 });
 
-Deno.test("validateInternalRequest: ALLOW_UNAUTH_INGEST=true bypass -> null", () => {
-  return withEnv({ INTERNAL_INGEST_KEY: undefined, ALLOW_UNAUTH_INGEST: "true" }, () => {
+Deno.test("validateInternalRequest: ALLOW_UNAUTH_INGEST=true does not bypass missing secret", async () => {
+  return withEnv({ INTERNAL_INGEST_KEY: undefined, ALLOW_UNAUTH_INGEST: "true" }, async () => {
     const req = new Request("https://example.com", { method: "POST" });
-    assertEquals(validateInternalRequest(req, {}), null);
+    const result = validateInternalRequest(req, {});
+    assertExists(result);
+    assertEquals(result!.status, 500);
+    await result!.text();
   });
 });
 

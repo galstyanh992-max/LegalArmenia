@@ -13,16 +13,20 @@ verify_jwt = false
 
 
 [functions.generate-document]
+verify_jwt = false
 
 [functions.ai-analyze]
+verify_jwt = false
 
 [functions.multi-agent-analyze]
 
 [functions.ocr-process]
+verify_jwt = false
 
 [functions.audio-transcribe]
 
 [functions.legal-chat]
+verify_jwt = false
 
 [functions.extract-case-fields]
 

@@ -328,7 +328,11 @@ Deno.test("OCR CONTRACT: no auth → 401 + schema", async () => {
   if (skipOCR()) return;
   const res = await fetchWithTimeout(OCR_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      apikey: ANON_KEY!,
+      Origin: "http://localhost:8080",
+    },
     body: JSON.stringify({ fileUrl: "https://example.com/t.pdf", fileName: "t.pdf" }),
   });
   assertEquals(res.status, 401);
@@ -379,7 +383,11 @@ Deno.test("OCR CONTRACT: error responses match { ok: false, text: '', warnings: 
   if (skipOCR()) return;
   const res = await fetchWithTimeout(OCR_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      apikey: ANON_KEY!,
+      Origin: "http://localhost:8080",
+    },
     body: JSON.stringify({ fileUrl: "https://example.com/t.pdf", fileName: "t.pdf" }),
   });
   const data = await res.json();
@@ -773,7 +781,11 @@ Deno.test("NON-SILENT: OCR 401 returns structured error body", async () => {
   if (skipOCR()) return;
   const res = await fetchWithTimeout(OCR_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      apikey: ANON_KEY!,
+      Origin: "http://localhost:8080",
+    },
     body: JSON.stringify({ fileUrl: "https://example.com/t.pdf", fileName: "t.pdf" }),
   });
   assertEquals(res.status, 401);

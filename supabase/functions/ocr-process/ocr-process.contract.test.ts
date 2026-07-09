@@ -19,6 +19,7 @@ const ANON_KEY =
 const TEST_EMAIL = Deno.env.get("TEST_USER_EMAIL");
 const TEST_PASSWORD = Deno.env.get("TEST_USER_PASSWORD");
 const OCR_URL = `${SUPABASE_URL}/functions/v1/ocr-process`;
+const BROWSER_ORIGIN = "http://localhost:8080";
 
 // ── auth helper ─────────────────────────────────────────────────────────
 
@@ -78,7 +79,7 @@ Deno.test("contract: no auth → 401 + normalized schema", async () => {
 
   const res = await fetch(OCR_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Origin: BROWSER_ORIGIN, apikey: ANON_KEY! },
     body: JSON.stringify({
       fileUrl: "https://example.com/test.pdf",
       fileName: "test.pdf",

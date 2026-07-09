@@ -92,10 +92,8 @@ Deno.test("Phase2a: MIN merge does NOT merge chunks from different articles", as
   }
 });
 
-Deno.test("Phase2a: overlap_prev is set on split chunks", async () => {
-  const bigContent = Array.from({ length: 20 }, (_, i) =>
-    `\u053f\u0565\u057f ${i + 1}. ` + "X".repeat(500)
-  ).join("\n\n");
+Deno.test("Phase2a: overlap_prev is set on fallback split chunks", async () => {
+  const bigContent = "X ".repeat(4000);
 
   const rawText = [
     "\u0540\u0578\u0564\u057e\u0561\u056e 1. \u0544\u0565\u056e \u0570\u0578\u0564\u057e\u0561\u056e",

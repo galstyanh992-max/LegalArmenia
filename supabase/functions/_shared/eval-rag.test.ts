@@ -22,10 +22,11 @@ import {
 // Config
 // ---------------------------------------------------------------------------
 
-const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
-const SUPABASE_ANON_KEY = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY")!;
+const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL") || Deno.env.get("SUPABASE_URL");
+const INTERNAL_INGEST_KEY = Deno.env.get("INTERNAL_INGEST_KEY");
 
 const VECTOR_SEARCH_URL = `${SUPABASE_URL}/functions/v1/vector-search`;
+const canRun = Boolean(SUPABASE_URL && INTERNAL_INGEST_KEY);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -68,8 +69,7 @@ async function runSearch(fixture: GoldenFixture): Promise<{ response: Response; 
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "x-internal-key": INTERNAL_INGEST_KEY!,
     },
     body: JSON.stringify(body),
   });
@@ -253,6 +253,10 @@ function formatMetricsReport(metrics: EvalMetrics, results: EvalResult[]): strin
 // ---------------------------------------------------------------------------
 
 Deno.test("eval: all fixtures return valid HTTP 200", async () => {
+  if (!canRun) {
+    console.warn("SKIP: SUPABASE_URL or INTERNAL_INGEST_KEY not set");
+    return;
+  }
   const results: EvalResult[] = [];
   for (const f of GOLDEN_FIXTURES) {
     const r = await evaluateFixture(f);
@@ -279,6 +283,10 @@ Deno.test("eval: all fixtures return valid HTTP 200", async () => {
 });
 
 Deno.test("eval: legislation queries return JSON with kb array", async () => {
+  if (!canRun) {
+    console.warn("SKIP: SUPABASE_URL or INTERNAL_INGEST_KEY not set");
+    return;
+  }
   for (const f of LEGISLATION_FIXTURES.slice(0, 3)) {
     const { response, latencyMs } = await runSearch(f);
     const text = await response.text();
@@ -303,6 +311,10 @@ Deno.test("eval: legislation queries return JSON with kb array", async () => {
 });
 
 Deno.test("eval: practice queries return JSON with practice array", async () => {
+  if (!canRun) {
+    console.warn("SKIP: SUPABASE_URL or INTERNAL_INGEST_KEY not set");
+    return;
+  }
   for (const f of PRACTICE_FIXTURES.slice(0, 3)) {
     const { response } = await runSearch(f);
     const text = await response.text();
@@ -321,6 +333,10 @@ Deno.test("eval: practice queries return JSON with practice array", async () => 
 });
 
 Deno.test("eval: no forbidden (fabricated) norms in any result", async () => {
+  if (!canRun) {
+    console.warn("SKIP: SUPABASE_URL or INTERNAL_INGEST_KEY not set");
+    return;
+  }
   const fixturesWithForbidden = GOLDEN_FIXTURES.filter(
     (f) => f.forbiddenNormPatterns.length > 0
   );
@@ -348,6 +364,10 @@ Deno.test("eval: no forbidden (fabricated) norms in any result", async () => {
 });
 
 Deno.test("eval: temporal query with reference_date returns valid response", async () => {
+  if (!canRun) {
+    console.warn("SKIP: SUPABASE_URL or INTERNAL_INGEST_KEY not set");
+    return;
+  }
   const temporalFixture = GOLDEN_FIXTURES.find((f) => f.referenceDate);
   if (!temporalFixture) return;
 
@@ -361,12 +381,15 @@ Deno.test("eval: temporal query with reference_date returns valid response", asy
 });
 
 Deno.test("eval: empty query returns 400", async () => {
+  if (!canRun) {
+    console.warn("SKIP: SUPABASE_URL or INTERNAL_INGEST_KEY not set");
+    return;
+  }
   const response = await fetch(VECTOR_SEARCH_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "x-internal-key": INTERNAL_INGEST_KEY!,
     },
     body: JSON.stringify({ query: "", tables: "both" }),
   });

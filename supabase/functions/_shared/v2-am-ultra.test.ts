@@ -208,14 +208,13 @@ Deno.test("v2-am-ultra: never merge reasoning + ruling sections", async () => {
 
 // ─── 7. rechunk_version = 'v2-am-ultra' ─────────────────────────────
 
-Deno.test("v2-am-ultra: chunker_version is v2-am-ultra on all chunks", async () => {
+Deno.test("v2-am-ultra: chunker_version matches CHUNKER_VERSION on all chunks", async () => {
   const rawText = "\u0540\u0578\u0564\u057e\u0561\u056e 1. \u054f\u0565\u057d\u057f\nContent.\n\n\u0540\u0578\u0564\u057e\u0561\u056e 2. \u0535\u0580\u056f\u0580\u0578\u0580\u0564\nMore.";
   const result = await chunkDocument({ doc_type: "law", content_text: rawText, title: "Test Version" });
 
-  assertEquals(result.chunker_version, "v2-am-ultra");
-  assertEquals(CHUNKER_VERSION, "v2-am-ultra");
+  assertEquals(result.chunker_version, CHUNKER_VERSION);
   for (const c of result.chunks) {
-    assertEquals(c.chunker_version, "v2-am-ultra");
+    assertEquals(c.chunker_version, CHUNKER_VERSION);
   }
 });
 

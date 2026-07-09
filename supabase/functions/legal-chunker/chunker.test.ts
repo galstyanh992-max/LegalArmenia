@@ -15,6 +15,7 @@ import {
   assert,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { chunkDocument, extractCaseNumber, parentKey } from "./index.ts";
+import { CHUNKER_VERSION } from "../_shared/chunker.ts";
 
 // ─── FIXTURE 1: Legislation with articles ───────────────────────────
 const LEGISLATION_FIXTURE =
@@ -610,10 +611,10 @@ Deno.test("chunkDocument: ECHR metadata.court_level='echr' on ALL chunks", async
   }
 });
 
-Deno.test("chunkDocument: version is v2-am-ultra", async () => {
+Deno.test("chunkDocument: version matches CHUNKER_VERSION", async () => {
   const result = await chunkDocument({ doc_type: "code", content_text: LEGISLATION_FIXTURE });
-  assertEquals(result.chunker_version, "v2-am-ultra");
+  assertEquals(result.chunker_version, CHUNKER_VERSION);
   for (const c of result.chunks) {
-    assertEquals(c.chunker_version, "v2-am-ultra");
+    assertEquals(c.chunker_version, CHUNKER_VERSION);
   }
 });

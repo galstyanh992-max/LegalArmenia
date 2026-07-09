@@ -54,13 +54,17 @@ Deno.test("Criminal module routing: does NOT require MODULE_ID_TO_ANALYSIS_TYPE"
   }
 });
 
-Deno.test("MODULE_ID_TO_ANALYSIS_TYPE keys match CriminalAnalysisModule type", () => {
+Deno.test("MODULE_ID_TO_ANALYSIS_TYPE values match AnalysisType", () => {
   // This test documents the mapping exists but is unused
-  const mappingKeys = Object.keys(MODULE_ID_TO_ANALYSIS_TYPE);
+  const mappingValues = Object.values(MODULE_ID_TO_ANALYSIS_TYPE);
   
-  // All mapping keys should be valid CriminalAnalysisModule
-  for (const key of mappingKeys) {
-    assertEquals(isValidCriminalModule(key), true, `Mapping key '${key}' should be valid module`);
+  // All mapped values should be valid AnalysisType
+  for (const value of mappingValues) {
+    assertEquals(
+      ANALYSIS_TYPES.includes(value),
+      true,
+      `Mapping value '${value}' should be valid analysis type`,
+    );
   }
 });
 

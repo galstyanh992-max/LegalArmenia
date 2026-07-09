@@ -629,7 +629,7 @@ html:not(.light) {
 
   /* Mobile-first container with safe area padding */
   .container-mobile {
-    @apply w-full max-w-7xl mx-auto;
+    @apply w-full max-w-full mx-auto;
     padding-left: max(var(--spacing-md), env(safe-area-inset-left));
     padding-right: max(var(--spacing-md), env(safe-area-inset-right));
   }

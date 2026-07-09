@@ -33,6 +33,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -120,10 +121,10 @@ const COURTS = [
   { value: 'Գեղարքունիքի մարզի ընդհանուր իրավասության դատարան', label: 'court_gegharkunik' },
   { value: 'Լոռու մարզի ընդհանուր իրավասության դատարան', label: 'court_lori' },
   { value: 'Կոտայքի մարզի ընդհանուր իրավասության դատարան', label: 'court_kotayk' },
-  { value: 'Շիրակի մարزի ընդհանուր իրավասության դատարան', label: 'court_shirak' },
-  { value: 'Սյունիքի մарзի ընդհանուր իրավасության դатаран', label: 'court_syunik' },
-  { value: 'Տавушի марзи ընдhanur иравасутян датаран', label: 'court_tavush' },
-  { value: 'Արмавири марзи ընдhanur иравасутян датаран', label: 'court_armavir' },
+  { value: 'Շիրակի մարզի ընդհանուր իրավասության դատարան', label: 'court_shirak' },
+  { value: 'Սյունիքի մարզի ընդհանուր իրավասության դատարան', label: 'court_syunik' },
+  { value: 'Տավուշի մարզի ընդհանուր իրավասության դատարան', label: 'court_tavush' },
+  { value: 'Արմավիրի մարզի ընդհանուր իրավասության դատարան', label: 'court_armavir' },
 ] as const;
 
 interface CaseFormProps {
@@ -146,7 +147,7 @@ export function CaseForm({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
-  // extractedFacts/LegalQuestion no longer needed — fields are in the form schema
+  // extractedFacts/LegalQuestion no longer needed - fields are in the form schema
   const [autoFillProgress, setAutoFillProgress] = useState(0);
   const [autoFillStage, setAutoFillStage] = useState('');
 
@@ -383,7 +384,6 @@ export function CaseForm({
       party_role: values.party_role || null,
       appeal_party_role: values.appeal_party_role || null,
       current_stage: values.current_stage || 'preliminary',
-      court: values.court_name || 'Не указан',
       status: values.status || 'open',
       priority: values.priority || 'medium',
       court_date: values.court_date ? new Date(values.court_date).toISOString() : null,
@@ -404,6 +404,9 @@ export function CaseForm({
           <DialogTitle>
             {initialData ? t('edit_case') : t('new_case')}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {t('case_form_description', 'Create or edit a legal case, including court, stage, parties, and files.')}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>

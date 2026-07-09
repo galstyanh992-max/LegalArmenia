@@ -1,6 +1,8 @@
 // =============================================================================
 // MULTI-AGENT SYSTEM TYPES
 // =============================================================================
+import { createElement } from 'react';
+import { Search, Scale, FileText, AlertTriangle, BookOpen, Shield, AlertOctagon, FileWarning, Brain } from 'lucide-react';
 
 // Frontend AgentType (used in multi-agent UI)
 export type AgentType = 
@@ -162,7 +164,7 @@ export interface AgentConfig {
   description: string;
   descriptionHy: string;
   descriptionRu: string;
-  icon: string;
+  icon: React.ReactNode;
   color: string;
   order: number;
 }
@@ -176,7 +178,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Catalogs all evidence from case volumes',
     descriptionHy: 'Կատալոգավորում է գործի բոլոր ապացույցները',
     descriptionRu: 'Каталогизирует все доказательства из томов дела',
-    icon: '\uD83D\uDD0D',
+    icon: createElement(Search, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-blue-500',
     order: 1
   },
@@ -188,7 +190,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Analyzes admissibility of each evidence',
     descriptionHy: 'Վերլուծում է ապացույցների թույլատրելիությունը',
     descriptionRu: 'Анализирует допустимость каждого доказательства',
-    icon: '\u2696\uFE0F',
+    icon: createElement(Scale, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-amber-500',
     order: 2
   },
@@ -200,7 +202,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Verifies correctness of criminal charges',
     descriptionHy: 'Ստուգում է մեղադրանքի որակավորման ճիշտությունը',
     descriptionRu: 'Проверяет правильность квалификации обвинения',
-    icon: '\uD83D\uDCCB',
+    icon: createElement(FileText, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-purple-500',
     order: 3
   },
@@ -212,7 +214,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Finds CPC violations',
     descriptionHy: 'Հայտնաբերում է ՔԴՕ-ի խախտումները',
     descriptionRu: 'Выявляет нарушения УПК',
-    icon: '\uD83D\uDEA8',
+    icon: createElement(AlertTriangle, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-red-500',
     order: 4
   },
@@ -224,7 +226,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Finds Criminal Code violations',
     descriptionHy: 'Հայտնաբերում է ՔՕ-ի նորմերի խախտումները',
     descriptionRu: 'Выявляет нарушения норм Уголовного кодекса',
-    icon: '\uD83D\uDCDC',
+    icon: createElement(BookOpen, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-orange-500',
     order: 5
   },
@@ -236,7 +238,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Builds defense arguments',
     descriptionHy: 'Կազմում է պաշտպանության փաստարկները',
     descriptionRu: 'Формирует аргументы защиты',
-    icon: '\uD83D\uDEE1\uFE0F',
+    icon: createElement(Shield, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-green-500',
     order: 6
   },
@@ -248,7 +250,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Identifies prosecution gaps',
     descriptionHy: 'Հայտնաբերում է մեղադրանքի թույլ կողմերը',
     descriptionRu: 'Выявляет слабые места обвинения',
-    icon: '\u26A0\uFE0F',
+    icon: createElement(AlertOctagon, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-yellow-500',
     order: 7
   },
@@ -260,7 +262,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Finds Constitution & ECHR violations',
     descriptionHy: 'Սահմանադրության և ՄԻԵԴ-ի խախտումները',
     descriptionRu: 'Нарушения Конституции и ЕКПЧ',
-    icon: '\uD83D\uDCDC',
+    icon: createElement(FileWarning, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-indigo-500',
     order: 8
   },
@@ -272,7 +274,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     description: 'Synthesizes all analyses into final report',
     descriptionHy: 'Համադրում է բոլոր վերլուծությունները վերջնական զեկույցում',
     descriptionRu: 'Объединяет все анализы в итоговый отчёт',
-    icon: '\uD83E\uDDE0',
+    icon: createElement(Brain, { className: 'h-5 w-5 text-[#D7B46A] drop-shadow-[0_2px_8px_rgba(215,180,106,0.3)]' }),
     color: 'bg-teal-500',
     order: 9
   }

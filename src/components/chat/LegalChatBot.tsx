@@ -216,13 +216,13 @@ export function LegalChatBot({ isOpen: controlledIsOpen, onOpenChange, reference
   return (
     <Card
       className={cn(
-        "fixed z-50 shadow-2xl transition-all duration-300 overflow-hidden",
+        "fixed z-50 shadow-2xl transition-all duration-300 overflow-hidden flex flex-col bg-card/95 backdrop-blur-md border border-border/50",
         isExpanded
-          ? "inset-4 sm:left-auto sm:top-auto sm:bottom-4 sm:right-4 sm:h-[90vh] sm:w-[600px]"
-          : "bottom-4 right-4 h-[500px] w-[calc(100vw-32px)] max-w-[380px] sm:w-[380px]"
+          ? "inset-4 sm:left-auto sm:top-auto sm:bottom-6 sm:right-6 sm:h-[85vh] sm:w-[650px] rounded-2xl"
+          : "bottom-4 right-4 sm:bottom-6 sm:right-6 h-[600px] max-h-[85vh] w-[calc(100vw-32px)] sm:w-[420px] rounded-2xl"
       )}
     >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b p-3 min-w-0">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2 pl-3 min-w-0 bg-transparent shrink-0">
         <CardTitle className="flex items-center gap-2 text-base min-w-0">
           <Bot className="h-5 w-5 text-primary shrink-0" />
           <span className="truncate">{t('ai_name')}</span>
@@ -247,8 +247,8 @@ export function LegalChatBot({ isOpen: controlledIsOpen, onOpenChange, reference
         </div>
       </CardHeader>
 
-      <CardContent className="flex h-[calc(100%-120px)] flex-col p-0">
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+      <CardContent className="flex-1 flex flex-col p-0 min-h-0 overflow-hidden">
+        <ScrollArea className="flex-1 p-2 sm:p-3" ref={scrollRef}>
           <div className="space-y-4">
             {messages.map((msg, i) => (
               <div
@@ -260,25 +260,25 @@ export function LegalChatBot({ isOpen: controlledIsOpen, onOpenChange, reference
               >
                 <div
                   className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-                    msg.role === 'user' ? "bg-primary" : "bg-muted"
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full shadow-sm",
+                    msg.role === 'user' ? "bg-primary text-primary-foreground" : "bg-muted border border-border/50"
                   )}
                 >
                   {msg.role === 'user' ? (
-                    <User className="h-4 w-4 text-primary-foreground" />
+                    <User className="h-4 w-4" />
                   ) : (
-                    <Bot className="h-4 w-4" />
+                    <Bot className="h-4 w-4 text-[hsl(38,56%,63%)]" />
                   )}
                 </div>
                 <div
                   className={cn(
-                    "max-w-[80%] rounded-lg px-3 py-2 text-sm",
+                    "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm",
                     msg.role === 'user'
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted"
+                      ? "bg-primary text-primary-foreground rounded-tr-sm"
+                      : "bg-muted/60 border border-border/50 rounded-tl-sm text-foreground"
                   )}
                 >
-                  <p className="whitespace-pre-wrap">{msg.role === 'assistant' ? stripMarkdown(msg.content || '\u2026') : msg.content}</p>
+                  <p className="whitespace-pre-wrap break-words">{msg.role === 'assistant' ? stripMarkdown(msg.content || '\u2026') : msg.content}</p>
                 </div>
               </div>
             ))}
@@ -291,33 +291,30 @@ export function LegalChatBot({ isOpen: controlledIsOpen, onOpenChange, reference
           </div>
         </ScrollArea>
 
-        <div className="border-t p-3">
-          <div className="flex gap-2">
+        <div className="p-2 shrink-0">
+          <div className="flex gap-2 items-end">
             <Textarea
               ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t('enter_case_details')}
-              className="min-h-[40px] max-h-[120px] resize-none"
+              className="min-h-[44px] max-h-[140px] resize-none rounded-xl bg-background/50 focus:bg-background transition-colors"
               disabled={isLoading}
             />
             <Button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
               size="icon"
-              className="shrink-0"
+              className="shrink-0 h-11 w-11 rounded-xl bg-[hsl(38,56%,63%)] hover:bg-[hsl(38,56%,53%)] text-[hsl(222,41%,7%)] shadow-md transition-all"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                <Send className="h-4 w-4" />
+                <Send className="h-5 w-5 ml-0.5" />
               )}
             </Button>
           </div>
-          <p className="mt-2 text-[10px] text-muted-foreground">
-            {t('legal_only_warning')}
-          </p>
         </div>
       </CardContent>
     </Card>
