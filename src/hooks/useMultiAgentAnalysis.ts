@@ -348,7 +348,7 @@ export function useMultiAgentAnalysis(): UseMultiAgentAnalysisReturn {
       // Save findings to separate table
       if (data.findings?.length > 0) {
         const findingsToInsert = data.findings.map((f: AgentFinding) => ({
-          run_id: run.id,
+          agent_run_id: run.id,
           case_id: caseId,
           finding_type: f.finding_type,
           severity: f.severity,

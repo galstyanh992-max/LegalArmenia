@@ -22,7 +22,9 @@ export type Database = {
           completed_at: string | null
           created_at: string
           error_message: string | null
+          findings: Json
           id: string
+          sources_used: Json
           started_at: string | null
           status: string
           summary: string | null
@@ -36,7 +38,9 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           error_message?: string | null
+          findings?: Json
           id?: string
+          sources_used?: Json
           started_at?: string | null
           status?: string
           summary?: string | null
@@ -50,7 +54,9 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           error_message?: string | null
+          findings?: Json
           id?: string
+          sources_used?: Json
           started_at?: string | null
           status?: string
           summary?: string | null
@@ -65,9 +71,11 @@ export type Database = {
           case_id: string
           created_at: string
           description: string | null
+          evidence_refs: Json
           finding_type: string | null
           id: string
-          legal_basis: string | null
+          legal_basis: Json | null
+          page_references: Json
           recommendation: string | null
           severity: string | null
           title: string
@@ -78,9 +86,11 @@ export type Database = {
           case_id: string
           created_at?: string
           description?: string | null
+          evidence_refs?: Json
           finding_type?: string | null
           id?: string
-          legal_basis?: string | null
+          legal_basis?: Json | null
+          page_references?: Json
           recommendation?: string | null
           severity?: string | null
           title: string
@@ -91,9 +101,11 @@ export type Database = {
           case_id?: string
           created_at?: string
           description?: string | null
+          evidence_refs?: Json
           finding_type?: string | null
           id?: string
-          legal_basis?: string | null
+          legal_basis?: Json | null
+          page_references?: Json
           recommendation?: string | null
           severity?: string | null
           title?: string
@@ -111,6 +123,7 @@ export type Database = {
       }
       aggregated_reports: {
         Row: {
+          agent_runs: Json
           case_id: string
           created_at: string
           data_gaps: Json | null
@@ -130,6 +143,7 @@ export type Database = {
           warnings: Json | null
         }
         Insert: {
+          agent_runs?: Json
           case_id: string
           created_at?: string
           data_gaps?: Json | null
@@ -149,6 +163,7 @@ export type Database = {
           warnings?: Json | null
         }
         Update: {
+          agent_runs?: Json
           case_id?: string
           created_at?: string
           data_gaps?: Json | null
@@ -166,6 +181,87 @@ export type Database = {
           updated_at?: string
           violations_summary?: string | null
           warnings?: Json | null
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
+      audio_transcriptions: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          file_id: string | null
+          id: string
+          language: string | null
+          needs_review: boolean | null
+          transcription_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          file_id?: string | null
+          id?: string
+          language?: string | null
+          needs_review?: boolean | null
+          transcription_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          file_id?: string | null
+          id?: string
+          language?: string | null
+          needs_review?: boolean | null
+          transcription_text?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          record_id: string | null
+          table_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -898,6 +994,7 @@ export type Database = {
           evidence_number: number | null
           evidence_type: string | null
           id: string
+          metadata: Json | null
           page_reference: string | null
           source_document: string | null
           title: string | null
@@ -913,6 +1010,7 @@ export type Database = {
           evidence_number?: number | null
           evidence_type?: string | null
           id?: string
+          metadata?: Json | null
           page_reference?: string | null
           source_document?: string | null
           title?: string | null
@@ -928,6 +1026,7 @@ export type Database = {
           evidence_number?: number | null
           evidence_type?: string | null
           id?: string
+          metadata?: Json | null
           page_reference?: string | null
           source_document?: string | null
           title?: string | null
@@ -1290,6 +1389,39 @@ export type Database = {
             referencedColumns: ["version_id"]
           },
         ]
+      }
+      ocr_results: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          extracted_text: string | null
+          file_id: string | null
+          id: string
+          language: string | null
+          needs_review: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          extracted_text?: string | null
+          file_id?: string | null
+          id?: string
+          language?: string | null
+          needs_review?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          extracted_text?: string | null
+          file_id?: string | null
+          id?: string
+          language?: string | null
+          needs_review?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       parties: {
         Row: {
@@ -2012,7 +2144,9 @@ export type Database = {
         Row: {
           case_id: string | null
           created_at: string | null
+          created_by: string | null
           id: string | null
+          prompt_used: string | null
           response_text: string | null
           role: string | null
           sources_used: Json | null
@@ -2020,18 +2154,22 @@ export type Database = {
         Insert: {
           case_id?: string | null
           created_at?: string | null
+          created_by?: string | null
           id?: string | null
+          prompt_used?: string | null
           response_text?: never
           role?: string | null
-          sources_used?: Json | null
+          sources_used?: never
         }
         Update: {
           case_id?: string | null
           created_at?: string | null
+          created_by?: string | null
           id?: string | null
+          prompt_used?: string | null
           response_text?: never
           role?: string | null
-          sources_used?: Json | null
+          sources_used?: never
         }
         Relationships: []
       }
