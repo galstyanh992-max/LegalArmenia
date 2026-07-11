@@ -173,6 +173,11 @@ const Login = () => {
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Մուտք
               </Button>
+              <p className="text-center text-sm">
+                <Link to="/forgot-password" className="text-primary hover:underline">
+                  Մոռացե՞լ եք գաղտնաբառը
+                </Link>
+              </p>
             </form>
           </Form>
         </CardContent>

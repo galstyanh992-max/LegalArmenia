@@ -2,8 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { handleCors } from "../_shared/edge-security.ts";
 import { recordAiMetric } from "../_shared/ai-metrics.ts";
+import { analyzeTranscription } from "./analysis.ts";
 
-const CONFIDENCE_THRESHOLD = 0.50;
 const MAX_FILE_SIZE_MB = 25;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 const ALLOWED_AUDIO_MIME_BY_EXTENSION: Record<string, string> = {
@@ -208,71 +208,63 @@ serve(async (req) => {
       throw new Error("Empty transcription result from Gemini");
     }
 
-    // Detect language from content
-    const armenianChars = (transcription.match(/[\u0531-\u058F]/g) || []).length;
-    const russianChars = (transcription.match(/[\u0400-\u04FF]/g) || []).length;
-    const totalChars = transcription.length;
+    // Deterministic, provider-independent analysis (see ./analysis.ts).
+    const analysis = analyzeTranscription(transcription);
+    const {
+      language_detected,
+      word_count,
+      confidence_score,
+      confidence_reason,
+      needs_review: needsReview,
+      warnings,
+    } = analysis;
 
-    let language_detected = "unknown";
-    if (armenianChars / totalChars > 0.3) {
-      language_detected = russianChars / totalChars > 0.2 ? "mixed" : "armenian";
-    } else if (russianChars / totalChars > 0.3) {
-      language_detected = "russian";
+    if (analysis.has_repetition_hallucination) {
+      console.warn("[audio-transcribe] Repetition hallucination detected");
     }
-
-    const word_count = transcription.split(/\s+/).filter(Boolean).length;
-
-    // Detect repetition hallucinations (e.g. same word/phrase repeated 10+ times)
-    const words = transcription.split(/\s+/).filter(Boolean);
-    let maxRepeat = 0;
-    let currentRepeat = 1;
-    for (let i = 1; i < words.length; i++) {
-      if (words[i] === words[i - 1]) {
-        currentRepeat++;
-        if (currentRepeat > maxRepeat) maxRepeat = currentRepeat;
-      } else {
-        currentRepeat = 1;
-      }
-    }
-    const hasRepetitionHallucination = maxRepeat >= 8;
-    const warnings: string[] = [];
-
-    let confidence_score = 0.85;
-    if (hasRepetitionHallucination) {
-      confidence_score = 0.3;
-      warnings.push("Detected repetitive text — possible hallucination due to poor audio quality");
-      console.warn(`[audio-transcribe] Repetition hallucination detected: ${maxRepeat} consecutive repeats`);
-    }
-
-    const needsReview = confidence_score < CONFIDENCE_THRESHOLD || hasRepetitionHallucination;
-
-    const confidence_reason = confidence_score >= 0.8
-      ? "High confidence transcription"
-      : "Medium confidence — review recommended";
 
     // Only save to DB if fileId is provided (case-linked transcription)
     let transcriptionRecord = null;
     if (fileId) {
-      const { data, error: insertError } = await supabase
+      // IDEMPOTENCY: file_id has no DB unique constraint and the client retries
+      // on transient errors, so a lost response after a successful insert would
+      // otherwise create duplicate transcription rows for the same file. Treat
+      // an existing row for this file_id as the authoritative result and return
+      // it instead of inserting again. Scoped by the CALLER's client so the
+      // lookup itself is RLS-checked.
+      const { data: existing } = await sb
         .from("audio_transcriptions")
-        .insert({
-          file_id: fileId,
-          transcription_text: transcription,
-          confidence: confidence_score,
-          language: language_detected,
-          duration_seconds: 0,
-          needs_review: needsReview,
-          reviewed_by: null,
-          speaker_labels: null,
-        })
-        .select()
-        .single();
+        .select("*")
+        .eq("file_id", fileId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-      if (insertError) {
-        console.error("Failed to save transcription:", insertError);
-        throw new Error("Failed to save transcription");
+      if (existing) {
+        console.log(`[audio-transcribe] idempotent replay for file_id=${fileId}`);
+        transcriptionRecord = existing;
       } else {
-        transcriptionRecord = data;
+        const { data, error: insertError } = await supabase
+          .from("audio_transcriptions")
+          .insert({
+            file_id: fileId,
+            transcription_text: transcription,
+            confidence: confidence_score,
+            language: language_detected,
+            duration_seconds: 0,
+            needs_review: needsReview,
+            reviewed_by: null,
+            speaker_labels: null,
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error("Failed to save transcription:", insertError);
+          throw new Error("Failed to save transcription");
+        } else {
+          transcriptionRecord = data;
+        }
       }
     }
 

@@ -47,6 +47,29 @@ export function getFileExtension(fileName: string): string {
   return fileName.split(".").pop()?.toLowerCase() || "";
 }
 
+/**
+ * Storage object keys only tolerate a narrow ASCII charset. A user-controlled
+ * extension (non-ASCII, spaces, separators) must never reach the key — it
+ * either 400s at the Storage API or tampers with the intended path shape.
+ */
+export function sanitizeStorageExtension(fileName: string, fallback = "bin"): string {
+  const raw = getFileExtension(fileName).replace(/[^a-z0-9]/g, "");
+  return raw.length > 0 && raw.length <= 10 ? raw : fallback;
+}
+
+/** Deterministic, non-user-controlled path for temporary complaint uploads. */
+export function buildComplaintStoragePath(userId: string, fileName: string): string {
+  return `${userId}/complaints/${Date.now()}-${Math.random().toString(36).slice(2)}.${sanitizeStorageExtension(fileName)}`;
+}
+
+/** Canonical extension for a normalized audio MIME — never taken from the filename. */
+export const AUDIO_EXT_BY_MIME: Record<string, string> = {
+  "audio/mpeg": "mp3",
+  "audio/wav": "wav",
+  "audio/mp4": "m4a",
+  "audio/ogg": "ogg",
+};
+
 export function formatMaxBytes(bytes: number): string {
   return `${Math.floor(bytes / MB)}MB`;
 }
