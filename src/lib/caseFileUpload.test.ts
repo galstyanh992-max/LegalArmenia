@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // ── Supabase client mock ─────────────────────────────────────────────────────
 
@@ -34,17 +34,12 @@ import { uploadCaseFileWithMetadata } from '@/lib/caseFileUpload';
 
 function makeFile(name: string, type = 'application/pdf'): File {
   const file = new File([new Uint8Array([1, 2, 3])], name, { type });
-  // Force a deterministic, spec-compliant ArrayBuffer for computeSHA256:
-  // jsdom's File.arrayBuffer is absent in some versions and, in others (CI's
-  // Node 24), resolves to a value SubtleCrypto.digest rejects. Overriding the
-  // instance method unconditionally makes the hash path identical everywhere.
+  // jsdom's File.arrayBuffer is absent in some versions; give it a stub so
+  // computeSHA256 can call it. The returned value is irrelevant because the
+  // digest itself is mocked below.
   Object.defineProperty(file, 'arrayBuffer', {
     configurable: true,
-    value: async () => {
-      const buf = new ArrayBuffer(3);
-      new Uint8Array(buf).set([1, 2, 3]);
-      return buf;
-    },
+    value: async () => new Uint8Array([1, 2, 3]).buffer,
   });
   return file;
 }
@@ -54,6 +49,14 @@ beforeEach(() => {
   insertResultQueue.length = 0;
   uploadMock.mockResolvedValue({ error: null });
   removeMock.mockResolvedValue({ error: null });
+  // Node 24's WebCrypto rejects an ArrayBuffer created in jsdom's realm
+  // ("2nd argument is not instance of ArrayBuffer"). computeSHA256's hash value
+  // is irrelevant to these tests, so mock digest to keep the path realm-safe.
+  vi.spyOn(globalThis.crypto.subtle, 'digest').mockResolvedValue(new Uint8Array(32).buffer);
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe('uploadCaseFileWithMetadata', () => {
