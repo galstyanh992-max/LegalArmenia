@@ -19,7 +19,7 @@ interface DocumentTemplate {
   subcategory: string | null;
   name_hy: string;
   name_ru: string;
-  name_en: string;
+  name_en: string | null;
   required_fields: string[];
 }
 

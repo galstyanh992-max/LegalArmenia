@@ -39,8 +39,8 @@ export function StandaloneMultiAgent() {
     }
   };
 
-  const caseLabel = (c: { case_number: string; title: string }) =>
-    `${c.case_number} — ${c.title}`.slice(0, 80);
+  const caseLabel = (c: { case_number: string | null; title: string }) =>
+    `${c.case_number ?? ''} — ${c.title}`.slice(0, 80);
 
   // Derive case type for party-role mapping; default to civil for standalone.
   const caseType = selectedCase?.case_type ?? 'civil';
