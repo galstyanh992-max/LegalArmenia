@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { COMPLAINT_MAX_BYTES, getFileExtension, getComplaintMime } from "@/lib/uploadPolicies";
+import { COMPLAINT_MAX_BYTES, buildComplaintStoragePath, getFileExtension, getComplaintMime } from "@/lib/uploadPolicies";
 import type { UploadedFile } from "./types";
 
 // =============================================================================
@@ -51,8 +51,7 @@ export function useComplaintFiles({
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Not authenticated");
 
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${user.id}/complaints/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+        const fileName = buildComplaintStoragePath(user.id, file.name);
         
         const { error: uploadError } = await supabase.storage
           .from("case-files")
