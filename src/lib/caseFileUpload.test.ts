@@ -34,12 +34,18 @@ import { uploadCaseFileWithMetadata } from '@/lib/caseFileUpload';
 
 function makeFile(name: string, type = 'application/pdf'): File {
   const file = new File([new Uint8Array([1, 2, 3])], name, { type });
-  // jsdom's File lacks arrayBuffer(); polyfill it for computeSHA256.
-  if (typeof file.arrayBuffer !== 'function') {
-    Object.defineProperty(file, 'arrayBuffer', {
-      value: async () => new Uint8Array([1, 2, 3]).buffer,
-    });
-  }
+  // Force a deterministic, spec-compliant ArrayBuffer for computeSHA256:
+  // jsdom's File.arrayBuffer is absent in some versions and, in others (CI's
+  // Node 24), resolves to a value SubtleCrypto.digest rejects. Overriding the
+  // instance method unconditionally makes the hash path identical everywhere.
+  Object.defineProperty(file, 'arrayBuffer', {
+    configurable: true,
+    value: async () => {
+      const buf = new ArrayBuffer(3);
+      new Uint8Array(buf).set([1, 2, 3]);
+      return buf;
+    },
+  });
   return file;
 }
 
