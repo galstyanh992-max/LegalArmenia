@@ -73,7 +73,7 @@ import { AppRole } from '@/lib/auth';
 
 interface UserWithRoles {
   id: string;
-  email: string;
+  email: string | null;
   username: string | null;
   full_name: string | null;
   created_at: string;
@@ -410,7 +410,7 @@ export function UserManagement() {
     const query = searchQuery.toLowerCase();
     return (
       user.username?.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query) ||
+      user.email?.toLowerCase().includes(query) ||
       user.full_name?.toLowerCase().includes(query)
     );
   });

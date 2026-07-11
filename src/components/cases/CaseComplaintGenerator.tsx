@@ -195,7 +195,7 @@ export function CaseComplaintGenerator({
       if (singleResult.data && singleResult.data.length > 0) {
         const latestByRole = new Map<string, string>();
         for (const item of singleResult.data) {
-          if (!latestByRole.has(item.role)) {
+          if (item.role && item.response_text && !latestByRole.has(item.role)) {
             latestByRole.set(item.role, item.response_text);
           }
         }
@@ -218,7 +218,7 @@ export function CaseComplaintGenerator({
         const latestByAgent = new Map<string, string>();
         for (const item of multiResult.data) {
           if (!latestByAgent.has(item.agent_type)) {
-            const text = item.summary || item.analysis_result || "";
+            const text = item.summary || (typeof item.analysis_result === 'string' ? item.analysis_result : '') || "";
             if (text) latestByAgent.set(item.agent_type, text);
           }
         }

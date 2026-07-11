@@ -120,9 +120,9 @@ export function useMultiAgentAnalysis(): UseMultiAgentAnalysisReturn {
       return null;
     }
     
-    setVolumes(prev => [...prev, newVolume as CaseVolume]);
+    setVolumes(prev => [...prev, newVolume as unknown as CaseVolume]);
     toast.success(t("cases:volume_created"));
-    return newVolume as CaseVolume;
+    return newVolume as unknown as CaseVolume;
   }, [volumes, t]);
 
   // Update volume

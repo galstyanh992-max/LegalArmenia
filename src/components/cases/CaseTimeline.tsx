@@ -44,20 +44,20 @@ interface CaseFile {
 
 interface Analysis {
   id: string;
-  role: string;
+  role: string | null;
   created_at: string;
 }
 
 interface OcrResult {
   id: string;
   created_at: string;
-  file_id: string;
+  file_id: string | null;
 }
 
 interface AudioTranscription {
   id: string;
   created_at: string;
-  file_id: string;
+  file_id: string | null;
 }
 
 interface CaseData {
@@ -203,7 +203,7 @@ export function CaseTimeline({ caseId }: CaseTimelineProps) {
         id: `analysis-${analysis.id}`,
         type: 'analysis',
         title: t('ai:ai_analysis'),
-        description: roleLabels[analysis.role] || analysis.role,
+        description: (analysis.role && roleLabels[analysis.role]) || analysis.role || '',
         timestamp: analysis.created_at,
         icon: <Brain className="h-4 w-4" />,
       });
@@ -215,7 +215,7 @@ export function CaseTimeline({ caseId }: CaseTimelineProps) {
         id: `ocr-${ocr.id}`,
         type: 'ocr',
         title: t('cases:ocr_processed'),
-        description: fileMap.get(ocr.file_id),
+        description: ocr.file_id ? fileMap.get(ocr.file_id) : undefined,
         timestamp: ocr.created_at,
         icon: <FileSearch className="h-4 w-4" />,
       });
@@ -227,7 +227,7 @@ export function CaseTimeline({ caseId }: CaseTimelineProps) {
         id: `audio-${audio.id}`,
         type: 'audio',
         title: t('cases:audio_transcribed'),
-        description: fileMap.get(audio.file_id),
+        description: audio.file_id ? fileMap.get(audio.file_id) : undefined,
         timestamp: audio.created_at,
         icon: <Mic className="h-4 w-4" />,
       });

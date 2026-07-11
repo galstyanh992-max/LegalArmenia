@@ -128,7 +128,7 @@ export function CaseAIAnalysisPanel({
         if (data && data.length > 0) {
           const latestByRole = new Map<string, typeof data[0]>();
           for (const item of data) {
-            if (!latestByRole.has(item.role)) {
+            if (item.role && !latestByRole.has(item.role)) {
               latestByRole.set(item.role, item);
             }
           }
@@ -145,7 +145,7 @@ export function CaseAIAnalysisPanel({
                 : [];
               loadedResults[role as AIRole] = {
                 role: role as AIRole,
-                analysis: item.response_text,
+                analysis: item.response_text ?? '',
                 sources,
                 model: 'loaded'
               };
@@ -177,7 +177,7 @@ export function CaseAIAnalysisPanel({
         role,
         response_text: results[role]!.analysis,
         sources_used: results[role]!.sources as unknown as Database['public']['Tables']['ai_analysis']['Insert']['sources_used'],
-        created_by: user?.id,
+        created_by: user?.id ?? null,
       });
       
       if (error) throw error;
