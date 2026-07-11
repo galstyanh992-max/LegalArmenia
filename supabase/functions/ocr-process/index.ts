@@ -233,12 +233,24 @@ serve(async (req) => {
           if (textMatch) txtContent = decodeURIComponent(textMatch[1]);
         }
       }
+    } else if (fileUrl.includes('/storage/v1/object/sign/')) {
+      // Signed URLs carry their own scoped, expiring authorization token —
+      // fetch them directly (SSRF-guarded) instead of re-parsing bucket/path.
+      if (!isAllowedFileUrl(fileUrl)) {
+        return errorResponse("Invalid file URL: only Supabase storage URLs are allowed", 400, requestId);
+      }
+      const signedResponse = await fetch(fileUrl);
+      if (!signedResponse.ok) throw new Error(`Failed to download file: ${signedResponse.status}`);
+      fileBuffer = await signedResponse.arrayBuffer();
     } else if (fileUrl.includes('/storage/v1/object/')) {
-      const storageMatch = fileUrl.match(/\/storage\/v1\/object\/(?:public\/)?([^/]+)\/(.+)$/);
+      const storageMatch = fileUrl.match(/\/storage\/v1\/object\/(?:public\/)?([^/]+)\/(.+?)(?:\?.*)?$/);
       if (!storageMatch) throw new Error('Invalid Supabase storage URL format');
       const [, bucket, path] = storageMatch;
       const decodedPath = decodeURIComponent(path);
-      const { data, error } = await supabase.storage.from(bucket).download(decodedPath);
+      // Download with the CALLER's credentials so bucket/path access is
+      // enforced by storage RLS — a service-role download here would let any
+      // authenticated user read arbitrary objects from arbitrary buckets.
+      const { data, error } = await sb.storage.from(bucket).download(decodedPath);
       if (error || !data) throw new Error(`Failed to download from storage: ${error?.message || 'Unknown error'}`);
       fileBuffer = await data.arrayBuffer();
     } else {
