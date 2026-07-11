@@ -40,7 +40,7 @@ interface CaseComment {
   created_at: string;
   updated_at: string;
   author?: {
-    email: string;
+    email: string | null;
     full_name: string | null;
   };
 }
@@ -177,11 +177,11 @@ export function CaseComments({ caseId }: CaseCommentsProps) {
     updateComment.mutate({ id: editingId, content: editingContent.trim() });
   };
 
-  const getInitials = (name: string | null, email: string) => {
+  const getInitials = (name: string | null, email: string | null) => {
     if (name) {
       return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
     }
-    return email.slice(0, 2).toUpperCase();
+    return (email ?? '??').slice(0, 2).toUpperCase();
   };
 
   return (

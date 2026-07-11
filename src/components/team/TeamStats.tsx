@@ -45,7 +45,7 @@ import {
 
 interface TeamMemberStats {
   userId: string;
-  email: string;
+  email: string | null;
   fullName: string | null;
   totalCases: number;
   openCases: number;
@@ -400,7 +400,7 @@ export function TeamStats() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={team.memberStats.slice(0, 5).map(m => ({
-                          name: m.fullName?.split(' ')[0] || m.email.split('@')[0],
+                          name: m.fullName?.split(' ')[0] || (m.email ?? '').split('@')[0],
                           cases: m.totalCases,
                         }))}
                         layout="vertical"

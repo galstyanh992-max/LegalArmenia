@@ -57,7 +57,7 @@ interface Team {
   description: string | null;
   leader_id: string;
   created_at: string;
-  leader?: { id: string; email: string; full_name: string | null };
+  leader?: { id: string; email: string | null; full_name: string | null };
   members?: { user_id: string; email: string; full_name: string | null }[];
 }
 

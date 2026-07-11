@@ -31,9 +31,9 @@ type KbCategory = Database['public']['Enums']['kb_category'];
 // Partial type that works for both full documents and search results
 type KBDocumentType = {
   id: string;
-  title: string;
-  content_text: string;
-  category: KbCategory | string;
+  title: string | null;
+  content_text: string | null;
+  category: KbCategory | string | null;
   source_name?: string | null;
   version_date?: string | null;
   source_url?: string | null;
@@ -162,7 +162,7 @@ export function KBDocumentCard({
   // Use server-returned chunks if available, otherwise fallback to client-side extraction
   const serverChunks = document.chunks || [];
   const clientSnippets = serverChunks.length === 0 && searchQuery
-    ? extractRelevantSnippets(document.content_text, searchQuery, 3, 200)
+    ? extractRelevantSnippets(document.content_text ?? '', searchQuery, 3, 200)
     : [];
 
   const handleExpandChunk = async (chunkIndex: number) => {
