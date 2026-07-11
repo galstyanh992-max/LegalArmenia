@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { rollbackCaseFile, uploadCaseFileWithMetadata } from '@/lib/caseFileUpload';
 import {
+  AUDIO_EXT_BY_MIME,
   AUDIO_TRANSCRIPTION_ACCEPT,
   AUDIO_TRANSCRIPTION_SUPPORTED_LABEL,
   getAudioTranscriptionMime,
@@ -203,9 +204,8 @@ const AudioTranscriptions = () => {
 
     try {
       const fileId = crypto.randomUUID();
-      const fileExt = selectedFile.name.split('.').pop()?.toLowerCase();
-
       const contentType = getAudioTranscriptionMime(selectedFile);
+      const fileExt = contentType ? AUDIO_EXT_BY_MIME[contentType] : undefined;
       if (!contentType || !fileExt) throw new Error(t('audio:unsupported_format'));
 
       let signedUrl: string;
