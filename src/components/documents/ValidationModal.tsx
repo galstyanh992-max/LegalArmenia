@@ -205,7 +205,7 @@ export function ValidationModal({
 // =============================================================================
 
 interface FormData {
-  selectedTemplate: { id: string; name_hy: string; name_ru: string; name_en: string } | null;
+  selectedTemplate: { id: string; name_hy: string; name_ru: string; name_en: string | null } | null;
   senderName: string;
   senderAddress: string;
   senderContact: string;

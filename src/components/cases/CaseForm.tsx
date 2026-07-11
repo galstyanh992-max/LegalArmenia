@@ -242,7 +242,7 @@ export function CaseForm({
       const courtName = initialData.court_name || initialData.court || '';
 
       form.reset({
-        case_number: initialData.case_number,
+        case_number: initialData.case_number ?? undefined,
         title: initialData.title,
         description: initialData.description || '',
         facts: initialData.facts || '',
@@ -251,8 +251,8 @@ export function CaseForm({
         party_role: (initialData.party_role as 'claimant' | 'defendant') || undefined,
         appeal_party_role: (initialData.appeal_party_role as 'appellant' | 'respondent') || undefined,
         current_stage: currentStage,
-        status: initialData.status,
-        priority: initialData.priority,
+        status: initialData.status as 'open' | 'in_progress' | 'pending' | 'closed' | 'archived',
+        priority: initialData.priority as 'low' | 'medium' | 'high' | 'urgent',
         court_name: courtName,
         court_date: initialData.court_date
           ? new Date(initialData.court_date).toISOString().split('T')[0]

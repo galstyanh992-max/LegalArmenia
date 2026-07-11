@@ -11,15 +11,14 @@ import { format } from "date-fns";
 
 interface ErrorLog {
   id: string;
-  error_type: string;
-  error_message: string;
-  error_details: Record<string, unknown> | null;
-  case_id: string | null;
-  file_id: string | null;
+  error_type: string | null;
+  error_message: string | null;
+  error_details?: Record<string, unknown> | null;
+  case_id?: string | null;
+  file_id?: string | null;
   user_id: string | null;
   resolved: boolean;
   resolved_at: string | null;
-  resolved_by: string | null;
   created_at: string;
 }
 

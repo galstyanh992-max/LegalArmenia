@@ -17,7 +17,7 @@ interface DocumentTemplate {
   subcategory: string | null;
   name_hy: string;
   name_ru: string;
-  name_en: string;
+  name_en: string | null;
   required_fields: string[];
 }
 
@@ -232,7 +232,7 @@ export function useDocumentGenerator(
         .order("category", { ascending: true });
 
       if (error) throw error;
-      setTemplates(data?.length ? data : FALLBACK_DOCUMENT_TEMPLATES);
+      setTemplates(data?.length ? (data as unknown as DocumentTemplate[]) : FALLBACK_DOCUMENT_TEMPLATES);
     } catch (error) {
       console.warn("Document templates unavailable, using built-in fallback templates:", error);
       setTemplates(FALLBACK_DOCUMENT_TEMPLATES);
@@ -244,7 +244,7 @@ export function useDocumentGenerator(
   const getTemplateName = useCallback((template: DocumentTemplate) => {
     switch (i18n.language) {
       case 'hy': return template.name_hy;
-      case 'en': return template.name_en;
+      case 'en': return template.name_en ?? template.name_ru;
       default: return template.name_ru;
     }
   }, [i18n.language]);
@@ -437,9 +437,9 @@ export function useDocumentGenerator(
     }
   };
 
-  const handleLoadFromHistory = useCallback((doc: { content_text: string; title: string }) => {
-    setGeneratedContent(doc.content_text);
-    setEditedContent(doc.content_text);
+  const handleLoadFromHistory = useCallback((doc: { content_text: string | null; title: string | null }) => {
+    setGeneratedContent(doc.content_text ?? '');
+    setEditedContent(doc.content_text ?? '');
     setShowPreviewModal(true);
   }, []);
 

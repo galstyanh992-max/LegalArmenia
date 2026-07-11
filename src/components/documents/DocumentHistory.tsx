@@ -22,8 +22,8 @@ import { exportDocumentToPDF } from "@/lib/pdfExportDocument";
 
 interface GeneratedDocument {
   id: string;
-  title: string;
-  content_text: string;
+  title: string | null;
+  content_text: string | null;
   created_at: string;
   status: string;
   template_id: string | null;
@@ -124,8 +124,8 @@ export function DocumentHistory({
   const handleDownload = async (doc: GeneratedDocument) => {
     try {
       await exportDocumentToPDF({
-        title: doc.title,
-        content: doc.content_text,
+        title: doc.title ?? '',
+        content: doc.content_text ?? '',
         senderName: doc.sender_name || undefined,
         recipientOrganization: doc.recipient_organization || undefined,
         createdAt: new Date(doc.created_at),

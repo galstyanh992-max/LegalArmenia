@@ -44,8 +44,8 @@ export function StandaloneAIAnalysis() {
     }
   };
 
-  const caseLabel = (c: { case_number: string; title: string }) =>
-    `${c.case_number} — ${c.title}`.slice(0, 80);
+  const caseLabel = (c: { case_number: string | null; title: string }) =>
+    `${c.case_number ?? ''} — ${c.title}`.slice(0, 80);
 
   return (
     <div className="flex flex-col h-full space-y-6 max-w-5xl mx-auto w-full">

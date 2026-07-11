@@ -59,8 +59,8 @@ import logo from '@/assets/logo.png';
 
 interface GeneratedDocument {
   id: string;
-  title: string;
-  content_text: string;
+  title: string | null;
+  content_text: string | null;
   status: string;
   case_id: string | null;
   template_id: string | null;
@@ -124,8 +124,8 @@ const MyDocuments = () => {
 
   const handleOpenDocument = (doc: GeneratedDocument) => {
     setSelectedDocument(doc);
-    setEditedContent(doc.content_text);
-    setEditedTitle(doc.title);
+    setEditedContent(doc.content_text ?? '');
+    setEditedTitle(doc.title ?? '');
     setIsEditing(false);
   };
 
@@ -207,8 +207,8 @@ const MyDocuments = () => {
     setIsExporting(true);
     try {
       await exportDocumentToPDF({
-        title: doc.title,
-        content: doc.content_text,
+        title: doc.title ?? '',
+        content: doc.content_text ?? '',
         recipientName: doc.recipient_name || undefined,
         recipientOrganization: doc.recipient_organization || undefined,
         senderName: doc.sender_name || undefined,
@@ -233,8 +233,8 @@ const MyDocuments = () => {
   };
 
   const filteredDocuments = documents.filter(doc =>
-    doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    doc.content_text.toLowerCase().includes(searchQuery.toLowerCase())
+    (doc.title ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (doc.content_text ?? '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const formatDate = (dateString: string) => {
@@ -367,7 +367,7 @@ const MyDocuments = () => {
                 </CardHeader>
                 <CardContent className="min-w-0">
                   <p className="text-sm text-muted-foreground line-clamp-3 break-words">
-                    {doc.content_text.substring(0, 150)}...
+                    {(doc.content_text ?? '').substring(0, 150)}...
                   </p>
                 </CardContent>
                 <CardFooter className="pt-2 flex flex-wrap gap-2">
@@ -399,8 +399,8 @@ const MyDocuments = () => {
                   </Button>
                   <div onClick={(e) => e.stopPropagation()}>
                     <SendToTelegramButton
-                      documentTitle={doc.title}
-                      documentContent={doc.content_text}
+                      documentTitle={doc.title ?? ''}
+                      documentContent={doc.content_text ?? ''}
                       size="sm"
                     />
                   </div>
@@ -481,8 +481,8 @@ const MyDocuments = () => {
                 </Button>
                 {selectedDocument && (
                   <SendToTelegramButton
-                    documentTitle={selectedDocument.title}
-                    documentContent={selectedDocument.content_text}
+                    documentTitle={selectedDocument.title ?? ''}
+                    documentContent={selectedDocument.content_text ?? ''}
                     variant="outline"
                   />
                 )}

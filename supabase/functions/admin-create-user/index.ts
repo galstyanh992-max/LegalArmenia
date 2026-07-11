@@ -111,28 +111,31 @@ serve(async (req) => {
       throw createError;
     }
 
-    // Update profile for the new user with username (trigger may have created it)
+    // Update profile for the new user with username. profiles is a view with
+    // an INSTEAD OF INSERT trigger that upserts internally, so a plain insert
+    // is the correct upsert here (ON CONFLICT is not supported on views).
     const { error: profileError } = await adminClient
       .from("profiles")
-      .upsert({
+      .insert({
         id: newUser.user.id,
         email: internalEmail,
         full_name: full_name || null,
         username: username,
         auditor_id: auditor_id || null,
-      }, { onConflict: 'id' });
+      });
 
     if (profileError) {
       console.error(JSON.stringify({ ts: new Date().toISOString(), lvl: "error", fn: "admin-create-user", msg: "Profile upsert error" }));
     }
 
-    // Assign the role (use upsert to avoid duplicate key error)
+    // Assign the role. user_roles is a view whose INSTEAD OF INSERT trigger
+    // sets app.user_profiles.app_role, so inserts are idempotent.
     const { error: roleInsertError } = await adminClient
       .from("user_roles")
-      .upsert({
+      .insert({
         user_id: newUser.user.id,
         role,
-      }, { onConflict: 'user_id,role', ignoreDuplicates: true });
+      });
 
     if (roleInsertError) {
       console.error(JSON.stringify({ ts: new Date().toISOString(), lvl: "error", fn: "admin-create-user", msg: "Role assignment error" }));
