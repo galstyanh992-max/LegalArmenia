@@ -60,3 +60,6 @@ temp/
 
 .vercel
 .codebuddy
+
+# Never track ad-hoc DB scripts with embedded credentials (DEEP-001)
+db_passwords.cjs
