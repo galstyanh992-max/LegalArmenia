@@ -140,21 +140,36 @@ Fixture cleanup PASS after the final matrices:
 - Storage objects: 0
 - synthetic audit rows: 0
 
-No paid resource or temporary external credential was created. The local Docker stack remains running only until scoped commit evidence is captured, then will be stopped without production interaction.
+No paid resource or temporary external credential was created. The local Supabase stack was stopped after scoped commit evidence was captured, without production interaction.
 
-## 14. Remaining Blockers
+## 14. Production Credential Closure and Smoke Verification
 
-1. Local Docker shutdown is scheduled after scoped commit evidence is captured.
-2. `DEEP-001` credential rotation/revocation remains a manual production blocker.
-3. Production release remains prohibited.
+- `DEEP-001 — CLOSED`
+- Production PostgreSQL password rotated: PASS
+- Dependent secrets updated: PASS
+- Previous credentials invalidated: PASS
+- Production connectivity: PASS
+- Auth sign-in/sign-out and client/lawyer/admin roles: PASS
+- Allowed reads/creates and foreign-access RLS denial: PASS
+- Storage upload/read/allowed delete/forbidden delete: PASS
+- Edge/RAG connectivity: PASS
+- Post-redeployment `password authentication failed` events: 0
+- Synthetic production fixtures remaining: 0
+- Secrets committed: 0
 
-## 15. Decision
+Rotation, dependent-secret updates and invalidation were operator-confirmed. Connectivity, Auth/RLS/Storage, Edge/RAG and cleanup were independently verified with synthetic records only. No secret values, complete connection strings or credential screenshots were captured.
 
-`LOCAL_DISPOSABLE_REPLAY_VERIFIED — PRODUCTION_RELEASE_BLOCKED_BY_DEEP-001`
+## 15. Remaining Blockers
 
-Clean replay, structural gates, Auth bootstrap, authorization matrix, Storage matrix, generated types, typecheck, tests, build, and synthetic fixture cleanup all pass. This is local disposable evidence only and does not authorize any production operation.
+- Merge requires explicit operator approval.
 
-## 16. Prompt 18 Handoff
+## 16. Decision
+
+`PROMPT_17_VERIFIED — DEEP_001_CLOSED — PRODUCTION_RELEASE_READY`
+
+Clean replay, structural gates, Auth bootstrap, authorization matrix, Storage matrix, generated types, production smoke tests and synthetic fixture cleanup pass. Merge remains pending explicit approval.
+
+## 17. Prompt 18 Handoff
 
 ```text
 VERIFIED_BASELINE_VERSION = 20260712120002 + 7 FORWARD MIGRATIONS
@@ -163,7 +178,7 @@ SCHEMA_ASSERTIONS = PASS
 AUTH_MATRIX = PASS
 STORAGE_MATRIX = PASS
 BACKFILL_STATUS = NOT_REQUIRED_EMPTY_REPLAY; GUARDED_SCRIPT_SEPARATE
-DISPOSABLE_ENVIRONMENT_DELETED = PENDING_POST_COMMIT_LOCAL_SHUTDOWN
+DISPOSABLE_ENVIRONMENT_DELETED = LOCAL_STACK_STOPPED
 GENERATED_TYPE_SOURCE = FINAL_LOCAL_EIGHT_MIGRATION_REPLAY_PUBLIC_SCHEMA
-NEXT_PROMPT = 18_AFTER_LOCAL_SHUTDOWN_EVIDENCE
+NEXT_PROMPT = 18_AFTER_MERGE_APPROVAL
 ```

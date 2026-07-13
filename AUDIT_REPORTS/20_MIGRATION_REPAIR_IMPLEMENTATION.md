@@ -163,10 +163,10 @@ No production SQL, migration, deploy, ledger repair or write was performed.
 ## 12. Known Gaps
 
 - Final eight-migration clean replay passed in local Docker.
-- Local Docker shutdown is deferred only until scoped commit evidence is captured.
+- Local Supabase stack was stopped after scoped commit evidence was captured.
 - Deterministic `ai_prompts` and `document_templates` production reference rows were not read/copied; seed parity remains open.
 - `telegram-uploads` bucket intent is unresolved and deferred.
-- `DEEP-001` credential rotation/revocation remains open.
+- `DEEP-001` is CLOSED after operator-confirmed password rotation, dependent-secret update and previous-credential invalidation; production connectivity and approved smoke tests independently passed.
 - PR #7 remains unmerged.
 
 ## 13. Disposable Replay Handoff
@@ -177,12 +177,26 @@ ACTIVE_MIGRATION_PATH = supabase/migrations
 LEGACY_ARCHIVE_PATH = supabase/migrations_legacy
 FORWARD_MIGRATIONS = 20260712120004, 20260712120006, 20260712120008, 20260712120010, 20260713221836, 20260713222445, 20260713222818
 DATA_BACKFILLS = supabase/baseline/backfills/20260712_audio_transcriptions_file_id_deduplicate.sql (synthetic disposable only; non-active)
-KNOWN_BLOCKERS = post-commit local Docker shutdown; seed parity; telegram bucket intent; DEEP-001
+KNOWN_BLOCKERS = seed parity; telegram bucket intent
 REPLAY_COMMAND_SOURCE = supabase/baseline/BASELINE_MANIFEST.md and scripts/verify-migration-baseline.ps1
 NEXT_PROMPT = 17
 ```
 
-## 14. Decision
+## 14. DEEP-001 Closure
+
+- `DEEP-001 — CLOSED`
+- Production PostgreSQL password rotated: PASS
+- Dependent secrets updated: PASS
+- Previous credentials invalidated: PASS
+- Production connectivity: PASS
+- Auth/RLS/Storage smoke tests: PASS
+- Edge/RAG connectivity: PASS
+- Post-redeployment `password authentication failed` events: 0
+- Secrets committed: 0
+
+Rotation, dependent-secret updates and invalidation were operator-confirmed. Connectivity and smoke-test evidence was independently verified without recording secret values, connection strings or screenshots.
+
+## 15. Decision
 
 `MIGRATION_IMPLEMENTATION_READY_FOR_REPLAY`
 
