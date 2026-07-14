@@ -2,7 +2,7 @@
  * RLS smoke test: verifies that anon/auth clients are denied access
  * to server-only tables, while service_role succeeds.
  *
- * Tables tested: encrypted_pii, api_usage, audit_logs
+ * Tables tested: audit_logs, error_logs
  * Requires: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
  *
  * Skips gracefully when credentials are not available.
@@ -20,42 +20,51 @@ const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
 const canRun = url.length > 0 && anonKey.length > 0 && serviceKey.length > 0;
 
-function getAnon() { return createClient(url, anonKey); }
-function getService() { return createClient(url, serviceKey); }
+const clientOptions = {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
+  },
+};
 
-// ─── encrypted_pii: anon SELECT must return empty or error ─────────
+function getAnon() {
+  return createClient(url, anonKey, clientOptions);
+}
+function getService() {
+  return createClient(url, serviceKey, clientOptions);
+}
+
+// ─── audit_logs: anon SELECT must return empty or error ────────────
 
 Deno.test({
-  name: "RLS: anon SELECT on encrypted_pii returns 0 rows (denied)",
+  name: "RLS: anon SELECT on audit_logs returns 0 rows (denied)",
   ignore: !canRun,
   async fn() {
     const { data, error } = await getAnon()
-      .from("encrypted_pii")
+      .from("audit_logs")
       .select("id")
       .limit(1);
     if (error) {
       assertExists(error.message);
     } else {
-      assertEquals(data?.length ?? 0, 0, "anon must not see encrypted_pii rows");
+      assertEquals(data?.length ?? 0, 0, "anon must not see audit_logs rows");
     }
   },
 });
 
-// ─── api_usage: anon INSERT must fail ──────────────────────────────
+// ─── error_logs: anon INSERT must fail ─────────────────────────────
 
 Deno.test({
-  name: "RLS: anon INSERT into api_usage is denied",
+  name: "RLS: anon INSERT into error_logs is denied",
   ignore: !canRun,
   async fn() {
-    const { error } = await getAnon().from("api_usage").insert({
+    const { error } = await getAnon().from("error_logs").insert({
       user_id: "00000000-0000-0000-0000-000000000000",
-      service_type: "test",
-      model_name: "test",
-      request_tokens: 0,
-      response_tokens: 0,
-      estimated_cost: 0,
+      error_type: "rls_test",
+      error_message: "test",
     });
-    assertExists(error, "anon INSERT into api_usage must be denied");
+    assertExists(error, "anon INSERT into error_logs must be denied");
   },
 });
 
@@ -73,43 +82,44 @@ Deno.test({
   },
 });
 
-// ─── service_role: SELECT on encrypted_pii succeeds ────────────────
+// ─── service_role: SELECT on audit_logs succeeds ──────────────────
 
 Deno.test({
-  name: "RLS: service_role SELECT on encrypted_pii succeeds",
+  name: "RLS: service_role SELECT on audit_logs succeeds",
   ignore: !canRun,
   async fn() {
     const { error } = await getService()
-      .from("encrypted_pii")
+      .from("audit_logs")
       .select("id")
       .limit(1);
-    assertEquals(error, null, "service_role SELECT on encrypted_pii must succeed");
+    assertEquals(error, null, "service_role SELECT on audit_logs must succeed");
   },
 });
 
-// ─── service_role: INSERT + cleanup on api_usage ───────────────────
+// ─── service_role: INSERT + cleanup on error_logs ──────────────────
 
 Deno.test({
-  name: "RLS: service_role INSERT into api_usage succeeds",
+  name: "RLS: service_role INSERT into error_logs succeeds",
   ignore: !canRun,
   async fn() {
     const svc = getService();
     const marker = `rls_smoke_${Date.now()}`;
     const { data, error } = await svc
-      .from("api_usage")
+      .from("error_logs")
       .insert({
         user_id: "00000000-0000-0000-0000-000000000000",
-        service_type: marker,
-        model_name: "test",
-        request_tokens: 0,
-        response_tokens: 0,
-        estimated_cost: 0,
+        error_type: marker,
+        error_message: "test",
       })
       .select("id")
       .single();
-    assertEquals(error, null, "service_role INSERT into api_usage must succeed");
+    assertEquals(
+      error,
+      null,
+      "service_role INSERT into error_logs must succeed",
+    );
     assertExists(data?.id);
-    await svc.from("api_usage").delete().eq("id", data!.id);
+    await svc.from("error_logs").delete().eq("id", data!.id);
   },
 });
 
@@ -129,7 +139,11 @@ Deno.test({
       })
       .select("id")
       .single();
-    assertEquals(error, null, "service_role INSERT into audit_logs must succeed");
+    assertEquals(
+      error,
+      null,
+      "service_role INSERT into audit_logs must succeed",
+    );
     assertExists(data?.id);
     await svc.from("audit_logs").delete().eq("id", data!.id);
   },
