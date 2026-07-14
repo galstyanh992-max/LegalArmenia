@@ -64,7 +64,7 @@ The language/hallucination/confidence logic was inline in the Deno handler (unte
 | Control | Status |
 | --- | --- |
 | Authenticated actor | ✔ (401 on missing/invalid JWT, both functions) |
-| Case/file ownership | server-side RLS on storage + `audio_transcriptions` (caller client); idempotency lookup RLS-scoped | 
+| Case/file ownership | server-side RLS on storage + `audio_transcriptions` (caller client); idempotency lookup RLS-scoped |
 | Idempotency | ✔ (P-09-1) |
 | Bounded retry | ✔ (client ≤2, no server retry loop) |
 | Timeout | ✔ (gateway 120 s) |

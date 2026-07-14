@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
     Tables: {
       agent_analysis_runs: {
@@ -2615,403 +2610,152 @@ export type Database = {
           },
         ]
       }
-      cases: {
-        Row: {
-          appeal_party_role: string | null
-          case_number: string | null
-          case_type: string | null
-          client_id: string | null
-          court: string | null
-          court_date: string | null
-          court_name: string | null
-          created_at: string
-          current_stage: string | null
-          deleted_at: string | null
-          description: string | null
-          facts: string | null
-          id: string
-          lawyer_id: string
-          legal_question: string | null
-          notes: string | null
-          party_role: string | null
-          priority: string
-          status: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          appeal_party_role?: string | null
-          case_number?: string | null
-          case_type?: string | null
-          client_id?: string | null
-          court?: string | null
-          court_date?: string | null
-          court_name?: string | null
-          created_at?: string
-          current_stage?: string | null
-          deleted_at?: string | null
-          description?: string | null
-          facts?: string | null
-          id?: string
-          lawyer_id?: string
-          legal_question?: string | null
-          notes?: string | null
-          party_role?: string | null
-          priority?: string
-          status?: string
-          title?: string
-          updated_at?: string
-        }
-        Update: {
-          appeal_party_role?: string | null
-          case_number?: string | null
-          case_type?: string | null
-          client_id?: string | null
-          court?: string | null
-          court_date?: string | null
-          court_name?: string | null
-          created_at?: string
-          current_stage?: string | null
-          deleted_at?: string | null
-          description?: string | null
-          facts?: string | null
-          id?: string
-          lawyer_id?: string
-          legal_question?: string | null
-          notes?: string | null
-          party_role?: string | null
-          priority?: string
-          status?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      case_files: {
-        Row: {
-          case_id: string
-          created_at: string
-          deleted_at: string | null
-          file_size: number | null
-          file_type: string | null
-          filename: string
-          id: string
-          notes: string | null
-          original_filename: string
-          storage_path: string
-          updated_at: string
-          uploaded_by: string | null
-          version: number
-        }
-        Insert: {
-          case_id?: string
-          created_at?: string
-          deleted_at?: string | null
-          file_size?: number | null
-          file_type?: string | null
-          filename?: string
-          id?: string
-          notes?: string | null
-          original_filename?: string
-          storage_path?: string
-          updated_at?: string
-          uploaded_by?: string | null
-          version?: number
-        }
-        Update: {
-          case_id?: string
-          created_at?: string
-          deleted_at?: string | null
-          file_size?: number | null
-          file_type?: string | null
-          filename?: string
-          id?: string
-          notes?: string | null
-          original_filename?: string
-          storage_path?: string
-          updated_at?: string
-          uploaded_by?: string | null
-          version?: number
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          auditor_id: string | null
-          avatar_url: string | null
-          created_at: string
-          email: string | null
-          full_name: string | null
-          has_migrated: boolean
-          id: string
-          is_active: boolean
-          last_login_at: string
-          notification_preferences: Json | null
-          preferences: Json | null
-          role: string
-          telegram_chat_id: string | null
-          updated_at: string
-          username: string | null
-        }
-        Insert: {
-          auditor_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          full_name?: string | null
-          has_migrated?: boolean
-          id?: string
-          is_active?: boolean
-          last_login_at?: string
-          notification_preferences?: Json | null
-          preferences?: Json | null
-          role?: string
-          telegram_chat_id?: string | null
-          updated_at?: string
-          username?: string | null
-        }
-        Update: {
-          auditor_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          full_name?: string | null
-          has_migrated?: boolean
-          id?: string
-          is_active?: boolean
-          last_login_at?: string
-          notification_preferences?: Json | null
-          preferences?: Json | null
-          role?: string
-          telegram_chat_id?: string | null
-          updated_at?: string
-          username?: string | null
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          id: string
-          role: string
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          role?: string
-          user_id?: string
-        }
-        Update: {
-          id?: string
-          role?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      ai_analysis: {
-        Row: {
-          case_id: string
-          created_at: string
-          created_by: string | null
-          id: string
-          prompt_used: string | null
-          response_text: string | null
-          role: string | null
-          sources_used: Json
-        }
-        Insert: {
-          case_id?: string
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          prompt_used?: string | null
-          response_text?: string | null
-          role?: string | null
-          sources_used?: Json
-        }
-        Update: {
-          case_id?: string
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          prompt_used?: string | null
-          response_text?: string | null
-          role?: string | null
-          sources_used?: Json
-        }
-        Relationships: []
-      }
-      generated_documents: {
-        Row: {
-          case_id: string | null
-          content: string | null
-          content_text: string | null
-          created_at: string
-          document_type: string | null
-          id: string
-          metadata: Json | null
-          recipient_name: string | null
-          recipient_organization: string | null
-          recipient_position: string | null
-          sender_address: string | null
-          sender_contact: string | null
-          sender_name: string | null
-          source_text: string | null
-          status: string
-          template_id: string | null
-          title: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          case_id?: string | null
-          content?: string | null
-          content_text?: string | null
-          created_at?: string
-          document_type?: string | null
-          id?: string
-          metadata?: Json | null
-          recipient_name?: string | null
-          recipient_organization?: string | null
-          recipient_position?: string | null
-          sender_address?: string | null
-          sender_contact?: string | null
-          sender_name?: string | null
-          source_text?: string | null
-          status?: string
-          template_id?: string | null
-          title?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          case_id?: string | null
-          content?: string | null
-          content_text?: string | null
-          created_at?: string
-          document_type?: string | null
-          id?: string
-          metadata?: Json | null
-          recipient_name?: string | null
-          recipient_organization?: string | null
-          recipient_position?: string | null
-          sender_address?: string | null
-          sender_contact?: string | null
-          sender_name?: string | null
-          source_text?: string | null
-          status?: string
-          template_id?: string | null
-          title?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      case_members: {
-        Row: {
-          case_id: string
-          case_role: string
-          user_id: string
-        }
-        Insert: {
-          case_id?: string | null
-          case_role?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          case_id?: string | null
-          case_role?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
     }
     Views: {
       ai_analysis: {
         Row: {
-          case_id: string
-          created_at: string
+          case_id: string | null
+          created_at: string | null
           created_by: string | null
-          id: string
+          id: string | null
           prompt_used: string | null
           response_text: string | null
           role: string | null
-          sources_used: Json
+          sources_used: Json | null
         }
         Insert: {
-          case_id?: string
-          created_at?: string
+          case_id?: string | null
+          created_at?: string | null
           created_by?: string | null
-          id?: string
+          id?: string | null
           prompt_used?: string | null
-          response_text?: string | null
+          response_text?: never
           role?: string | null
-          sources_used?: Json
+          sources_used?: never
         }
         Update: {
-          case_id?: string
-          created_at?: string
+          case_id?: string | null
+          created_at?: string | null
           created_by?: string | null
-          id?: string
+          id?: string | null
           prompt_used?: string | null
-          response_text?: string | null
+          response_text?: never
           role?: string | null
-          sources_used?: Json
+          sources_used?: never
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ai_analysis_runs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_analysis_runs_triggered_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_analysis_runs_triggered_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_analysis_runs_triggered_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       case_files: {
         Row: {
-          case_id: string
-          created_at: string
+          case_id: string | null
+          created_at: string | null
           deleted_at: string | null
           file_size: number | null
           file_type: string | null
-          filename: string
-          id: string
+          filename: string | null
+          id: string | null
           notes: string | null
-          original_filename: string
-          storage_path: string
-          updated_at: string
+          original_filename: string | null
+          storage_path: string | null
+          updated_at: string | null
           uploaded_by: string | null
-          version: number
+          version: number | null
         }
         Insert: {
-          case_id?: string
-          created_at?: string
-          deleted_at?: string | null
+          case_id?: string | null
+          created_at?: string | null
+          deleted_at?: never
           file_size?: number | null
-          file_type?: string | null
-          filename?: string
-          id?: string
-          notes?: string | null
-          original_filename?: string
-          storage_path?: string
-          updated_at?: string
+          file_type?: never
+          filename?: string | null
+          id?: string | null
+          notes?: never
+          original_filename?: string | null
+          storage_path?: string | null
+          updated_at?: string | null
           uploaded_by?: string | null
-          version?: number
+          version?: never
         }
         Update: {
-          case_id?: string
-          created_at?: string
-          deleted_at?: string | null
+          case_id?: string | null
+          created_at?: string | null
+          deleted_at?: never
           file_size?: number | null
-          file_type?: string | null
-          filename?: string
-          id?: string
-          notes?: string | null
-          original_filename?: string
-          storage_path?: string
-          updated_at?: string
+          file_type?: never
+          filename?: string | null
+          id?: string | null
+          notes?: never
+          original_filename?: string | null
+          storage_path?: string | null
+          updated_at?: string | null
           uploaded_by?: string | null
-          version?: number
+          version?: never
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "client_documents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       case_members: {
         Row: {
-          case_id: string
-          case_role: string
-          user_id: string
+          case_id: string | null
+          case_role: string | null
+          user_id: string | null
         }
         Insert: {
           case_id?: string | null
@@ -3023,7 +2767,36 @@ export type Database = {
           case_role?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "case_members_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       cases: {
         Row: {
@@ -3034,20 +2807,20 @@ export type Database = {
           court: string | null
           court_date: string | null
           court_name: string | null
-          created_at: string
+          created_at: string | null
           current_stage: string | null
           deleted_at: string | null
           description: string | null
           facts: string | null
-          id: string
-          lawyer_id: string
+          id: string | null
+          lawyer_id: string | null
           legal_question: string | null
           notes: string | null
           party_role: string | null
-          priority: string
-          status: string
-          title: string
-          updated_at: string
+          priority: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
         }
         Insert: {
           appeal_party_role?: string | null
@@ -3057,20 +2830,20 @@ export type Database = {
           court?: string | null
           court_date?: string | null
           court_name?: string | null
-          created_at?: string
+          created_at?: string | null
           current_stage?: string | null
           deleted_at?: string | null
           description?: string | null
           facts?: string | null
-          id?: string
-          lawyer_id?: string
+          id?: string | null
+          lawyer_id?: string | null
           legal_question?: string | null
           notes?: string | null
           party_role?: string | null
-          priority?: string
-          status?: string
-          title?: string
-          updated_at?: string
+          priority?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Update: {
           appeal_party_role?: string | null
@@ -3080,31 +2853,53 @@ export type Database = {
           court?: string | null
           court_date?: string | null
           court_name?: string | null
-          created_at?: string
+          created_at?: string | null
           current_stage?: string | null
           deleted_at?: string | null
           description?: string | null
           facts?: string | null
-          id?: string
-          lawyer_id?: string
+          id?: string | null
+          lawyer_id?: string | null
           legal_question?: string | null
           notes?: string | null
           party_role?: string | null
-          priority?: string
-          status?: string
-          title?: string
-          updated_at?: string
+          priority?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cases_lawyer_id_fkey"
+            columns: ["lawyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cases_lawyer_id_fkey"
+            columns: ["lawyer_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cases_lawyer_id_fkey"
+            columns: ["lawyer_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       generated_documents: {
         Row: {
           case_id: string | null
           content: string | null
           content_text: string | null
-          created_at: string
+          created_at: string | null
           document_type: string | null
-          id: string
+          id: string | null
           metadata: Json | null
           recipient_name: string | null
           recipient_organization: string | null
@@ -3113,130 +2908,129 @@ export type Database = {
           sender_contact: string | null
           sender_name: string | null
           source_text: string | null
-          status: string
+          status: string | null
           template_id: string | null
           title: string | null
-          updated_at: string
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
           case_id?: string | null
           content?: string | null
           content_text?: string | null
-          created_at?: string
+          created_at?: string | null
           document_type?: string | null
-          id?: string
+          id?: string | null
           metadata?: Json | null
-          recipient_name?: string | null
-          recipient_organization?: string | null
-          recipient_position?: string | null
-          sender_address?: string | null
-          sender_contact?: string | null
-          sender_name?: string | null
-          source_text?: string | null
-          status?: string
-          template_id?: string | null
+          recipient_name?: never
+          recipient_organization?: never
+          recipient_position?: never
+          sender_address?: never
+          sender_contact?: never
+          sender_name?: never
+          source_text?: never
+          status?: never
+          template_id?: never
           title?: string | null
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
           case_id?: string | null
           content?: string | null
           content_text?: string | null
-          created_at?: string
+          created_at?: string | null
           document_type?: string | null
-          id?: string
+          id?: string | null
           metadata?: Json | null
-          recipient_name?: string | null
-          recipient_organization?: string | null
-          recipient_position?: string | null
-          sender_address?: string | null
-          sender_contact?: string | null
-          sender_name?: string | null
-          source_text?: string | null
-          status?: string
-          template_id?: string | null
+          recipient_name?: never
+          recipient_organization?: never
+          recipient_position?: never
+          sender_address?: never
+          sender_contact?: never
+          sender_name?: never
+          source_text?: never
+          status?: never
+          template_id?: never
           title?: string | null
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "generated_documents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_created_by_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_created_by_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_created_by_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       profiles: {
         Row: {
           auditor_id: string | null
           avatar_url: string | null
-          created_at: string
+          created_at: string | null
           email: string | null
           full_name: string | null
-          has_migrated: boolean
-          id: string
-          is_active: boolean
-          last_login_at: string
+          has_migrated: boolean | null
+          id: string | null
+          is_active: boolean | null
+          last_login_at: string | null
           notification_preferences: Json | null
           preferences: Json | null
-          role: string
+          role: string | null
           telegram_chat_id: string | null
-          updated_at: string
+          updated_at: string | null
           username: string | null
-        }
-        Insert: {
-          auditor_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          full_name?: string | null
-          has_migrated?: boolean
-          id?: string
-          is_active?: boolean
-          last_login_at?: string
-          notification_preferences?: Json | null
-          preferences?: Json | null
-          role?: string
-          telegram_chat_id?: string | null
-          updated_at?: string
-          username?: string | null
-        }
-        Update: {
-          auditor_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          full_name?: string | null
-          has_migrated?: boolean
-          id?: string
-          is_active?: boolean
-          last_login_at?: string
-          notification_preferences?: Json | null
-          preferences?: Json | null
-          role?: string
-          telegram_chat_id?: string | null
-          updated_at?: string
-          username?: string | null
         }
         Relationships: []
       }
       user_roles: {
         Row: {
-          id: string
-          role: string
-          user_id: string
+          id: string | null
+          role: string | null
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          role?: string
-          user_id?: string
+          id?: string | null
+          role?: never
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          role?: string
-          user_id?: string
+          id?: string | null
+          role?: never
+          user_id?: string | null
         }
         Relationships: []
       }
     }
     Functions: {
+      admin_set_user_active: {
+        Args: { p_is_active: boolean; p_user_id: string }
+        Returns: undefined
+      }
       admin_set_user_role: {
         Args: { p_role: "admin" | "lawyer" | "client"; p_user_id: string }
         Returns: undefined
@@ -3480,8 +3274,6 @@ export type Database = {
       user_roles_guard: { Args: never; Returns: boolean }
     }
     Enums: {
-      case_status: "open" | "in_progress" | "pending" | "closed" | "archived"
-      case_priority: "low" | "medium" | "high" | "urgent"
       content_domain: "knowledge_base" | "practice" | "unknown"
       kb_category:
         | "constitution"
