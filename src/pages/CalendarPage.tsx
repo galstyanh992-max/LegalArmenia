@@ -435,7 +435,7 @@ const CalendarPage = () => {
           court: null,
           facts: null,
           legal_question: null,
-        } as Case : null}
+        } as unknown as Case : null}
         isLoading={createCase.isPending}
       />
 

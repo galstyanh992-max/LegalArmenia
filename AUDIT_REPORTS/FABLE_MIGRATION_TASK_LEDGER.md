@@ -1,5 +1,22 @@
+# FABLE MIGRATION TASK LEDGER
+
+Strategy: `B_BASELINE_PLUS_FORWARD_MIGRATIONS`. Main scaffold history and Prompt 16/17 execution evidence are retained below.
+
 | ID | Задача | Вход | Разрешённые пути | Статус | Verification | Blocker | Handoff |
 | -- | ------ | ---- | ---------------- | ------ | ------------ | ------- | ------- |
+| T1 | Restart branch from merged main | PR #7 merged | git | FIXED_VERIFIED | Historical main scaffold evidence retained | None | Integrated into Prompt 16/17 |
+| T2 | Legacy archive (186 E1 files) | reports 17/18 | `supabase/migrations_legacy/` | FIXED_VERIFIED | All 186 entries are contained in the 237-file Prompt 16 archive | None | Superseded by 16.1 |
+| T3 | Legacy manifest | archive | `supabase/migrations_legacy/LEGACY_MIGRATION_MANIFEST.md` | FIXED_VERIFIED | Main 186-row mapping is a subset of the Prompt 16 manifest | None | Superseded by 16.1 |
+| T4 | App authz core reference | report 16 + read-only capture | `supabase/baseline/00_app_authorization_core.reference.sql` | FIXED_VERIFIED | Main reference artifact retained | None | Baseline evidence |
+| T5 | Baseline generation step | strategy 19 | `supabase/baseline/GENERATE_BASELINE.md` | FIXED_VERIFIED | Main operator-generation artifact retained as historical reference | None | Superseded by replayed versioned baseline |
+| T6 | Forward migration D7 (audio unique) | report 18 | legacy evidence | FIXED_VERIFIED | Content retained at `migrations_legacy/20260712120000_audio_transcriptions_file_id_unique.sql`; active replacement is `20260712120010` | None | Active forward path |
+| T7 | Forward migration D9 (telegram bucket) | report 16 | legacy evidence | DEFERRED | Content retained at `migrations_legacy/20260712120100_telegram_uploads_bucket.sql` | Product decision remains deferred | No active replay inclusion |
+| T8 | Forward D8 (storage hardening) | draft policy | `supabase/storage-policies/` | FIXED_VERIFIED | Superseded by replay-verified forward Storage migrations | None | 16.4 / 17.6 |
+| T9 | Baseline manifest | scaffold artifacts | `supabase/baseline/BASELINE_MANIFEST.md` | FIXED_VERIFIED | Main scaffold requirements retained or superseded by the 14-section replay manifest | None | Prompt 16.5 |
+| T10 | Static verification | scaffold files | repository checks | FIXED_VERIFIED | Superseded by final replay static verifier PASS | None | Prompt 17 |
+| T11 | Authoritative full schema baseline | production evidence | `supabase/baseline/` | FIXED_VERIFIED | Superseded blocker: versioned baseline created and clean replay verified | None | Prompt 17 |
+| T12 | Ledger repair mapping | reports 17/19 | reports only | DEFERRED | Remote ledger remains unchanged; no migration repair executed | Operator-gated | Separate production authorization |
+| T13 | Prompt 17 clean replay | versioned baseline | disposable local environment | FIXED_VERIFIED | Clean replay and behavioral gates PASS | None | Prompt 17 decision |
 | 16.0 | Repository map and baseline | Repository, PR #7, CLI | `AUDIT_REPORTS/`, read-only repository inspection | FIXED_VERIFIED | branch/HEAD/status/PR/CLI/config/seed captured | None | Prompt 16.1 |
 | 16.1 | Legacy archive design | Reports 16–19, migrations, remote ledger evidence | `supabase/migrations/`, `supabase/migrations_legacy/` | FIXED_VERIFIED | 237 SQL archived; HEAD 221/221 and PR-only 11/11 hashes match | None | Prompt 16.2 |
 | 16.2 | Versioned schema baseline | Production baseline, generated types, usage inventory | `supabase/migrations/`, `supabase/baseline/` | FIXED_VERIFIED | 68 tables, 7 views, 43 functions, 219 constraints, 142 indexes, 192 policies captured | Runtime replay pending Prompt 17 | Prompt 16.3 |

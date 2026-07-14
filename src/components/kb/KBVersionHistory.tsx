@@ -44,7 +44,7 @@ export function KBVersionHistory({ kbId }: KBVersionHistoryProps) {
             </div>
             <p className="mt-2 text-sm font-medium">{version.title}</p>
             <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-              {version.content_text.substring(0, 150)}...
+              {(version.content_text ?? '').substring(0, 150)}...
             </p>
             {version.change_reason && (
               <p className="mt-2 text-xs italic text-muted-foreground">

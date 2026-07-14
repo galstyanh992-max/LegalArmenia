@@ -10,10 +10,10 @@
 
 ## 2. Repository Baseline
 
-- Branch: `main`
+- Branch: `codex/supabase-replay-verification`
 - HEAD: `09023b0c3d120e53753924e7181d4da9cc665824`
-- PR #7: `OPEN`, not merged; head `cfeafb7ec20c3057446405db9f62ba64206a5918`
-- Input reports 16–19: read from PR #7 head because absent from current `main`
+- PR #7: merged into `main`; source commit `cfeafb7ec20c3057446405db9f62ba64206a5918` retained for provenance.
+- Input reports 16–19: integrated with current `origin/main` during PR #10 conflict resolution.
 - Supabase CLI: `2.102.0` (`2.109.1` available)
 - Active migration path before implementation: `supabase/migrations/`
 - `supabase/config.toml`: present
@@ -38,12 +38,12 @@ scripts/
 
 ## 3. Fable Task Ledger Summary
 
-Prompt 16 checkpoints `16.0`–`16.V`: `FIXED_VERIFIED`. Prompt 17 precondition: `BLOCKED`. Full detail: `AUDIT_REPORTS/FABLE_MIGRATION_TASK_LEDGER.md`.
+Prompt 16 checkpoints `16.0`–`16.V`: `FIXED_VERIFIED`. Prompt 17: `FIXED_VERIFIED`. Full detail: `AUDIT_REPORTS/FABLE_MIGRATION_TASK_LEDGER.md`.
 
 ## 4. Legacy Archive
 
 - Archive: `supabase/migrations_legacy/`
-- SQL files: 237
+- SQL files: 239 (237 Prompt 16 files + 2 verbatim `origin/main` integration archives)
 - Current HEAD migrations verified verbatim: 221/221 hashes match
 - PR-only migrations verified verbatim: 11/11 hashes match `cfeafb7`
 - Pre-existing worktree-only migrations moved without content edits: 5
@@ -144,7 +144,7 @@ No old timestamp was reused. No remote-applied identifier was modified.
 
 - `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-migration-baseline.ps1`: PASS
 - Active migrations: 8
-- Legacy SQL: 237
+- Legacy SQL: 239
 - Duplicate active versions: 0
 - Secret-value indicators in active migrations: 0
 - Baseline counts: 68 tables, 5 types, 7 views, 192 policies
@@ -167,7 +167,7 @@ No production SQL, migration, deploy, ledger repair or write was performed.
 - Deterministic `ai_prompts` and `document_templates` production reference rows were not read/copied; seed parity remains open.
 - `telegram-uploads` bucket intent is unresolved and deferred.
 - `DEEP-001` is CLOSED after operator-confirmed password rotation, dependent-secret update and previous-credential invalidation; production connectivity and approved smoke tests independently passed.
-- PR #7 remains unmerged.
+- PR #7 is merged; PR #10 remains pending explicit approval.
 
 ## 13. Disposable Replay Handoff
 

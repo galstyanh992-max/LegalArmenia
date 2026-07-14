@@ -28,11 +28,12 @@ export function useCourtCases() {
         // For now, we'll show all cases - this can be enhanced with team/org filtering
         // when that structure is available in the database
       } else if (isLawyer) {
-        // Lawyer sees their own cases and cases they're auditing
-        query = query.or(`created_by.eq.${user.id},lawyer_id.eq.${user.id}`);
+        // Lawyer sees cases where they are the lawyer or a party
+        // (the cases view exposes lawyer_id/client_id, not created_by)
+        query = query.or(`lawyer_id.eq.${user.id},client_id.eq.${user.id}`);
       } else {
         // Default: only show user's own cases
-        query = query.eq('lawyer_id', user.id);
+        query = query.or(`lawyer_id.eq.${user.id},client_id.eq.${user.id}`);
       }
 
       query = query.order('court_date', { ascending: true });

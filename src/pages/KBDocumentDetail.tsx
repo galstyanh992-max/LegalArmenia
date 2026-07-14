@@ -108,7 +108,7 @@ const KBDocumentDetail = () => {
         {/* Document Header */}
         <div className="mb-6">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className={getCategoryColor(document.category)}>
+            <Badge className={getCategoryColor(document.category ?? 'other')}>
               {t(`category_${document.category}`)}
             </Badge>
             {document.article_number && (

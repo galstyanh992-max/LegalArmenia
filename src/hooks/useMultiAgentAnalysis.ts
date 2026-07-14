@@ -120,9 +120,9 @@ export function useMultiAgentAnalysis(): UseMultiAgentAnalysisReturn {
       return null;
     }
     
-    setVolumes(prev => [...prev, newVolume as CaseVolume]);
+    setVolumes(prev => [...prev, newVolume as unknown as CaseVolume]);
     toast.success(t("cases:volume_created"));
-    return newVolume as CaseVolume;
+    return newVolume as unknown as CaseVolume;
   }, [volumes, t]);
 
   // Update volume
@@ -348,7 +348,7 @@ export function useMultiAgentAnalysis(): UseMultiAgentAnalysisReturn {
       // Save findings to separate table
       if (data.findings?.length > 0) {
         const findingsToInsert = data.findings.map((f: AgentFinding) => ({
-          run_id: run.id,
+          agent_run_id: run.id,
           case_id: caseId,
           finding_type: f.finding_type,
           severity: f.severity,
