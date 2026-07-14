@@ -1,0 +1,1345 @@
+{
+  "evidence_class": "PROVISIONAL_NON_EXPERT_TRAIN_DEV_ONLY",
+  "release_eligible": false,
+  "test_split_used_for_tuning": false,
+  "independent_signals": [
+    "retrieval_relevance",
+    "status_eligibility",
+    "authority_quality",
+    "temporal_validity",
+    "evidence_sufficiency",
+    "citation_support",
+    "contradiction_state"
+  ],
+  "methods": [
+    {
+      "method": "threshold_grid_search",
+      "parameters": {
+        "support_threshold": 0.526
+      },
+      "decision_cutoff": 0.526,
+      "train": {
+        "query_count": 168,
+        "answerable": 153,
+        "unanswerable": 15,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.12079515977269802
+      },
+      "dev": {
+        "query_count": 56,
+        "answerable": 51,
+        "unanswerable": 5,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.11692658437581298
+      }
+    },
+    {
+      "method": "logistic_calibration",
+      "parameters": {
+        "weight": 8.91487923344302,
+        "bias": -2.4323935772319603
+      },
+      "decision_cutoff": 0.905,
+      "train": {
+        "query_count": 168,
+        "answerable": 153,
+        "unanswerable": 15,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.02182610151632777
+      },
+      "dev": {
+        "query_count": 56,
+        "answerable": 51,
+        "unanswerable": 5,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.021553013423571372
+      }
+    },
+    {
+      "method": "isotonic_regression",
+      "parameters": {
+        "blocks": [
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.2605211279712223,
+            "high": 0.2605211279712223,
+            "sum": 0,
+            "count": 1,
+            "probability": 0.0
+          },
+          {
+            "low": 0.5261246988434175,
+            "high": 0.5261246988434175,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5297176165370946,
+            "high": 0.5297176165370946,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5307466704082537,
+            "high": 0.5307466704082537,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5514799211722821,
+            "high": 0.5514799211722821,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5517972674188304,
+            "high": 0.5517972674188304,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5548726395474796,
+            "high": 0.5548726395474796,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5594856977404534,
+            "high": 0.5594856977404534,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5626567475954056,
+            "high": 0.5626567475954056,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5659095450391692,
+            "high": 0.5659095450391692,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5668327243411713,
+            "high": 0.5668327243411713,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5674428302828715,
+            "high": 0.5674428302828715,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5688237533814594,
+            "high": 0.5688237533814594,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5692625127568693,
+            "high": 0.5692625127568693,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5720558884758453,
+            "high": 0.5720558884758453,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5748625583836996,
+            "high": 0.5748625583836996,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5797443187974683,
+            "high": 0.5797443187974683,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5814835315273892,
+            "high": 0.5814835315273892,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5814835315273892,
+            "high": 0.5814835315273892,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5842030845967272,
+            "high": 0.5842030845967272,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5842030845967272,
+            "high": 0.5842030845967272,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5853277466882008,
+            "high": 0.5853277466882008,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5853277466882008,
+            "high": 0.5853277466882008,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5853277466882008,
+            "high": 0.5853277466882008,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5853277466882008,
+            "high": 0.5853277466882008,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5888161427897011,
+            "high": 0.5888161427897011,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5939927573126194,
+            "high": 0.5939927573126194,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.597196269946629,
+            "high": 0.597196269946629,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.597196269946629,
+            "high": 0.597196269946629,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.597196269946629,
+            "high": 0.597196269946629,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.597196269946629,
+            "high": 0.597196269946629,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.597196269946629,
+            "high": 0.597196269946629,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5983963833343773,
+            "high": 0.5983963833343773,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.5985264469603622,
+            "high": 0.5985264469603622,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6017792444041258,
+            "high": 0.6017792444041258,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6045920685074762,
+            "high": 0.6045920685074762,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6045920685074762,
+            "high": 0.6045920685074762,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6045920685074762,
+            "high": 0.6045920685074762,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6072286812607154,
+            "high": 0.6072286812607154,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6073255804751364,
+            "high": 0.6073255804751364,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6076674406361254,
+            "high": 0.6076674406361254,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6076674406361254,
+            "high": 0.6076674406361254,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6076674406361254,
+            "high": 0.6076674406361254,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6076674406361254,
+            "high": 0.6076674406361254,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6076674406361254,
+            "high": 0.6076674406361254,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6084764090531308,
+            "high": 0.6084764090531308,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6122139879833444,
+            "high": 0.6122139879833444,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6122139879833444,
+            "high": 0.6122139879833444,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6122139879833444,
+            "high": 0.6122139879833444,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6122139879833444,
+            "high": 0.6122139879833444,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6143536584629204,
+            "high": 0.6143536584629204,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6149430752049391,
+            "high": 0.6149430752049391,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.615466785427108,
+            "high": 0.615466785427108,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.615466785427108,
+            "high": 0.615466785427108,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6155352972478919,
+            "high": 0.6155352972478919,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6177078284635388,
+            "high": 0.6177078284635388,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6177078284635388,
+            "high": 0.6177078284635388,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6181465878389488,
+            "high": 0.6181465878389488,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6181465878389488,
+            "high": 0.6181465878389488,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6181465878389488,
+            "high": 0.6181465878389488,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6181465878389488,
+            "high": 0.6181465878389488,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6182548975217624,
+            "high": 0.6182548975217624,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6219908029997603,
+            "high": 0.6219908029997603,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6222637902429088,
+            "high": 0.6222637902429088,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6223386523924419,
+            "high": 0.6223386523924419,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6223386523924419,
+            "high": 0.6223386523924419,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6223386523924419,
+            "high": 0.6223386523924419,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6223386523924419,
+            "high": 0.6223386523924419,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6229280691344606,
+            "high": 0.6229280691344606,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6229280691344606,
+            "high": 0.6229280691344606,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6229280691344606,
+            "high": 0.6229280691344606,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6229280691344606,
+            "high": 0.6229280691344606,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6257421072028143,
+            "high": 0.6257421072028143,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.626099871454289,
+            "high": 0.626099871454289,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.626099871454289,
+            "high": 0.626099871454289,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.626099871454289,
+            "high": 0.626099871454289,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.626099871454289,
+            "high": 0.626099871454289,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.626099871454289,
+            "high": 0.626099871454289,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6261808665782244,
+            "high": 0.6261808665782244,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6261808665782244,
+            "high": 0.6261808665782244,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6266892881963078,
+            "high": 0.6266892881963078,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6266892881963078,
+            "high": 0.6266892881963078,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6288442472799691,
+            "high": 0.6288442472799691,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6290385307945815,
+            "high": 0.6290385307945815,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6293234142620723,
+            "high": 0.6293234142620723,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6294336640219879,
+            "high": 0.6294336640219879,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6294336640219879,
+            "high": 0.6294336640219879,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6294336640219879,
+            "high": 0.6294336640219879,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6302170738582492,
+            "high": 0.6302170738582492,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.631986794963817,
+            "high": 0.631986794963817,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6325762117058359,
+            "high": 0.6325762117058359,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6325762117058359,
+            "high": 0.6325762117058359,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6325762117058359,
+            "high": 0.6325762117058359,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6325762117058359,
+            "high": 0.6325762117058359,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6325762117058359,
+            "high": 0.6325762117058359,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6325762117058359,
+            "high": 0.6325762117058359,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6332478733017272,
+            "high": 0.6332478733017272,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.634048723189991,
+            "high": 0.634048723189991,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.634048723189991,
+            "high": 0.634048723189991,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.634048723189991,
+            "high": 0.634048723189991,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.634048723189991,
+            "high": 0.634048723189991,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.634048723189991,
+            "high": 0.634048723189991,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6353643238004903,
+            "high": 0.6353643238004903,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6408560597445069,
+            "high": 0.6408560597445069,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6480684506052444,
+            "high": 0.6480684506052444,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.651321248049008,
+            "high": 0.651321248049008,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6573621575874261,
+            "high": 0.6573621575874261,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6597785214027934,
+            "high": 0.6597785214027934,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6597785214027934,
+            "high": 0.6597785214027934,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.6628538935314426,
+            "high": 0.6628538935314426,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.8768251573469777,
+            "high": 0.8768251573469777,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.8768251573469777,
+            "high": 0.8768251573469777,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.8768251573469777,
+            "high": 0.8768251573469777,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.8789936889761535,
+            "high": 0.8789936889761535,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.883330752234505,
+            "high": 0.883330752234505,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.883330752234505,
+            "high": 0.883330752234505,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.883330752234505,
+            "high": 0.883330752234505,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.883330752234505,
+            "high": 0.883330752234505,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.8846318712120106,
+            "high": 0.8846318712120106,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.8846318712120106,
+            "high": 0.8846318712120106,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.8898363471220322,
+            "high": 0.8898363471220322,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.908057891390133,
+            "high": 0.908057891390133,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.910228789635754,
+            "high": 0.910228789635754,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9120643882750955,
+            "high": 0.9120643882750955,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9195733923065749,
+            "high": 0.9195733923065749,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9236270396386023,
+            "high": 0.9236270396386023,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9236270396386023,
+            "high": 0.9236270396386023,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9268518321763227,
+            "high": 0.9268518321763227,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          },
+          {
+            "low": 0.9274412489183416,
+            "high": 0.9274412489183416,
+            "sum": 1,
+            "count": 1,
+            "probability": 1.0
+          }
+        ]
+      },
+      "decision_cutoff": 1.0,
+      "train": {
+        "query_count": 168,
+        "answerable": 153,
+        "unanswerable": 15,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.0
+      },
+      "dev": {
+        "query_count": 56,
+        "answerable": 51,
+        "unanswerable": 5,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.0
+      }
+    },
+    {
+      "method": "intent_specific_thresholds",
+      "parameters": {
+        "thresholds": {
+          "active_vs_repealed": 0.526,
+          "armenian_semantic": 0.526,
+          "duplicate_near_duplicate": 0.526,
+          "exact_law_article": 0.526,
+          "historical_law": 0.526,
+          "name_date_case_number": 0.526,
+          "no_answer": 0.526,
+          "prompt_injection_candidate": 0.526,
+          "russian_to_armenian": 0.526,
+          "unknown_status_discovery": 0.526
+        }
+      },
+      "decision_cutoff": 1.0,
+      "train": {
+        "query_count": 168,
+        "answerable": 153,
+        "unanswerable": 15,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.0
+      },
+      "dev": {
+        "query_count": 56,
+        "answerable": 51,
+        "unanswerable": 5,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.0
+      }
+    },
+    {
+      "method": "scope_specific_thresholds",
+      "parameters": {
+        "thresholds": {
+          "current": 0.526,
+          "extended": 0.526,
+          "historical": 0.526
+        }
+      },
+      "decision_cutoff": 1.0,
+      "train": {
+        "query_count": 168,
+        "answerable": 153,
+        "unanswerable": 15,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.0
+      },
+      "dev": {
+        "query_count": 56,
+        "answerable": 51,
+        "unanswerable": 5,
+        "no_answer_false_negative_rate": 0.0,
+        "no_answer_hallucination_rate": 0.0,
+        "brier_score": 0.0
+      }
+    }
+  ],
+  "selected_method": "threshold_grid_search",
+  "selected_parameters": {
+    "support_threshold": 0.526
+  },
+  "selected_train_metrics": {
+    "query_count": 168,
+    "answerable": 153,
+    "unanswerable": 15,
+    "no_answer_false_negative_rate": 0.0,
+    "no_answer_hallucination_rate": 0.0,
+    "brier_score": 0.12079515977269802
+  },
+  "selected_dev_metrics": {
+    "query_count": 56,
+    "answerable": 51,
+    "unanswerable": 5,
+    "no_answer_false_negative_rate": 0.0,
+    "no_answer_hallucination_rate": 0.0,
+    "brier_score": 0.11692658437581298
+  },
+  "selection_rule": "hallucination<=0.02 on train/dev, then minimum dev/train false-no-answer, then lowest complexity"
+}

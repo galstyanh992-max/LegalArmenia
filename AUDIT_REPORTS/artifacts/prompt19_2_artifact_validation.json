@@ -1,0 +1,136 @@
+{
+  "passed": true,
+  "check_count": 24,
+  "failed_checks": [],
+  "checks": {
+    "dataset_sha256": {
+      "passed": true,
+      "evidence": {
+        "expected": "9d324b10918a66bad74ed468faeec027952858235f5df433ca5702488c2a0381",
+        "actual": "9d324b10918a66bad74ed468faeec027952858235f5df433ca5702488c2a0381"
+      }
+    },
+    "corpus_sha256": {
+      "passed": true,
+      "evidence": {
+        "expected": "27bfa2ba968e6eec84cbf94528246e62c12e8be3be9338cfa2469eb5c71fd251",
+        "actual": "27bfa2ba968e6eec84cbf94528246e62c12e8be3be9338cfa2469eb5c71fd251"
+      }
+    },
+    "candidate_pool_sha256": {
+      "passed": true,
+      "evidence": {
+        "expected": "dca97f24244bd2ace3155d83b8db678f12c5ac13b8982b86044138674db373b7",
+        "actual": "dca97f24244bd2ace3155d83b8db678f12c5ac13b8982b86044138674db373b7"
+      }
+    },
+    "blinded_pool_sha256": {
+      "passed": true,
+      "evidence": {
+        "expected": "0bc062e8384e6de7037d365fe3df81bdf8d6f09c77306e1a662e23e3b4897cd6",
+        "actual": "0bc062e8384e6de7037d365fe3df81bdf8d6f09c77306e1a662e23e3b4897cd6"
+      }
+    },
+    "gold_count": {
+      "passed": true,
+      "evidence": 280
+    },
+    "split_counts": {
+      "passed": true,
+      "evidence": {
+        "train": 168,
+        "dev": 56,
+        "test": 56
+      }
+    },
+    "intent_counts": {
+      "passed": true,
+      "evidence": {
+        "armenian_semantic": 100,
+        "exact_law_article": 30,
+        "russian_to_armenian": 25,
+        "name_date_case_number": 20,
+        "historical_law": 20,
+        "active_vs_repealed": 20,
+        "unknown_status_discovery": 20,
+        "no_answer": 25,
+        "prompt_injection_candidate": 10,
+        "duplicate_near_duplicate": 10
+      }
+    },
+    "unique_query_ids": {
+      "passed": true,
+      "evidence": 280
+    },
+    "unique_snapshot_chunks": {
+      "passed": true,
+      "evidence": 592
+    },
+    "document_family_split_leakage": {
+      "passed": true,
+      "evidence": {}
+    },
+    "pool_query_coverage": {
+      "passed": true,
+      "evidence": 280
+    },
+    "blinded_query_coverage": {
+      "passed": true,
+      "evidence": 280
+    },
+    "candidate_pool_cardinality_and_uniqueness": {
+      "passed": true,
+      "evidence": []
+    },
+    "blinded_pool_hides_routes_scores_and_ranks": {
+      "passed": true,
+      "evidence": []
+    },
+    "injection_fixture_count": {
+      "passed": true,
+      "evidence": 10
+    },
+    "gte_raw_score_coverage": {
+      "passed": true,
+      "evidence": {
+        "runs": 56,
+        "invalid": []
+      }
+    },
+    "bge_raw_score_coverage": {
+      "passed": true,
+      "evidence": {
+        "runs": 56,
+        "invalid": []
+      }
+    },
+    "gte_final_weight": {
+      "passed": true,
+      "evidence": 0.05
+    },
+    "gte_no_invented_ids": {
+      "passed": true,
+      "evidence": []
+    },
+    "bge_final_weight": {
+      "passed": true,
+      "evidence": 0.05
+    },
+    "bge_no_invented_ids": {
+      "passed": true,
+      "evidence": []
+    },
+    "calibration_did_not_use_test": {
+      "passed": true,
+      "evidence": false
+    },
+    "legal_review_truthful": {
+      "passed": true,
+      "evidence": "ENGINEERING_GOLD_PENDING_LEGAL_REVIEW"
+    },
+    "production_writes_zero": {
+      "passed": true,
+      "evidence": 0
+    }
+  }
+}

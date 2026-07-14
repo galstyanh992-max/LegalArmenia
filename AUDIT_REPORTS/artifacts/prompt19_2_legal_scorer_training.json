@@ -1,0 +1,179 @@
+{
+  "evidence_class": "PROVISIONAL_NON_EXPERT_TRAIN_DEV_ONLY",
+  "release_eligible": false,
+  "test_split_used_for_tuning": false,
+  "training_queries": 153,
+  "dev_queries": 51,
+  "pair_count": 3180,
+  "selected_l2": 0,
+  "selected_post_training_ablation": "retrieval",
+  "selected_weights": {
+    "metric_cosine_similarity": 0,
+    "ann_rank_score": 0,
+    "armenian_fts_score": 0,
+    "fts_rank_score": 0,
+    "identifier_match": 0,
+    "rrf_score": 0,
+    "exact_phrase_match": 0.10860148605670827,
+    "exact_title_match": 0.2259827572649431,
+    "document_number_match": 0.038548525153593596,
+    "article_match": 0.0019574401075371397,
+    "part_match": 0.0019574401075371397,
+    "point_match": 0.0019574401075371397,
+    "subpoint_match": 0.0019574401075371397,
+    "case_number_match": 0.0001895356820493622,
+    "date_match": 0.03740788159704427,
+    "canonical_key_match": 0.005872320322611419,
+    "query_intent_match": 0,
+    "content_domain_match": 0.0015137629212679249,
+    "legal_domain_match": 0.01057395878699326,
+    "authority_level": 0.0007596215822369893,
+    "jurisdiction_match": 0.00033330351368180273,
+    "document_type_match": 0.009795800102063879,
+    "source_type_match": 0.0019574401075371397,
+    "current_version_signal": 0,
+    "norm_status_signal": 0,
+    "status_eligibility": 0,
+    "effective_date_validity": 0,
+    "specific_provision_bonus": 0,
+    "source_quality": 0.00005739046431641758,
+    "chunk_quality": 0,
+    "text_completeness": 0,
+    "exact_duplicate_penalty": -0.00019574401075371397,
+    "near_duplicate_penalty": -0.00019574401075371397,
+    "document_repetition_penalty": -0.0016902582498237544,
+    "source_diversity_bonus": 0.000018238605819202584
+  },
+  "train_metrics": {
+    "query_count": 153,
+    "mrr": 0.8388988727838663,
+    "ndcg_at_10": 0.8569120515602808,
+    "recall_at_10": 0.934640522875817
+  },
+  "dev_metrics": {
+    "query_count": 51,
+    "mrr": 0.8813803299097418,
+    "ndcg_at_10": 0.9038440093349356,
+    "recall_at_10": 0.9803921568627451
+  },
+  "trials": [
+    {
+      "l2": 0,
+      "train": {
+        "query_count": 153,
+        "mrr": 0.7711883334107051,
+        "ndcg_at_10": 0.8051169816773486,
+        "recall_at_10": 0.934640522875817
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.8418152109328583,
+        "ndcg_at_10": 0.8638953984097044,
+        "recall_at_10": 0.9607843137254902
+      }
+    },
+    {
+      "l2": 0.0001,
+      "train": {
+        "query_count": 153,
+        "mrr": 0.7711883334107051,
+        "ndcg_at_10": 0.8051169816773486,
+        "recall_at_10": 0.934640522875817
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.8418152109328583,
+        "ndcg_at_10": 0.8638953984097044,
+        "recall_at_10": 0.9607843137254902
+      }
+    },
+    {
+      "l2": 0.001,
+      "train": {
+        "query_count": 153,
+        "mrr": 0.7711883334107051,
+        "ndcg_at_10": 0.8051169816773486,
+        "recall_at_10": 0.934640522875817
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.8418152109328583,
+        "ndcg_at_10": 0.8638953984097044,
+        "recall_at_10": 0.9607843137254902
+      }
+    },
+    {
+      "l2": 0.01,
+      "train": {
+        "query_count": 153,
+        "mrr": 0.7711883334107051,
+        "ndcg_at_10": 0.8051169816773486,
+        "recall_at_10": 0.934640522875817
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.8418152109328583,
+        "ndcg_at_10": 0.8638953984097044,
+        "recall_at_10": 0.9607843137254902
+      }
+    }
+  ],
+  "ablation": {
+    "retrieval": {
+      "train": {
+        "query_count": 153,
+        "mrr": 0.8388988727838663,
+        "ndcg_at_10": 0.8569120515602808,
+        "recall_at_10": 0.934640522875817
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.8813803299097418,
+        "ndcg_at_10": 0.9038440093349356,
+        "recall_at_10": 0.9803921568627451
+      }
+    },
+    "exact": {
+      "train": {
+        "query_count": 153,
+        "mrr": 0.7279410591510694,
+        "ndcg_at_10": 0.7601335461490429,
+        "recall_at_10": 0.8954248366013072
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.7962724639195228,
+        "ndcg_at_10": 0.8233472738014113,
+        "recall_at_10": 0.9411764705882353
+      }
+    },
+    "legal": {
+      "train": {
+        "query_count": 153,
+        "mrr": 0.7711883334107051,
+        "ndcg_at_10": 0.8051169816773486,
+        "recall_at_10": 0.934640522875817
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.8418152109328583,
+        "ndcg_at_10": 0.8638953984097044,
+        "recall_at_10": 0.9607843137254902
+      }
+    },
+    "diversity": {
+      "train": {
+        "query_count": 153,
+        "mrr": 0.7711883334107051,
+        "ndcg_at_10": 0.8051169816773486,
+        "recall_at_10": 0.934640522875817
+      },
+      "dev": {
+        "query_count": 51,
+        "mrr": 0.8418152109328583,
+        "ndcg_at_10": 0.8638953984097044,
+        "recall_at_10": 0.9607843137254902
+      }
+    }
+  }
+}

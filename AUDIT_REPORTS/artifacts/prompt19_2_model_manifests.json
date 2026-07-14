@@ -1,0 +1,74 @@
+{
+  "captured_at": "2026-07-15T01:30:00+04:00",
+  "source_verification": "official Hugging Face model API at the immutable revision",
+  "license_conclusion": "Both candidates declare Apache-2.0. The license permits commercial production use subject to its notice and attribution conditions; this engineering statement is not legal advice.",
+  "runtime": {
+    "python": "3.14.2",
+    "torch": "2.11.0+cpu",
+    "transformers": "4.48.3",
+    "fastapi": "0.136.3",
+    "device": "cpu",
+    "quantization": "none",
+    "dtype": "float32",
+    "evaluation_batch_size": 16,
+    "evaluation_max_length": 128
+  },
+  "models": [
+    {
+      "candidate": "GTE",
+      "repository": "Alibaba-NLP/gte-multilingual-reranker-base",
+      "revision": "8215cf04918ba6f7b6a62bb44238ce2953d8831c",
+      "remote_code_repository": "Alibaba-NLP/new-impl",
+      "remote_code_revision": "40ced75c3017eb27626c9d4ea981bde21a2662f4",
+      "weights_sha256": "10ebaa49322dd7e01a13a91c49810939e3f91f231aceaa47fdf0cab3083954f6",
+      "weights_bytes": 611934706,
+      "tokenizer_revision": "8215cf04918ba6f7b6a62bb44238ce2953d8831c",
+      "tokenizer_sha256": "d6f76fe13d42f80dcee0cb86a1aeb5f14f8909bb8a8782f7a4a4ad76697ef164",
+      "license": "Apache-2.0",
+      "parameter_count": 305959681,
+      "configured_max_sequence_length": 8192,
+      "evaluated_max_sequence_length": 128,
+      "startup_ms": 9819.5248,
+      "memory_after_eager_load": {
+        "working_set_bytes": 1977413632,
+        "private_memory_bytes": 3783680000
+      },
+      "frozen_test_50_candidate_latency_ms": {
+        "p50": 3168.0,
+        "p95": 3375.75,
+        "p99": 3432.25
+      },
+      "normalization": "sigmoid of raw sequence-classification logit after clamping to [-80,80]",
+      "selected_dev_weight": 0.05,
+      "decision": "rejected"
+    },
+    {
+      "candidate": "BGE",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+      "remote_code_repository": null,
+      "remote_code_revision": null,
+      "weights_sha256": "d9e3e081faff1eefb84019509b2f5558fd74c1a05a2c7db22f74174fcedb5286",
+      "weights_bytes": 2271071852,
+      "tokenizer_revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+      "tokenizer_sha256": "69564b696052886ed0ac63fa393e928384e0f8caada38c1f4864a9bfbf379c15",
+      "license": "Apache-2.0",
+      "parameter_count": 567755777,
+      "configured_max_sequence_length": 8194,
+      "evaluated_max_sequence_length": 128,
+      "startup_ms": 9568.4539,
+      "memory_after_eager_load": {
+        "working_set_bytes": 2585440256,
+        "private_memory_bytes": 5654917120
+      },
+      "frozen_test_50_candidate_latency_ms": {
+        "p50": 7889.0,
+        "p95": 9307.25,
+        "p99": 27799.2
+      },
+      "normalization": "sigmoid of raw sequence-classification logit after clamping to [-80,80]",
+      "selected_dev_weight": 0.05,
+      "decision": "rejected"
+    }
+  ]
+}

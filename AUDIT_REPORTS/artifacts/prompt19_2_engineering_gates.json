@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-07-15T01:30:00+04:00",
+  "gates": {
+    "deno_fmt": { "passed": true, "exit_code": 0 },
+    "deno_lint": { "passed": true, "exit_code": 0, "qualification": "Repository-standard direct HTTPS import rule excluded." },
+    "deno_check": { "passed": true, "exit_code": 0 },
+    "python_contract_tests": { "passed": true, "passed_count": 5, "failed_count": 0 },
+    "deno_reranker_contract_tests": { "passed": true, "passed_count": 9, "failed_count": 0 },
+    "vitest": { "passed": true, "passed_count": 125, "failed_count": 0 },
+    "edge_tests": { "passed": true, "passed_count": 47, "failed_count": 0 },
+    "typescript": { "passed": true, "exit_code": 0 },
+    "eslint_quiet": { "passed": true, "exit_code": 0 },
+    "build": { "passed": true, "exit_code": 0, "env_file_created": false },
+    "artifact_validation": { "passed": true, "passed_count": 24, "failed_count": 0 },
+    "git_diff_check": { "passed": true, "exit_code": 0 },
+    "npm_audit": { "passed": true, "vulnerabilities": 0 }
+  },
+  "all_passed": true
+}

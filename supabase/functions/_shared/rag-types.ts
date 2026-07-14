@@ -2,6 +2,27 @@
 // SHARED RAG TYPES — Single source of truth for search result shapes
 // =============================================================================
 
+export type StatusScope = "current" | "extended" | "historical";
+
+export interface MetricRetrievalTelemetry {
+  embedding_model: "armenian-text-embeddings-2-large";
+  embedding_dimension: 1024;
+  status_scope: StatusScope;
+  identifier_ok: boolean;
+  metric_ann_ok: boolean;
+  fts_ok: boolean;
+  fusion_ok: boolean;
+  reranker_ok: boolean;
+  legacy_qwen_used: false;
+  degraded: boolean;
+  degraded_reason?: string | null;
+  retrieval_route: string;
+  reranker_model?: string;
+  reranker_revision?: string;
+  reranked_count?: number;
+  returned_count?: number;
+}
+
 /** Knowledge-base document returned by vector-search / unified corpus RPC */
 export interface KBSearchResult {
   id: string;
@@ -62,7 +83,11 @@ export interface PracticeSearchResult {
   score?: number;
 }
 
-export type RetrievalMode = "hybrid" | "vector" | "keyword_only" | "rpc_fallback";
+export type RetrievalMode =
+  | "hybrid"
+  | "vector"
+  | "keyword_only"
+  | "rpc_fallback";
 
 /**
  * Single item in the unified merged result list returned by kb-unified-search.
@@ -105,7 +130,7 @@ export interface VectorSearchResponse {
   metric_ann_ok?: boolean;
   fts_ok?: boolean;
   fusion_ok?: boolean;
-  reranker_ok?: false;
+  reranker_ok?: boolean;
   legacy_qwen_used?: false;
   degraded?: boolean;
   degraded_reason?: string | null;
@@ -117,8 +142,12 @@ export interface VectorSearchResponse {
   rerank_ok?: boolean;
   /** Reranker status */
   rerank_error?: string;
-  reranker_applied?: false;
-  status_scope?: "current" | "extended" | "historical";
+  reranker_applied?: boolean;
+  reranker_model?: string;
+  reranker_revision?: string;
+  reranked_count?: number;
+  returned_count?: number;
+  status_scope?: StatusScope;
   /** Request tracing ID */
   request_id?: string;
 }

@@ -1,0 +1,86 @@
+{
+  "captured_at": "2026-07-15T01:30:00+04:00",
+  "environment": {
+    "cpu": "Intel Xeon E5-2699 v3 @ 2.30GHz",
+    "physical_cores": 18,
+    "logical_processors": 36,
+    "ram_bytes": 68565090304,
+    "gpu": null,
+    "os": "Windows 11 Pro 10.0.22631",
+    "runtime": "Python 3.14.2, torch 2.11.0+cpu, transformers 4.48.3",
+    "quantization": "none",
+    "dtype": "float32"
+  },
+  "frozen_test": {
+    "candidate_count_per_query": 50,
+    "max_sequence_length": 128,
+    "batch_size": 16,
+    "deterministic_scorer_ms": {
+      "p50": 24.60145,
+      "p95": 28.018775,
+      "p99": 43.430335,
+      "throughput_queries_per_second": 39.1747366041
+    },
+    "gte_inference_ms": {
+      "p50": 3168.0,
+      "p95": 3375.75,
+      "p99": 3432.25,
+      "throughput_queries_per_second": 0.3120142189,
+      "timeout_rate": 0.0
+    },
+    "bge_inference_ms": {
+      "p50": 7889.0,
+      "p95": 9307.25,
+      "p99": 27799.2,
+      "throughput_queries_per_second": 0.1152835048,
+      "timeout_rate": 0.0
+    }
+  },
+  "cold_start": {
+    "gte_ms": 9819.5248,
+    "bge_ms": 9568.4539
+  },
+  "authenticated_short_payload_load_probe": {
+    "requests": 12,
+    "concurrency": 4,
+    "candidate_count": 2,
+    "gte": {
+      "passed": true,
+      "throughput_requests_per_second": 9.291040928,
+      "p50_ms": 279.1167,
+      "p95_ms": 737.37663,
+      "p99_ms": 766.024766
+    },
+    "bge": {
+      "passed": true,
+      "throughput_requests_per_second": 5.569009096,
+      "p50_ms": 490.7731,
+      "p95_ms": 1121.49969,
+      "p99_ms": 1174.171298
+    }
+  },
+  "predecessor_retrieval_evidence": {
+    "artifact": "AUDIT_REPORTS/artifacts/prompt19_1_raw_metrics.json",
+    "environment": "local disposable synthetic corpus",
+    "metric_rpc_current_p50_ms": 7.881,
+    "metric_rpc_current_p95_ms": 8.833,
+    "metric_rpc_current_p99_ms": 17.165,
+    "production_quality_latency_claim": false
+  },
+  "not_independently_measured_in_prompt19_2": [
+    "live embedding endpoint latency",
+    "production identifier lane latency",
+    "production ANN latency",
+    "production FTS latency",
+    "production fusion latency",
+    "reranker queue time separated from inference",
+    "end-to-end live production retrieval latency",
+    "maximum stable concurrency for 50 full legal candidates"
+  ],
+  "cost_per_query_usd": 0.0,
+  "cost_basis": "local owned CPU evaluation; infrastructure amortization excluded",
+  "latency_budget_ms_p95": 1500,
+  "gte_latency_gate_pass": false,
+  "bge_latency_gate_pass": false,
+  "release_eligible": false
+}

@@ -1,0 +1,29 @@
+{
+  "captured_at": "2026-07-14T00:00:00+04:00",
+  "prompt19_1_head": "aa52448cc6f9b8fc0f635214898fbbb1f6e8322d",
+  "prompt19_1_origin_branch": null,
+  "prompt19_2_branch": "codex/prompt-19-2-legal-reranker",
+  "prompt19_1_commit_manifest_hash": "38c825db9ae0c74e84540b3792da089febad6e0982f201f5d18bbe5f22ddf3a0",
+  "prompt19_1_commit_changed_file_count": 35,
+  "original_dirty_worktree": {
+    "branch": "codex/supabase-replay-verification",
+    "head": "cf652431d5119dab76d7937f075eb440aa2ca002",
+    "status_hash": "89edd69eae9c596e181c09c2acc1bc2128069d713eb541931c47fbdac278bc30",
+    "tracked_diff_hash": "371255e78c53818e70c94e8fb5d01f34dae8518a0d77c55ff1b79a2b4476ee74",
+    "cached_diff_hash": "9c1caacb8b66bbec8165361739aba372078ba5a362879cc5f404abd467a86cc3",
+    "untracked_manifest_hash_recorded_prompt19_1": "1878e837a8f4afac5cb4f6347b9c7a0ef6a1d56efa2433830427046232f05d15",
+    "status_lines": 150,
+    "untracked_files": 101
+  },
+  "prompt19_1_artifact_hashes": {
+    "supabase/migrations/20260714165009_metric_only_rpc_unknown_scope.sql": {
+      "canonical_lf_sha256": "5ec74f89a961d8050ad36233de63b437ed3b99765aa5286c2031bdbc27922c25",
+      "working_tree_sha256": "3e9942b4640ed8c11a2da1513513e1c6c1e894e19ae334e4e6b47592d3545df7"
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_1_evaluation.json": "7a271f3882b85fc44ebf7d72383a77d0031ee4add90fcb1c4d00d27a546c9216",
+    "AUDIT_REPORTS/artifacts/prompt19_1_raw_metrics.json": "1a5d68031e304edcf98343dece8db7e50da189f330947e4630db08e5c9b58d58",
+    "AUDIT_REPORTS/artifacts/prompt19_1_latency_matrix.csv": "dbcd86962c6839b127adc3f1506711a06510b084c4f2a333a030b99b6043b8b2",
+    "AUDIT_REPORTS/artifacts/prompt19_1_qwen_runtime_scan.json": "2371fa9cae270c537b0562052c25a21dc41d704062ca54d7f8bc382d5bc8cd3a",
+    "AUDIT_REPORTS/artifacts/prompt19_1_static_verifier.json": "8c97b4ce79588cf4d4df9a84136134706ccf04b44cb3954a7c168707dedf79f4"
+  }
+}

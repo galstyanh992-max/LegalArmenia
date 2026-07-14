@@ -1,0 +1,104 @@
+{
+  "seed": 1902,
+  "paired_unit": "frozen test query",
+  "answerable_query_count": 51,
+  "bootstrap_iterations": 20000,
+  "comparisons": {
+    "E1_GTE_vs_D": {
+      "recall_at_10": {
+        "observed_difference": 0.019607843137254832,
+        "bootstrap_mean_difference": 0.01946862745098039,
+        "ci95": [
+          0.0,
+          0.058823529411764705
+        ],
+        "probability_difference_gt_zero": 0.6336,
+        "iterations": 20000
+      },
+      "mrr": {
+        "observed_difference": -0.0023187052598816482,
+        "bootstrap_mean_difference": -0.0023067483660130722,
+        "ci95": [
+          -0.016013071895424835,
+          0.0072051042639277914
+        ],
+        "probability_difference_gt_zero": 0.39925,
+        "iterations": 20000
+      },
+      "ndcg_at_10": {
+        "observed_difference": 8.894569935824492e-05,
+        "bootstrap_mean_difference": -2.6823151220089602e-05,
+        "ci95": [
+          -0.016253258131097882,
+          0.0179466636013892
+        ],
+        "probability_difference_gt_zero": 0.48585,
+        "iterations": 20000
+      },
+      "citation_document_accuracy": {
+        "observed_difference": 0.0,
+        "bootstrap_mean_difference": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "probability_difference_gt_zero": 0.0,
+        "iterations": 20000
+      },
+      "citation_mcnemar": {
+        "candidate_only_correct": 0,
+        "baseline_only_correct": 0,
+        "exact_two_sided_p": 1.0
+      }
+    },
+    "E2_BGE_vs_D": {
+      "recall_at_10": {
+        "observed_difference": 0.0,
+        "bootstrap_mean_difference": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "probability_difference_gt_zero": 0.0,
+        "iterations": 20000
+      },
+      "mrr": {
+        "observed_difference": 0.0012593071416602264,
+        "bootstrap_mean_difference": 0.001202152792741028,
+        "ci95": [
+          -0.010785510785510785,
+          0.01414446120328473
+        ],
+        "probability_difference_gt_zero": 0.6006,
+        "iterations": 20000
+      },
+      "ndcg_at_10": {
+        "observed_difference": 0.0008680099414793974,
+        "bootstrap_mean_difference": 0.0008756077617474446,
+        "ci95": [
+          -0.009803921568627449,
+          0.012407951393065423
+        ],
+        "probability_difference_gt_zero": 0.52165,
+        "iterations": 20000
+      },
+      "citation_document_accuracy": {
+        "observed_difference": 0.0,
+        "bootstrap_mean_difference": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "probability_difference_gt_zero": 0.0,
+        "iterations": 20000
+      },
+      "citation_mcnemar": {
+        "candidate_only_correct": 0,
+        "baseline_only_correct": 0,
+        "exact_two_sided_p": 1.0
+      }
+    }
+  },
+  "test_used_for_weight_selection": false,
+  "interpretation": "A 95% interval containing zero is not evidence of a material improvement."
+}

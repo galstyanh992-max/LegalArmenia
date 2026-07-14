@@ -1,0 +1,514 @@
+{
+  "evidence_class": "PROVISIONAL_NON_EXPERT_FROZEN_TEST",
+  "release_eligible": false,
+  "dataset_status": "ENGINEERING_GOLD_PENDING_LEGAL_REVIEW",
+  "test_query_count": 56,
+  "test_answerable_count": 51,
+  "gates": {
+    "recall_at_10": {
+      "operator": ">=",
+      "threshold": 0.9
+    },
+    "mrr": {
+      "operator": ">=",
+      "threshold": 0.8
+    },
+    "ndcg_at_10": {
+      "operator": ">=",
+      "threshold": 0.85
+    },
+    "citation_document_accuracy": {
+      "operator": "=",
+      "threshold": 1.0
+    },
+    "current_law_contamination": {
+      "operator": "=",
+      "threshold": 0.0
+    },
+    "no_answer_false_positive_rate": {
+      "operator": "<=",
+      "threshold": 0.02
+    },
+    "prompt_injection_pass_rate": {
+      "operator": "=",
+      "threshold": 1.0
+    },
+    "latency_p95_ms": {
+      "operator": "<=",
+      "threshold": 1500.0
+    }
+  },
+  "systems": {
+    "A_FTS": {
+      "source_artifact": "prompt19_2_system_a_test.json",
+      "model": null,
+      "revision": null,
+      "cross_encoder_weight": 0.65,
+      "metrics": {
+        "query_count": 56,
+        "answerable_count": 51,
+        "recall_at_5": 0.8627450980392157,
+        "recall_at_10": 0.9215686274509803,
+        "recall_at_20": 0.9803921568627451,
+        "precision_at_5": 0.18431372549019612,
+        "mrr": 0.757516339869281,
+        "ndcg_at_10": 0.803547507254386,
+        "citation_document_accuracy": 0.6666666666666666,
+        "citation_provision_accuracy": 0.7254901960784313,
+        "no_answer_false_positive_rate": 1,
+        "no_answer_false_negative_rate": 0,
+        "current_law_contamination": 0,
+        "warning_accuracy": 1,
+        "cross_tenant_leakage": null,
+        "cross_tenant_measurement": "not measurable: frozen corpus rows have no tenant dimension",
+        "latency_ms": {
+          "p50": 0.032300000000020646,
+          "p95": 0.08195000000000618,
+          "p99": 0.16219999999999005
+        },
+        "throughput_queries_per_second": 24848.027687796228,
+        "cost_per_query_usd": 0,
+        "timeout_rate": 0,
+        "fallback_correctness": true,
+        "expected_source_hit_rate": 0.9803921568627451,
+        "unknown_warning": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "support": 4,
+          "predicted": 3
+        },
+        "repealed_warning": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "support": 4,
+          "predicted": 3
+        },
+        "prompt_injection_pass_rate": 0.5,
+        "prompt_injection_cases": 2,
+        "duplicate_ranking_quality": 1.0,
+        "duplicate_cases": 2
+      },
+      "gate_checks": {
+        "recall_at_10": true,
+        "mrr": false,
+        "ndcg_at_10": false,
+        "citation_document_accuracy": false,
+        "current_law_contamination": true,
+        "no_answer_false_positive_rate": false,
+        "prompt_injection_pass_rate": false,
+        "latency_p95_ms": true,
+        "unknown_warning_accuracy": false,
+        "repealed_warning_accuracy": false,
+        "cross_tenant_leakage": null
+      },
+      "all_measured_gates_pass": false,
+      "release_gate_pass": false,
+      "release_gate_blockers": [
+        "mrr",
+        "ndcg_at_10",
+        "citation_document_accuracy",
+        "no_answer_false_positive_rate",
+        "prompt_injection_pass_rate",
+        "unknown_warning_accuracy",
+        "repealed_warning_accuracy",
+        "cross_tenant_leakage_not_measurable_in_snapshot",
+        "legal_review_pending"
+      ]
+    },
+    "B_METRIC_ANN": {
+      "source_artifact": "prompt19_2_system_b_test.json",
+      "model": null,
+      "revision": null,
+      "cross_encoder_weight": 0.65,
+      "metrics": {
+        "query_count": 56,
+        "answerable_count": 51,
+        "recall_at_5": 0.7058823529411765,
+        "recall_at_10": 0.7450980392156863,
+        "recall_at_20": 0.8431372549019608,
+        "precision_at_5": 0.14509803921568634,
+        "mrr": 0.5617992301815832,
+        "ndcg_at_10": 0.5948452191003475,
+        "citation_document_accuracy": 0.45098039215686275,
+        "citation_provision_accuracy": 0.5294117647058824,
+        "no_answer_false_positive_rate": 1,
+        "no_answer_false_negative_rate": 0,
+        "current_law_contamination": 0,
+        "warning_accuracy": 1,
+        "cross_tenant_leakage": null,
+        "cross_tenant_measurement": "not measurable: frozen corpus rows have no tenant dimension",
+        "latency_ms": {
+          "p50": 0.032850000000053114,
+          "p95": 0.07387500000007208,
+          "p99": 0.1408350000000158
+        },
+        "throughput_queries_per_second": 24937.655860343173,
+        "cost_per_query_usd": 0,
+        "timeout_rate": 0,
+        "fallback_correctness": true,
+        "expected_source_hit_rate": 0.8431372549019608,
+        "unknown_warning": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "support": 4,
+          "predicted": 2
+        },
+        "repealed_warning": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "support": 4,
+          "predicted": 2
+        },
+        "prompt_injection_pass_rate": 0.5,
+        "prompt_injection_cases": 2,
+        "duplicate_ranking_quality": 1.0,
+        "duplicate_cases": 2
+      },
+      "gate_checks": {
+        "recall_at_10": false,
+        "mrr": false,
+        "ndcg_at_10": false,
+        "citation_document_accuracy": false,
+        "current_law_contamination": true,
+        "no_answer_false_positive_rate": false,
+        "prompt_injection_pass_rate": false,
+        "latency_p95_ms": true,
+        "unknown_warning_accuracy": false,
+        "repealed_warning_accuracy": false,
+        "cross_tenant_leakage": null
+      },
+      "all_measured_gates_pass": false,
+      "release_gate_pass": false,
+      "release_gate_blockers": [
+        "recall_at_10",
+        "mrr",
+        "ndcg_at_10",
+        "citation_document_accuracy",
+        "no_answer_false_positive_rate",
+        "prompt_injection_pass_rate",
+        "unknown_warning_accuracy",
+        "repealed_warning_accuracy",
+        "cross_tenant_leakage_not_measurable_in_snapshot",
+        "legal_review_pending"
+      ]
+    },
+    "C_FUSION": {
+      "source_artifact": "prompt19_2_system_c_test.json",
+      "model": null,
+      "revision": null,
+      "cross_encoder_weight": 0.65,
+      "metrics": {
+        "query_count": 56,
+        "answerable_count": 51,
+        "recall_at_5": 0.8823529411764706,
+        "recall_at_10": 0.8823529411764706,
+        "recall_at_20": 0.9803921568627451,
+        "precision_at_5": 0.18823529411764708,
+        "mrr": 0.7608424536318276,
+        "ndcg_at_10": 0.790837189474075,
+        "citation_document_accuracy": 0.6666666666666666,
+        "citation_provision_accuracy": 0.6666666666666666,
+        "no_answer_false_positive_rate": 1,
+        "no_answer_false_negative_rate": 0,
+        "current_law_contamination": 0,
+        "warning_accuracy": 1,
+        "cross_tenant_leakage": null,
+        "cross_tenant_measurement": "not measurable: frozen corpus rows have no tenant dimension",
+        "latency_ms": {
+          "p50": 0.03839999999996735,
+          "p95": 0.07342500000004293,
+          "p99": 0.1454200000000016
+        },
+        "throughput_queries_per_second": 22019.502988363467,
+        "cost_per_query_usd": 0,
+        "timeout_rate": 0,
+        "fallback_correctness": true,
+        "expected_source_hit_rate": 0.9803921568627451,
+        "unknown_warning": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "support": 4,
+          "predicted": 2
+        },
+        "repealed_warning": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "support": 4,
+          "predicted": 2
+        },
+        "prompt_injection_pass_rate": 0.0,
+        "prompt_injection_cases": 2,
+        "duplicate_ranking_quality": 1.0,
+        "duplicate_cases": 2
+      },
+      "gate_checks": {
+        "recall_at_10": false,
+        "mrr": false,
+        "ndcg_at_10": false,
+        "citation_document_accuracy": false,
+        "current_law_contamination": true,
+        "no_answer_false_positive_rate": false,
+        "prompt_injection_pass_rate": false,
+        "latency_p95_ms": true,
+        "unknown_warning_accuracy": false,
+        "repealed_warning_accuracy": false,
+        "cross_tenant_leakage": null
+      },
+      "all_measured_gates_pass": false,
+      "release_gate_pass": false,
+      "release_gate_blockers": [
+        "recall_at_10",
+        "mrr",
+        "ndcg_at_10",
+        "citation_document_accuracy",
+        "no_answer_false_positive_rate",
+        "prompt_injection_pass_rate",
+        "unknown_warning_accuracy",
+        "repealed_warning_accuracy",
+        "cross_tenant_leakage_not_measurable_in_snapshot",
+        "legal_review_pending"
+      ]
+    },
+    "D_LEGAL_SCORER": {
+      "source_artifact": "prompt19_2_system_d_test.json",
+      "model": null,
+      "revision": null,
+      "cross_encoder_weight": 0.65,
+      "metrics": {
+        "query_count": 56,
+        "answerable_count": 51,
+        "recall_at_5": 0.9215686274509803,
+        "recall_at_10": 0.9607843137254902,
+        "recall_at_20": 0.9803921568627451,
+        "precision_at_5": 0.19607843137254902,
+        "mrr": 0.8742919389978215,
+        "ndcg_at_10": 0.9026535982024242,
+        "citation_document_accuracy": 0.8431372549019608,
+        "citation_provision_accuracy": 0.8431372549019608,
+        "no_answer_false_positive_rate": 0,
+        "no_answer_false_negative_rate": 0.0196078431372549,
+        "current_law_contamination": 0,
+        "warning_accuracy": 1,
+        "cross_tenant_leakage": null,
+        "cross_tenant_measurement": "not measurable: frozen corpus rows have no tenant dimension",
+        "latency_ms": {
+          "p50": 24.601449999999886,
+          "p95": 28.018775000000034,
+          "p99": 43.43033500000016
+        },
+        "throughput_queries_per_second": 39.17473660411139,
+        "cost_per_query_usd": 0,
+        "timeout_rate": 0,
+        "fallback_correctness": true,
+        "expected_source_hit_rate": 0.9803921568627451,
+        "unknown_warning": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 4,
+          "predicted": 4
+        },
+        "repealed_warning": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "support": 4,
+          "predicted": 3
+        },
+        "prompt_injection_pass_rate": 0.5,
+        "prompt_injection_cases": 2,
+        "duplicate_ranking_quality": 1.0,
+        "duplicate_cases": 2
+      },
+      "gate_checks": {
+        "recall_at_10": true,
+        "mrr": true,
+        "ndcg_at_10": true,
+        "citation_document_accuracy": false,
+        "current_law_contamination": true,
+        "no_answer_false_positive_rate": true,
+        "prompt_injection_pass_rate": false,
+        "latency_p95_ms": true,
+        "unknown_warning_accuracy": true,
+        "repealed_warning_accuracy": false,
+        "cross_tenant_leakage": null
+      },
+      "all_measured_gates_pass": false,
+      "release_gate_pass": false,
+      "release_gate_blockers": [
+        "citation_document_accuracy",
+        "prompt_injection_pass_rate",
+        "repealed_warning_accuracy",
+        "cross_tenant_leakage_not_measurable_in_snapshot",
+        "legal_review_pending"
+      ]
+    },
+    "E1_GTE": {
+      "source_artifact": "prompt19_2_gte_test_final.json",
+      "model": "Alibaba-NLP/gte-multilingual-reranker-base",
+      "revision": "8215cf04918ba6f7b6a62bb44238ce2953d8831c",
+      "cross_encoder_weight": 0.05,
+      "metrics": {
+        "query_count": 56,
+        "answerable_count": 51,
+        "recall_at_5": 0.9215686274509803,
+        "recall_at_10": 0.9803921568627451,
+        "recall_at_20": 0.9803921568627451,
+        "precision_at_5": 0.19607843137254902,
+        "mrr": 0.8719732337379397,
+        "ndcg_at_10": 0.9027425439017822,
+        "citation_document_accuracy": 0.8431372549019608,
+        "citation_provision_accuracy": 0.8431372549019608,
+        "no_answer_false_positive_rate": 0,
+        "no_answer_false_negative_rate": 0.0196078431372549,
+        "current_law_contamination": 0,
+        "warning_accuracy": 1,
+        "cross_tenant_leakage": null,
+        "cross_tenant_measurement": "not measurable: frozen corpus rows have no tenant dimension",
+        "latency_ms": {
+          "p50": 3168,
+          "p95": 3375.75,
+          "p99": 3432.25
+        },
+        "throughput_queries_per_second": 0.3120142189336914,
+        "cost_per_query_usd": 0,
+        "timeout_rate": 0,
+        "fallback_correctness": true,
+        "expected_source_hit_rate": 0.9803921568627451,
+        "unknown_warning": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 4,
+          "predicted": 4
+        },
+        "repealed_warning": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "support": 4,
+          "predicted": 3
+        },
+        "prompt_injection_pass_rate": 0.5,
+        "prompt_injection_cases": 2,
+        "duplicate_ranking_quality": 1.0,
+        "duplicate_cases": 2
+      },
+      "gate_checks": {
+        "recall_at_10": true,
+        "mrr": true,
+        "ndcg_at_10": true,
+        "citation_document_accuracy": false,
+        "current_law_contamination": true,
+        "no_answer_false_positive_rate": true,
+        "prompt_injection_pass_rate": false,
+        "latency_p95_ms": false,
+        "unknown_warning_accuracy": true,
+        "repealed_warning_accuracy": false,
+        "cross_tenant_leakage": null
+      },
+      "all_measured_gates_pass": false,
+      "release_gate_pass": false,
+      "release_gate_blockers": [
+        "citation_document_accuracy",
+        "prompt_injection_pass_rate",
+        "latency_p95_ms",
+        "repealed_warning_accuracy",
+        "cross_tenant_leakage_not_measurable_in_snapshot",
+        "legal_review_pending",
+        "material_mrr_improvement",
+        "material_ndcg_improvement",
+        "latency_within_budget"
+      ],
+      "winner_checks_vs_D": {
+        "material_mrr_improvement": false,
+        "material_ndcg_improvement": false,
+        "recall_within_tolerance": true,
+        "no_answer_not_worse": true,
+        "citation_not_worse": true,
+        "latency_within_budget": false
+      }
+    },
+    "E2_BGE": {
+      "source_artifact": "prompt19_2_bge_test_final.json",
+      "model": "BAAI/bge-reranker-v2-m3",
+      "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+      "cross_encoder_weight": 0.05,
+      "metrics": {
+        "query_count": 56,
+        "answerable_count": 51,
+        "recall_at_5": 0.9215686274509803,
+        "recall_at_10": 0.9607843137254902,
+        "recall_at_20": 0.9803921568627451,
+        "precision_at_5": 0.19607843137254902,
+        "mrr": 0.8755512461394815,
+        "ndcg_at_10": 0.9035216081439035,
+        "citation_document_accuracy": 0.8431372549019608,
+        "citation_provision_accuracy": 0.8431372549019608,
+        "no_answer_false_positive_rate": 0,
+        "no_answer_false_negative_rate": 0.0196078431372549,
+        "current_law_contamination": 0,
+        "warning_accuracy": 1,
+        "cross_tenant_leakage": null,
+        "cross_tenant_measurement": "not measurable: frozen corpus rows have no tenant dimension",
+        "latency_ms": {
+          "p50": 7889,
+          "p95": 9307.25,
+          "p99": 27799.200000000114
+        },
+        "throughput_queries_per_second": 0.11528350478323614,
+        "cost_per_query_usd": 0,
+        "timeout_rate": 0,
+        "fallback_correctness": true,
+        "expected_source_hit_rate": 0.9803921568627451,
+        "unknown_warning": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 4,
+          "predicted": 4
+        },
+        "repealed_warning": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "support": 4,
+          "predicted": 3
+        },
+        "prompt_injection_pass_rate": 0.5,
+        "prompt_injection_cases": 2,
+        "duplicate_ranking_quality": 1.0,
+        "duplicate_cases": 2
+      },
+      "gate_checks": {
+        "recall_at_10": true,
+        "mrr": true,
+        "ndcg_at_10": true,
+        "citation_document_accuracy": false,
+        "current_law_contamination": true,
+        "no_answer_false_positive_rate": true,
+        "prompt_injection_pass_rate": false,
+        "latency_p95_ms": false,
+        "unknown_warning_accuracy": true,
+        "repealed_warning_accuracy": false,
+        "cross_tenant_leakage": null
+      },
+      "all_measured_gates_pass": false,
+      "release_gate_pass": false,
+      "release_gate_blockers": [
+        "citation_document_accuracy",
+        "prompt_injection_pass_rate",
+        "latency_p95_ms",
+        "repealed_warning_accuracy",
+        "cross_tenant_leakage_not_measurable_in_snapshot",
+        "legal_review_pending",
+        "material_mrr_improvement",
+        "material_ndcg_improvement",
+        "latency_within_budget"
+      ],
+      "winner_checks_vs_D": {
+        "material_mrr_improvement": false,
+        "material_ndcg_improvement": false,
+        "recall_within_tolerance": true,
+        "no_answer_not_worse": true,
+        "citation_not_worse": true,
+        "latency_within_budget": false
+      }
+    }
+  },
+  "verdict": "GENERIC_RERANKERS_REJECTED — CUSTOM_ARMENIAN_LEGAL_RERANKER_REQUIRED — NO_PRODUCTION_WRITES"
+}

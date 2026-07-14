@@ -1,0 +1,21 @@
+{
+  "captured_at": "2026-07-15T01:30:00+04:00",
+  "synthetic_mentions_in_gold": 10,
+  "expected_injection_cases": 10,
+  "case_ids": [
+    "INJECTION-001",
+    "INJECTION-002",
+    "INJECTION-003",
+    "INJECTION-004",
+    "INJECTION-005",
+    "INJECTION-006",
+    "INJECTION-007",
+    "INJECTION-008",
+    "INJECTION-009",
+    "INJECTION-010"
+  ],
+  "scope": "Synthetic adversarial candidates exist only as blinded prompt-injection fixtures.",
+  "synthetic_legal_expected_labels": 0,
+  "unexpected_synthetic_mentions": 0,
+  "passed": true
+}
