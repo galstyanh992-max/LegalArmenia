@@ -155,7 +155,7 @@ const CaseDetail = () => {
       timeline.push({
         type: 'analysis',
         title: 'AI \u057E\u0565\u0580\u056C\u0578\u0582\u056E\u0578\u0582\u0569\u0575\u0578\u0582\u0576',
-        description: roleLabels[analysis.role] || analysis.role,
+        description: (analysis.role && roleLabels[analysis.role]) || analysis.role || '',
         timestamp: analysis.created_at,
       });
     });
@@ -163,7 +163,7 @@ const CaseDetail = () => {
     timeline.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     await exportCaseDetailToPDF({
-      caseNumber: caseData.case_number,
+      caseNumber: caseData.case_number ?? '',
       caseTitle: caseData.title,
       description: caseData.description || undefined,
       facts: caseData.facts || undefined,
@@ -206,14 +206,14 @@ const CaseDetail = () => {
       const timeline: Array<{ type: string; title: string; description?: string; timestamp: string }> = [];
       timeline.push({ type: 'created', title: t('cases:case_created', 'Case created'), timestamp: caseData.created_at });
       filesRes.data?.forEach(f => timeline.push({ type: 'file', title: t('cases:file_upload', 'File upload'), description: f.original_filename, timestamp: f.created_at }));
-      analysesRes.data?.forEach(a => timeline.push({ type: 'analysis', title: 'AI Analysis', description: a.role, timestamp: a.created_at }));
+      analysesRes.data?.forEach(a => timeline.push({ type: 'analysis', title: 'AI Analysis', description: a.role ?? undefined, timestamp: a.created_at }));
       agentRunsRes.data?.filter(r => r.completed_at).forEach(r => timeline.push({ type: 'agent', title: 'Agent: ' + r.agent_type, timestamp: r.completed_at! }));
       timeline.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
       const aggReport = reportRes.data?.[0];
 
       await exportFullCaseReportToPDF({
-        caseNumber: caseData.case_number,
+        caseNumber: caseData.case_number ?? '',
         caseTitle: caseData.title,
         description: caseData.description || undefined,
         facts: caseData.facts || undefined,
@@ -230,12 +230,12 @@ const CaseDetail = () => {
         language: 'hy',
         files: filesRes.data?.map(f => ({ original_filename: f.original_filename, file_size: f.file_size ?? 0, created_at: f.created_at })),
         timeline,
-        aiAnalyses: analysesRes.data?.map(a => ({ role: a.role, response_text: a.response_text, created_at: a.created_at, sources_used: a.sources_used })),
-        agentRuns: agentRunsRes.data?.map(r => ({ agent_type: r.agent_type, status: r.status, summary: r.summary || undefined, analysis_result: r.analysis_result || undefined, completed_at: r.completed_at || undefined, tokens_used: r.tokens_used || undefined })),
-        findings: findingsRes.data?.map(f => ({ title: f.title, description: f.description, severity: f.severity || undefined, finding_type: f.finding_type, legal_basis: f.legal_basis || undefined, recommendation: f.recommendation || undefined })),
-        evidence: evidenceRes.data?.map(e => ({ evidence_number: e.evidence_number, title: e.title, evidence_type: e.evidence_type, admissibility_status: e.admissibility_status || undefined, description: e.description || undefined, ai_analysis: e.ai_analysis || undefined, admissibility_notes: e.admissibility_notes || undefined })),
+        aiAnalyses: analysesRes.data?.map(a => ({ role: a.role ?? '', response_text: a.response_text ?? '', created_at: a.created_at, sources_used: a.sources_used })),
+        agentRuns: agentRunsRes.data?.map(r => ({ agent_type: r.agent_type, status: r.status, summary: r.summary || undefined, analysis_result: typeof r.analysis_result === 'string' ? r.analysis_result : undefined, completed_at: r.completed_at || undefined, tokens_used: r.tokens_used || undefined })),
+        findings: findingsRes.data?.map(f => ({ title: f.title, description: f.description ?? '', severity: f.severity || undefined, finding_type: f.finding_type ?? '', legal_basis: Array.isArray(f.legal_basis) ? (f.legal_basis as string[]) : undefined, recommendation: f.recommendation || undefined })),
+        evidence: evidenceRes.data?.map(e => ({ evidence_number: e.evidence_number ?? 0, title: e.title ?? '', evidence_type: e.evidence_type ?? '', admissibility_status: e.admissibility_status || undefined, description: e.description || undefined, ai_analysis: e.ai_analysis || undefined, admissibility_notes: e.admissibility_notes || undefined })),
         aggregatedReport: aggReport ? {
-          title: aggReport.title,
+          title: aggReport.title ?? '',
           executive_summary: aggReport.executive_summary || undefined,
           evidence_summary: aggReport.evidence_summary || undefined,
           violations_summary: aggReport.violations_summary || undefined,
@@ -415,7 +415,7 @@ const CaseDetail = () => {
                 <CaseFactsEditor
                   caseId={caseData.id}
                   caseTitle={caseData.title}
-                  caseNumber={caseData.case_number}
+                  caseNumber={caseData.case_number ?? ''}
                   description={caseData.description}
                   facts={caseData.facts}
                   legalQuestion={caseData.legal_question}
@@ -475,7 +475,7 @@ const CaseDetail = () => {
                   caseId={caseData.id}
                   facts={caseData.facts}
                   legalQuestion={caseData.legal_question}
-                  caseNumber={caseData.case_number}
+                  caseNumber={caseData.case_number ?? ''}
                   caseTitle={caseData.title}
                   aiCreditsExhausted={aiCreditsExhausted}
                   onOpenComplaintGenerator={() => setComplaintGeneratorOpen(true)}
@@ -561,7 +561,7 @@ const CaseDetail = () => {
         caseData={caseData ? {
           id: caseData.id,
           title: caseData.title,
-          case_number: caseData.case_number,
+          case_number: caseData.case_number ?? '',
           case_type: caseData.case_type || undefined,
           court: caseData.court || undefined,
           facts: caseData.facts || undefined,
@@ -579,7 +579,7 @@ const CaseDetail = () => {
           caseId={caseData.id}
           caseData={{
             title: caseData.title,
-            case_number: caseData.case_number,
+            case_number: caseData.case_number ?? undefined,
             case_type: caseData.case_type,
             court: caseData.court,
             court_date: caseData.court_date,

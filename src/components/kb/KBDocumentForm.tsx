@@ -82,9 +82,9 @@ export function KBDocumentForm({
   useEffect(() => {
     if (initialData) {
       form.reset({
-        title: initialData.title,
-        content_text: initialData.content_text,
-        category: initialData.category,
+        title: initialData.title ?? '',
+        content_text: initialData.content_text ?? '',
+        category: (initialData.category ?? 'other') as string,
         article_number: initialData.article_number || '',
         source_name: initialData.source_name || '',
         source_url: initialData.source_url || '',

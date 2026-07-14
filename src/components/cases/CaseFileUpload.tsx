@@ -117,7 +117,7 @@ export function CaseFileUpload({ caseId }: CaseFileUploadProps) {
     enabled: files.length > 0,
   });
 
-  const existingOcrFileIds = new Set(ocrResults?.map(r => r.file_id) || []);
+  const existingOcrFileIds = new Set((ocrResults?.map(r => r.file_id) || []).filter((id): id is string => id != null));
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;

@@ -67,9 +67,6 @@ export const EVIDENCE_WEAKNESS_PROMPT = `
 ---
 ## ROLE
 
-Դու գործdelays delays delays delays delays delay delays delays delays delays delays delays delays delays delays delays delays **Ադdelays delays delays delays delays delays delays delays delays delays delays delays delaysDelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays Delays delays delays delays delays delays delays delays
-
-Դou delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays
 You act as a **Senior Evidence Admissibility & Credibility Analyst** specializing in the Republic of Armenia jurisdiction.
 
 📌 Focus ONLY on the provided case materials. Do NOT invent facts or references.

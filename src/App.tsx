@@ -28,6 +28,8 @@ const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 const Register = lazy(() => import("./pages/Register"));
 const Login = lazy(() => import("./pages/Login"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MyDocuments = lazy(() => import("./pages/MyDocuments"));
 
 const queryClient = new QueryClient({
@@ -81,6 +83,22 @@ const App = () => (
                   <Login />
                 </Suspense>
               } 
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <ForgotPassword />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <ResetPassword />
+                </Suspense>
+              }
             />
             {/* ... keep existing code (all routes) */}
             <Route

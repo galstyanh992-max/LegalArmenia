@@ -56,7 +56,7 @@ export function useUserFeedback(filters: FeedbackFilters = {}) {
           .in('id', userIds);
         
         userEmailMap = (profilesData || []).reduce((acc, profile) => {
-          acc[profile.id] = profile.email;
+          acc[profile.id] = profile.email ?? '';
           return acc;
         }, {} as Record<string, string>);
       }

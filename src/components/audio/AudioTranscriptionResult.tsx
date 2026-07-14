@@ -110,7 +110,7 @@ export function AudioTranscriptionResult({ transcription, caseId }: AudioTranscr
   const { isAdmin, isClient } = useAuth();
   
   const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState(transcription.transcription_text);
+  const [editedText, setEditedText] = useState(transcription.transcription_text ?? '');
   const [showKBDialog, setShowKBDialog] = useState(false);
   const [kbTitle, setKbTitle] = useState('');
   const [kbCategory, setKbCategory] = useState<KBCategory>('legal_commentary');
@@ -129,7 +129,7 @@ export function AudioTranscriptionResult({ transcription, caseId }: AudioTranscr
     ? Math.floor(transcription.duration_seconds % 60) 
     : 0;
 
-  const dialogueLines = parseDialogue(transcription.transcription_text);
+  const dialogueLines = parseDialogue(transcription.transcription_text ?? '');
   const isDialogue = dialogueLines.some(l => l.type === 'dialogue');
 
   const getConfidenceBadge = () => {
@@ -176,7 +176,7 @@ export function AudioTranscriptionResult({ transcription, caseId }: AudioTranscr
   };
 
   const handleCancel = () => {
-    setEditedText(transcription.transcription_text);
+    setEditedText(transcription.transcription_text ?? '');
     setIsEditing(false);
   };
 

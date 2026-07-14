@@ -247,6 +247,15 @@ All SQL files are preserved verbatim. This directory is outside the Supabase CLI
 | `20260711080700_generated_documents_view_insert.sql` | YES (version drift) | NO | RAG / KB / documents | REMOTE_APPLIED_MIRROR_ARCHIVED | Maps to remote 20260711014949 generated_documents_view_insert | `20260712120002_versioned_baseline_20260712.sql` |
 | `20260711123112_harden_user_profile_role_authorization.sql` | NO | YES | Auth / profiles | LOCAL_ONLY_SUPERSEDED | Not present in remote ledger; archived out of clean replay | `20260712120006_harden_profile_role_authorization.sql` |
 
+## Main integration archive additions
+
+The `origin/main` merge introduced 13 pre-baseline migrations into the active path. Eleven were byte-identical to files already preserved in this archive. The remaining two are preserved verbatim here and excluded from active replay to retain the verified eight-migration dependency order.
+
+| Migration | Remote Applied? | Local Only? | Objects | Disposition | Reason | Replacement |
+| --------- | --------------: | ----------: | ------- | ----------- | ------ | ----------- |
+| `20260712120000_audio_transcriptions_file_id_unique.sql` | UNKNOWN | YES | Audio transcription uniqueness | LOCAL_ONLY_SUPERSEDED | Earlier forward implementation merged from main; content retained verbatim | `20260712120010_enforce_audio_transcription_idempotency.sql` |
+| `20260712120100_telegram_uploads_bucket.sql` | UNKNOWN | YES | Telegram Storage bucket and policies | LOCAL_ONLY_SUPERSEDED | Product intent remains deferred; must not enter active replay implicitly | Deferred product decision |
+
 ## Remote-only ledger entries
 
 These applied ledger entries have no one-to-one local filename in the archive. They remain evidence only; no remote ledger mutation is authorized.

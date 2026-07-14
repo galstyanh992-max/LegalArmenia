@@ -12,7 +12,7 @@ Fresh environments only. Applying this baseline to the existing production proje
 - `AUDIT_REPORTS/17_LOCAL_MIGRATION_FORENSICS.md`
 - `AUDIT_REPORTS/18_SCHEMA_DIFF_CLASSIFICATION.md`
 - `AUDIT_REPORTS/19_MIGRATION_REPAIR_STRATEGY.md`
-- Source commit: `cfeafb7ec20c3057446405db9f62ba64206a5918` (PR #7; reports are not merged into current `main`).
+- Source commit: `cfeafb7ec20c3057446405db9f62ba64206a5918` (PR #7 provenance; now integrated into `main`).
 - Read-only production catalog capture: 2026-07-12.
 
 ## 3. Included schemas
@@ -98,6 +98,8 @@ The baseline has no safe down migration and must be discarded with the disposabl
 
 - Deterministic `ai_prompts` and `document_templates` reference-row parity is not captured.
 - `telegram-uploads` feature/bucket intent is unresolved.
-- Production credential incident `DEEP-001` remains open.
-- PR #7 remains open and reports 16–19 are sourced from `cfeafb7`, not current `main`.
-- Disposable clean replay and behavioral verification are required before production release consideration.
+- `DEEP-001` is CLOSED; rotation, dependent-secret updates, previous-credential invalidation and approved production smoke tests passed without recording secret values.
+- PR #7 is merged; source commit `cfeafb7` remains recorded for provenance.
+- Disposable clean replay and behavioral verification are complete; production smoke verification passed after `DEEP-001` closure.
+
+Main integration retained `00_app_authorization_core.reference.sql` and `GENERATE_BASELINE.md` as historical/source-review artifacts. They are not additional active replay inputs and do not change the eight-file active migration path.
