@@ -87,68 +87,20 @@ export function useLegalPracticeKB() {
     setState((s) => ({ ...s, isSearching: true, searchError: null }));
 
     try {
-      // Run edge-function search + chunk-RPC search in parallel
-      const edgePromise = supabase.functions.invoke("kb-search", {
+      const edgeResult = await supabase.functions.invoke("kb-search", {
         body: {
           query,
           category: category || null,
           limitDocs,
           limitChunksPerDoc,
+          statusScope: "extended",
         },
       });
-
-      const corpusRpc = supabase.rpc as unknown as (
-        fn: "search_legal_corpus_dual",
-        args: Record<string, unknown>,
-      ) => Promise<{ data: unknown; error: { message: string } | null }>;
-
-      const chunkPromise = corpusRpc("search_legal_corpus_dual", {
-        p_query_text: query,
-        p_metric_embedding: null,
-        p_qwen_embedding: null,
-        p_content_domain: "practice",
-        p_norm_status: "active",
-        p_limit: 50,
-        p_metric_limit: 0,
-        p_qwen_limit: 0,
-        p_bm25_limit: 50,
-        p_effective_at: null,
-      }).then(
-        (res) => res,
-        () => ({ data: null, error: { message: "chunk search unavailable" } })
-      );
-
-      const [edgeResult, chunkResult] = await Promise.all([edgePromise, chunkPromise]);
 
       // Edge function may fail (timeout, etc.) — treat as soft failure
       const edgeDocs: KBDocument[] = edgeResult.error ? [] : (edgeResult.data?.documents || []);
 
-      // Merge chunk-RPC results (if any) with edge results
-      const seenIds = new Set(edgeDocs.map((d) => d.id));
-      if (chunkResult.data && Array.isArray(chunkResult.data)) {
-        for (const row of chunkResult.data) {
-          if (seenIds.has(row.id)) continue;
-          seenIds.add(row.id);
-
-          edgeDocs.push({
-            id: row.document_id,
-            title: row.title || row.doc_id || "Untitled",
-            practice_category: (row.source === "echr" ? "echr" : category || "civil") as PracticeCategory,
-            court_type: (row.source || "first_instance") as CourtType,
-            outcome: "partial" as Outcome,
-            applied_articles: [],
-            key_violations: [],
-            legal_reasoning_summary: row.text_snippet || null,
-            decision_map: (row.decision_map as DecisionMap) || null,
-            key_paragraphs: Array.isArray(row.key_paragraphs) ? (row.key_paragraphs as unknown as KeyParagraph[]) : [],
-            top_chunks: [],
-            totalChunks: 0,
-            max_score: Number(row.score ?? 0) || 0,
-          });
-        }
-      }
-
-      // Limit to top 20 merged results
+      // Limit to top 20 edge-mediated results
       const documents = edgeDocs.slice(0, 20);
 
       setState((s) => ({

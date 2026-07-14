@@ -1,0 +1,54 @@
+{
+  "scan_scope": [
+    "supabase/functions/vector-search/index.ts",
+    "supabase/functions/kb-search/index.ts",
+    "supabase/functions/kb-search-assistant/index.ts",
+    "supabase/functions/kb-unified-search/index.ts",
+    "supabase/functions/_shared/rag-search.ts",
+    "supabase/functions/_shared/rag-types.ts"
+  ],
+  "approved_compatibility_field": "legacy_qwen_used=false",
+  "references": [
+    {
+      "file": "supabase/functions/vector-search/index.ts",
+      "line": 141,
+      "text": "legacy_qwen_used: false,"
+    },
+    {
+      "file": "supabase/functions/vector-search/index.ts",
+      "line": 173,
+      "text": "legacy_qwen_used: false,"
+    },
+    {
+      "file": "supabase/functions/kb-search/index.ts",
+      "line": 218,
+      "text": "legacy_qwen_used: false,"
+    },
+    {
+      "file": "supabase/functions/kb-search-assistant/index.ts",
+      "line": 39,
+      "text": "legacy_qwen_used: false;"
+    },
+    {
+      "file": "supabase/functions/kb-search-assistant/index.ts",
+      "line": 225,
+      "text": "legacy_qwen_used: false,"
+    },
+    {
+      "file": "supabase/functions/kb-unified-search/index.ts",
+      "line": 128,
+      "text": "legacy_qwen_used: false,"
+    },
+    {
+      "file": "supabase/functions/_shared/rag-search.ts",
+      "line": 203,
+      "text": "legacy_qwen_used: false,"
+    },
+    {
+      "file": "supabase/functions/_shared/rag-types.ts",
+      "line": 109,
+      "text": "legacy_qwen_used?: false;"
+    }
+  ],
+  "unapproved_reference_count": 0
+}

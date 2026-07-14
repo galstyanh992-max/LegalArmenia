@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "failures": [],
+  "changed_file_count": 35,
+  "env_files_in_diff": [],
+  "secret_hits": {
+    "private_key": 0,
+    "openai_key": 0,
+    "supabase_secret": 0,
+    "jwt": 0
+  },
+  "unexpected_local_migrations": [],
+  "known_remote_only_baseline_migrations": [
+    "20260714110215_repair_metric_retrieval_quality"
+  ],
+  "migration_sha256": "5ec74f89a961d8050ad36233de63b437ed3b99765aa5286c2031bdbc27922c25"
+}

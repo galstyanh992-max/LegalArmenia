@@ -144,6 +144,23 @@ Deno.test("LegalPipelineOrchestrator - deps.runRAG can be mocked", async () => {
   assertEquals(mockCalled, true);
 });
 
+Deno.test("LegalPipelineOrchestrator - RAG receives reasoning engine and reference date", async () => {
+  let receivedEngine = false;
+  let receivedReferenceDate: string | null | undefined;
+  const deps: LegalPipelineDeps = {
+    runRAG: async (_query, opts) => {
+      receivedEngine = Boolean(opts.engine?.retrieval_plan);
+      receivedReferenceDate = opts.referenceDate;
+      return { semantic_ok: true, kbResults: [], practiceResults: [] };
+    },
+  };
+
+  await runLegalPipeline(createInput(), deps);
+
+  assertEquals(receivedEngine, true);
+  assertEquals(receivedReferenceDate, "2026-06-30T00:00:00Z");
+});
+
 // Updated: "citation_verification" stage skips when no generatedText,
 // the old "verification" name now refers to the summary stage.
 Deno.test("LegalPipelineOrchestrator - citation_verification is skipped when no generated text exists", async () => {

@@ -14,7 +14,6 @@
  *     supabase/functions/vector-search/vector-search-retrieval.test.ts
  */
 
-import "https://deno.land/std@0.224.0/dotenv/load.ts";
 import {
   assertEquals,
   assertExists,
@@ -124,7 +123,9 @@ Deno.test("vector-search retrieval: returns seeded KB record by marker text", as
 
     // Bonus: verify telemetry fields
     assertExists(data.retrieval_mode);
-    assertEquals(typeof data.rerank_ok, "boolean");
+    assertEquals(data.reranker_ok, false);
+    assertEquals(data.rerank_ok, false);
+    assertEquals(data.legacy_qwen_used, false);
     assertExists(data.request_id);
 
     console.log(`[TEST] PASS: record ${recordId} found in top-${data.kb.length} results`);

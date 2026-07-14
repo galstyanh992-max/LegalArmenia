@@ -95,17 +95,30 @@ export interface VectorSearchResponse {
   semantic_ok?: boolean;
   /** Error message if semantic/vector retrieval was unavailable or failed */
   semantic_error?: string;
-  /** Whether optional Qwen/ECHR fallback retrieval ran for this request */
-  qwen_semantic_ok?: boolean;
-  /** Status message if optional Qwen/ECHR fallback retrieval did not run */
-  qwen_semantic_error?: string;
+  /** Whether Metric-AI semantic retrieval ran for this request */
+  metric_semantic_ok?: boolean;
+  /** Metric-AI semantic retrieval error */
+  metric_semantic_error?: string;
+  embedding_model?: "armenian-text-embeddings-2-large";
+  embedding_dimension?: 1024;
+  identifier_ok?: boolean;
+  metric_ann_ok?: boolean;
+  fts_ok?: boolean;
+  fusion_ok?: boolean;
+  reranker_ok?: false;
+  legacy_qwen_used?: false;
+  degraded?: boolean;
+  degraded_reason?: string | null;
+  retrieval_route?: string;
   /** Whether a semantic threshold was applied to vector branches */
   threshold_applied?: boolean;
   threshold_value?: number;
-  /** @deprecated Compatibility alias for semantic_ok; no AI reranker is used */
+  /** Always false until a separately evaluated reranker is configured */
   rerank_ok?: boolean;
-  /** @deprecated Compatibility alias for semantic_error */
+  /** Reranker status */
   rerank_error?: string;
+  reranker_applied?: false;
+  status_scope?: "current" | "extended" | "historical";
   /** Request tracing ID */
   request_id?: string;
 }

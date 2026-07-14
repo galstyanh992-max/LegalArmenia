@@ -281,72 +281,22 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
       const trimmed = searchQuery.trim();
       if (trimmed.length < 2) { setIsSearchingKB(false); return; }
 
-      const corpusRpc = supabase.rpc as unknown as (
-        fn: "search_legal_corpus_dual",
-        args: Record<string, unknown>,
-      ) => Promise<{ data: unknown; error: { message: string } | null }>;
-
-      const { data, error } = await corpusRpc("search_legal_corpus_dual", {
-        p_query_text: trimmed,
-        p_metric_embedding: null,
-        p_qwen_embedding: null,
-        p_content_domain: "knowledge_base",
-        p_norm_status: "active",
-        p_limit: 50,
-        p_metric_limit: 0,
-        p_qwen_limit: 0,
-        p_bm25_limit: 50,
-        p_effective_at: null,
+      const { data, error } = await supabase.functions.invoke("kb-unified-search", {
+        body: { query: trimmed, statusScope: "extended" },
       });
 
       if (error) throw error;
-
-      const rows = (Array.isArray(data) ? data : []) as Array<{
-        chunk_id: string;
-        document_id: string;
-        title: string | null;
-        doc_id: string | null;
-        text_snippet: string | null;
-        source_url: string | null;
-        citation_anchor: string | null;
-        source: string | null;
-        score: number;
-      }>;
-
       const chunksByDoc = new Map<string, KBChunkResult[]>();
-      const docsById = new Map<string, {
+      const docs = (data?.kb?.documents || []) as Array<{
         id: string; title: string; category: string;
         source_name: string | null; article_number: string | null;
         source_url: string | null; max_score: number;
-      }>();
-
-      for (const row of rows) {
-        if (!docsById.has(row.document_id)) {
-          docsById.set(row.document_id, {
-            id: row.document_id,
-            title: row.title || row.doc_id || "Untitled",
-            category: row.source || "legal",
-            source_name: row.source || null,
-            article_number: row.citation_anchor,
-            source_url: row.source_url,
-            max_score: Number(row.score) || 0,
-          });
-        }
-        const arr = chunksByDoc.get(row.document_id) || [];
-        arr.push({
-          doc_id: row.document_id,
-          chunk_index: arr.length,
-          chunk_type: "text",
-          label: row.citation_anchor,
-          char_start: 0,
-          excerpt: row.text_snippet || "",
-          full_text: row.text_snippet || "",
-          score: Number(row.score) || 0,
-        });
-        chunksByDoc.set(row.document_id, arr);
+      }>;
+      for (const chunk of (data?.kb?.chunks || []) as KBChunkResult[]) {
+        const arr = chunksByDoc.get(chunk.doc_id) || [];
+        arr.push(chunk);
+        chunksByDoc.set(chunk.doc_id, arr);
       }
-
-      const docs = [...docsById.values()];
       const globalMax = docs.reduce((mx, d) => Math.max(mx, Number(d.max_score) || 0), 0);
 
       const results: KBSearchResult[] = docs.map((doc) => {
@@ -375,6 +325,7 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
           query: trimmed,
           category: cat,
           kbCategory: null,
+          statusScope: "extended",
         },
       });
 

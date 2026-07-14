@@ -81,9 +81,9 @@ export interface RAGResult<T> {
   semantic_ok?: boolean;
   /** Semantic/vector availability error */
   semantic_error?: string;
-  /** @deprecated Compatibility alias for semantic_ok; no AI reranker is used */
+  /** Always false until a separately evaluated reranker is configured */
   rerank_ok?: boolean;
-  /** @deprecated Compatibility alias for semantic_error */
+  /** Reranker status */
   rerank_error?: string;
   source_hierarchy?: SourceHierarchyContext;
   court_practice?: CourtPracticeContext;
@@ -169,6 +169,7 @@ async function callVectorSearch(
         limit: opts.limit || 10,
         threshold: effectiveThreshold,
         reference_date: opts.referenceDate || undefined,
+        status_scope: "current",
       },
       {
         requestId: opts.requestId,
@@ -190,12 +191,25 @@ async function callVectorSearch(
       retrieval_mode: data.retrieval_mode,
       semantic_ok: data.semantic_ok === true,
       semantic_error: data.semantic_error,
-      qwen_semantic_ok: data.qwen_semantic_ok === true,
-      qwen_semantic_error: data.qwen_semantic_error,
+      metric_semantic_ok: data.metric_semantic_ok === true,
+      metric_semantic_error: data.metric_semantic_error,
+      embedding_model: data.embedding_model,
+      embedding_dimension: data.embedding_dimension,
+      identifier_ok: data.identifier_ok === true,
+      metric_ann_ok: data.metric_ann_ok === true,
+      fts_ok: data.fts_ok === true,
+      fusion_ok: data.fusion_ok === true,
+      reranker_ok: false,
+      legacy_qwen_used: false,
+      degraded: data.degraded === true,
+      degraded_reason: data.degraded_reason,
+      retrieval_route: data.retrieval_route,
       threshold_applied: data.threshold_applied === true,
       threshold_value: data.threshold_value,
-      rerank_ok: data.rerank_ok ?? data.semantic_ok,
-      rerank_error: data.rerank_error ?? data.semantic_error,
+      reranker_applied: false,
+      rerank_ok: false,
+      rerank_error: data.rerank_error || "RERANKER_NOT_CONFIGURED",
+      status_scope: data.status_scope || "current",
       request_id: data.request_id,
       _failed: false,
     };
@@ -334,8 +348,8 @@ export async function searchKB(opts: RAGKBOptions): Promise<RAGResult<KBSearchRe
     retrieval_mode: retrievalMode,
     semantic_ok: semanticOk,
     semantic_error: vectorResults._error || vectorResults.semantic_error,
-    rerank_ok: semanticOk,
-    rerank_error: vectorResults._error || vectorResults.semantic_error,
+    rerank_ok: false,
+    rerank_error: "RERANKER_NOT_CONFIGURED",
     source_hierarchy: buildSourceHierarchyContext(trimmed, { temporal_context: { effective_at: referenceDate || null } }),
     temporal_warnings: buildTemporalWarnings(trimmed, referenceDate),
   };
@@ -422,8 +436,8 @@ export async function searchPractice(opts: RAGPracticeOptions): Promise<RAGResul
     retrieval_mode: retrievalMode,
     semantic_ok: semanticOk,
     semantic_error: vectorResults._error || vectorResults.semantic_error,
-    rerank_ok: semanticOk,
-    rerank_error: vectorResults._error || vectorResults.semantic_error,
+    rerank_ok: false,
+    rerank_error: "RERANKER_NOT_CONFIGURED",
     source_hierarchy: buildSourceHierarchyContext(sorted, { temporal_context: { effective_at: opts.referenceDate || null } }),
     temporal_warnings: buildTemporalWarnings(sorted, opts.referenceDate),
   };
@@ -644,9 +658,9 @@ export interface DualRAGResult {
   semantic_ok: boolean;
   /** Aggregated semantic/vector errors if any */
   semantic_error?: string;
-  /** @deprecated Compatibility alias for semantic_ok; no AI reranker is used */
+  /** Always false until a separately evaluated reranker is configured */
   rerank_ok: boolean;
-  /** @deprecated Compatibility alias for semantic_error */
+  /** Reranker status */
   rerank_error?: string;
   source_hierarchy?: SourceHierarchyContext;
   court_practice?: CourtPracticeContext;
@@ -719,8 +733,8 @@ export async function dualSearch(opts: RAGSearchOptions & {
     retrieval_mode: retrievalMode,
     semantic_ok: semanticOk,
     semantic_error: errors || undefined,
-    rerank_ok: semanticOk,
-    rerank_error: errors || undefined,
+    rerank_ok: false,
+    rerank_error: "RERANKER_NOT_CONFIGURED",
     source_hierarchy: buildSourceHierarchyContext([...kb.results, ...practice.results], { temporal_context: { effective_at: opts.referenceDate || null } }),
     court_practice: buildCourtPracticeContext(practice.results, { effective_at: opts.referenceDate || null }),
     temporal_warnings: buildTemporalWarnings([...kb.results, ...practice.results], opts.referenceDate),

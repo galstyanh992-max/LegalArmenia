@@ -4,13 +4,11 @@
  * Tests the deployed vector-search Edge Function end-to-end:
  * 1. Valid internal call → 200 with telemetry fields
  * 2. Missing auth → rejected
- * 3. Response includes retrieval_mode, rerank_ok, request_id
- *    (semantic_ok/semantic_error kept as backward-compat aliases)
+ * 3. Response includes independent Metric/FTS/fusion/reranker telemetry
  *
  * Run: deno test --allow-net --allow-env supabase/functions/vector-search/vector-search.test.ts
  */
 
-import "https://deno.land/std@0.224.0/dotenv/load.ts";
 import {
   assertEquals,
   assertExists,
@@ -56,7 +54,14 @@ Deno.test("vector-search: internal call with valid key returns telemetry fields"
 
   // Must have canonical telemetry fields
   assertExists(data.retrieval_mode, "Missing retrieval_mode");
-  assertEquals(typeof data.rerank_ok, "boolean", "rerank_ok must be boolean");
+  assertEquals(data.reranker_ok, false, "reranker must not be faked");
+  assertEquals(data.rerank_ok, false, "compat rerank flag must remain false");
+  assertEquals(data.legacy_qwen_used, false, "legacy model must not run");
+  assertEquals(data.embedding_model, "armenian-text-embeddings-2-large");
+  assertEquals(data.embedding_dimension, 1024);
+  assertEquals(typeof data.metric_ann_ok, "boolean");
+  assertEquals(typeof data.fts_ok, "boolean");
+  assertEquals(typeof data.fusion_ok, "boolean");
   assertExists(data.request_id, "Missing request_id");
   // Backward compat aliases
   assertEquals(typeof data.semantic_ok, "boolean", "semantic_ok (compat) must be boolean");
@@ -134,13 +139,12 @@ Deno.test("vector-search: response shape matches contract", async () => {
     true,
     `Invalid retrieval_mode: ${data.retrieval_mode}`,
   );
-  assertEquals(typeof data.rerank_ok, "boolean");
+  assertEquals(data.reranker_ok, false);
+  assertEquals(data.rerank_ok, false);
+  assertEquals(data.legacy_qwen_used, false);
   assertEquals(typeof data.request_id, "string");
   // Backward compat
   assertEquals(typeof data.semantic_ok, "boolean");
 
-  // If rerank failed, error field must be present
-  if (!data.rerank_ok) {
-    assertExists(data.rerank_error, "rerank_error must be present when rerank_ok=false");
-  }
+  assertExists(data.rerank_error, "rerank_error must explain that no reranker ran");
 });
