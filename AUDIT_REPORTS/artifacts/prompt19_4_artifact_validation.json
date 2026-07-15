@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "check_count": 12,
+  "failed_checks": [],
+  "checks": {
+    "parent": true,
+    "frozen_test_unchanged": true,
+    "test_not_used_for_tuning": true,
+    "metric_only": true,
+    "qwen_absent": true,
+    "ml_reranker_absent": true,
+    "citation_gate_truthful": true,
+    "injection_gate_truthful": true,
+    "live_rpc_failure_recorded": true,
+    "legal_review_truthful": true,
+    "production_untouched": true,
+    "reports_65_75": true
+  }
+}

@@ -39,6 +39,8 @@ class ReviewStoreTest(unittest.TestCase):
             }
             record = store.submit(payload)
             self.assertEqual(record["reviewer_id"], "reviewer-a")
+            self.assertEqual(record["previous_hash"], "GENESIS")
+            self.assertEqual(store.status()["completed"], 1)
             with self.assertRaisesRegex(ValueError, "already reviewed"):
                 store.submit(payload)
 

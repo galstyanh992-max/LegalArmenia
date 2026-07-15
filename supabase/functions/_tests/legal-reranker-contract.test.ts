@@ -133,7 +133,7 @@ Deno.test("prompt-injection candidate remains data and stable ID is preserved", 
   }
 });
 
-Deno.test("status guard is applied after cross-encoder and metadata is immutable", async () => {
+Deno.test("status guard is applied by deterministic runtime and metadata is immutable", async () => {
   resetRerankerCircuitsForTests();
   const active = row();
   const unknown = row({
@@ -167,13 +167,14 @@ Deno.test("status guard is applied after cross-encoder and metadata is immutable
         ),
       ),
   });
-  assertEquals(result.reranker_ok, true);
+  assertEquals(result.reranker_ok, false);
+  assertEquals(result.reranker_mode, "deterministic");
   assertEquals(result.rows.length, 1);
   assertEquals(result.rows[0].chunk_id, active.chunk_id);
   assertEquals(result.rows[0].norm_status, "active");
 });
 
-Deno.test("timeout/error fallback reports degradation and never reports reranker_ok", async () => {
+Deno.test("production runtime never calls experimental reranker", async () => {
   resetRerankerCircuitsForTests();
   let attempts = 0;
   const result = await applyLegalReranking({
@@ -188,10 +189,9 @@ Deno.test("timeout/error fallback reports degradation and never reports reranker
       return Promise.reject(new Error("network unavailable"));
     },
   });
-  assertEquals(attempts, 2);
+  assertEquals(attempts, 0);
   assertEquals(result.reranker_ok, false);
-  assertEquals(result.degraded, true);
-  assertEquals(result.degraded_reason, "RERANKER_HTTP_ERROR");
+  assertEquals(result.degraded, false);
   assertEquals(
     result.retrieval_route,
     "identifier+metric_hy+fts+deterministic_legal_score",
@@ -216,7 +216,7 @@ Deno.test("calibrated no-answer uses separate signals and exact refusal text", (
   ]);
 });
 
-Deno.test("disabled runtime leaves stable Metric order and truthful telemetry", async () => {
+Deno.test("legacy enabled flag cannot reactivate experimental reranker", async () => {
   const rows = [
     row(),
     row({ chunk_id: "00000000-0000-4000-8000-000000000003" }),
@@ -229,7 +229,7 @@ Deno.test("disabled runtime leaves stable Metric order and truthful telemetry", 
   }, {
     config: config({ enabled: false }),
   });
-  assertEquals(result.rows, rows);
+  assertEquals(result.reranker_mode, "deterministic");
   assertEquals(result.reranker_ok, false);
   assertEquals(result.degraded, false);
 });

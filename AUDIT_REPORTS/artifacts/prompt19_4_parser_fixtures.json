@@ -1,0 +1,17 @@
+{
+  "passed": 5,
+  "failed": 0,
+  "languages": [
+    "hy",
+    "ru",
+    "mixed"
+  ],
+  "hostile_structure_guard": true,
+  "cases": [
+    "71-րդ հոդված",
+    "71-րդ հոդվածի 2-րդ մաս",
+    "5-րդ կետի «ա» ենթակետ",
+    "статья 71, часть 2",
+    "article 12.1 — part 3"
+  ]
+}

@@ -2,15 +2,13 @@ import type { MetricCorpusRow } from "./metric-search.ts";
 import type { StatusScope } from "./rag-types.ts";
 import {
   type LegalFeatureVector,
-  type LegalScoredRow,
   scoreLegalCandidates,
 } from "./legal-feature-scorer.ts";
+import type { RerankerConfig } from "./reranker-client.ts";
 import {
-  loadRerankerConfig,
-  requestRerank,
-  type RerankerConfig,
-  type RerankerFailure,
-} from "./reranker-client.ts";
+  decideNoAnswerV2,
+  rankDeterministicV2,
+} from "./deterministic-search-v2.ts";
 
 export const NO_ANSWER_TEXT =
   "В подключённом корпусе недостаточно подтверждённой информации для надёжного ответа.";
@@ -43,9 +41,10 @@ export interface RankedMetricRow extends MetricCorpusRow {
 export interface LegalRerankingResult {
   rows: RankedMetricRow[] | MetricCorpusRow[];
   enabled: boolean;
+  reranker_mode: "deterministic";
   reranker_ok: boolean;
   degraded: boolean;
-  degraded_reason?: RerankerFailure["reason"];
+  degraded_reason?: string;
   retrieval_route:
     | "identifier+metric_hy+fts"
     | "identifier+fts"
@@ -59,18 +58,6 @@ export interface LegalRerankingResult {
 
 function clamp(value: number): number {
   return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0;
-}
-
-function envNumber(
-  name: string,
-  fallback: number,
-  min: number,
-  max: number,
-): number {
-  const raw = typeof Deno !== "undefined"
-    ? Number(Deno.env.get(name))
-    : Number.NaN;
-  return Number.isFinite(raw) ? Math.min(max, Math.max(min, raw)) : fallback;
 }
 
 function validStatus(row: MetricCorpusRow, scope: StatusScope): boolean {
@@ -214,109 +201,58 @@ export async function applyLegalReranking(
     effectiveAt?: string | null;
     outputLimit: number;
   },
-  testOptions: { config?: RerankerConfig; fetcher?: typeof fetch } = {},
+  _testOptions: { config?: RerankerConfig; fetcher?: typeof fetch } = {},
 ): Promise<LegalRerankingResult> {
-  const config = testOptions.config ?? loadRerankerConfig();
-  const metricRoute = params.rows.some((row) => row.ann_rank != null)
-    ? "identifier+metric_hy+fts" as const
-    : "identifier+fts" as const;
-  if (!config.enabled) {
-    return {
-      rows: params.rows,
-      enabled: false,
-      reranker_ok: false,
-      degraded: false,
-      retrieval_route: metricRoute,
-    };
-  }
-
   const guarded = params.rows.filter((row) =>
     validStatus(row, params.statusScope) && validDate(row, params.effectiveAt)
   );
-  const deterministic = scoreLegalCandidates(params.query, guarded, {
-    statusScope: params.statusScope,
-    effectiveAt: params.effectiveAt,
-  }).sort((a, b) =>
-    b.deterministic_score - a.deterministic_score ||
-    a.row.chunk_id.localeCompare(b.row.chunk_id)
-  );
-  const candidateLimit = Math.min(
-    100,
-    Math.max(50, Math.trunc(config.maxBatchSize)),
-  );
-  const candidates = deterministic.slice(0, candidateLimit);
-  const reranker = await requestRerank(
-    params.query,
-    candidates.map((candidate) => candidate.row),
-    {
-      config,
-      fetcher: testOptions.fetcher,
-    },
-  );
-  const scores = reranker.ok
-    ? new Map(
-      reranker.results.map((
-        score,
-      ) => [score.candidate_id, score.normalized_score]),
-    )
-    : new Map<string, number>();
-  const crossEncoderWeight = envNumber(
-    "RERANKER_CROSS_ENCODER_WEIGHT",
-    0.65,
-    0,
-    1,
-  );
-  const ranked = candidates.map(
-    (candidate: LegalScoredRow): RankedMetricRow => {
-      const cross = scores.get(candidate.row.chunk_id);
-      const finalScore = reranker.ok && cross != null
-        ? crossEncoderWeight * cross +
-          (1 - crossEncoderWeight) * candidate.deterministic_score
-        : candidate.deterministic_score;
-      return {
-        ...candidate.row,
-        legal_feature_score: candidate.deterministic_score,
-        reranker_score: cross ?? null,
-        final_score: clamp(finalScore),
-        legal_features: candidate.features,
-      };
-    },
-  ).sort((a, b) =>
-    b.final_score - a.final_score || a.chunk_id.localeCompare(b.chunk_id)
+  const featureMap = new Map(
+    scoreLegalCandidates(params.query, guarded, {
+      statusScope: params.statusScope,
+      effectiveAt: params.effectiveAt,
+    }).map((item) => [item.row.chunk_id, item] as const),
   );
   const outputLimit = Math.min(
     20,
     Math.max(10, Math.trunc(params.outputLimit)),
   );
-  const diversified = diversify(ranked, outputLimit);
-  const noAnswer = decideNoAnswer(diversified, {
-    rerankerOk: reranker.ok,
+  const v2 = rankDeterministicV2(params.query, guarded, {
+    statusScope: params.statusScope,
+    effectiveAt: params.effectiveAt,
+    limit: outputLimit,
+  });
+  const ranked = v2.map((item): RankedMetricRow => {
+    const base = featureMap.get(item.row.chunk_id)!;
+    return {
+      ...item.row,
+      legal_feature_score: base.deterministic_score,
+      reranker_score: null,
+      final_score: item.final_score,
+      legal_features: base.features,
+    };
+  });
+  const v2Decision = decideNoAnswerV2(params.query, v2, params.statusScope);
+  const legacySignals = decideNoAnswer(ranked, {
+    rerankerOk: false,
     statusScope: params.statusScope,
     query: params.query,
-  });
-  const rows = noAnswer.answerable ? diversified : [];
-  if (reranker.ok) {
-    return {
-      rows,
-      enabled: true,
-      reranker_ok: true,
-      degraded: false,
-      retrieval_route:
-        "identifier+metric_hy+fts+deterministic_legal_score+cross_encoder",
-      model: reranker.model,
-      revision: reranker.revision,
-      latency_ms: reranker.latency_ms,
-      no_answer: noAnswer,
-    };
-  }
+    supportThreshold: 0,
+  }).signals;
+  const noAnswer: NoAnswerDecision = {
+    answerable: v2Decision.answerable,
+    text: v2Decision.answerable ? null : NO_ANSWER_TEXT,
+    reasons: v2Decision.reasons,
+    signals: legacySignals,
+    calibration: "train_dev_v2_unreleased",
+    support_score: v2Decision.support_score,
+  };
   return {
-    rows,
+    rows: noAnswer.answerable ? ranked : [],
     enabled: true,
+    reranker_mode: "deterministic",
     reranker_ok: false,
-    degraded: true,
-    degraded_reason: reranker.reason,
+    degraded: false,
     retrieval_route: "identifier+metric_hy+fts+deterministic_legal_score",
-    latency_ms: reranker.latency_ms,
     no_answer: noAnswer,
   };
 }

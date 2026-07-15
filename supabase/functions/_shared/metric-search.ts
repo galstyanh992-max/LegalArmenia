@@ -140,6 +140,7 @@ export function buildMetricTelemetry(
     metric_ann_ok: metricAnnOk,
     fts_ok: fusionOk,
     fusion_ok: fusionOk,
+    reranker_mode: "deterministic",
     reranker_ok: false,
     legacy_qwen_used: false,
     degraded: !metricAnnOk || !fusionOk,

@@ -1,0 +1,94 @@
+{
+  "unique_chunks": 588,
+  "fields": {
+    "document_title": {
+      "null_count": 0,
+      "null_rate": 0.0
+    },
+    "canonical_title": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "document_number": {
+      "null_count": 52,
+      "null_rate": 0.08843537414965986
+    },
+    "article": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "part": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "point": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "subpoint": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "chapter": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "section": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "effective_dates": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "norm_status": {
+      "null_count": 0,
+      "null_rate": 0.0
+    },
+    "source_url": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "document_version": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "chunk_index": {
+      "null_count": 588,
+      "null_rate": 1.0
+    },
+    "citation_anchor": {
+      "null_count": 245,
+      "null_rate": 0.4166666666666667
+    },
+    "page": {
+      "null_count": 588,
+      "null_rate": 1.0
+    }
+  },
+  "invalid_format": {
+    "document_number": 0,
+    "source_url": 0
+  },
+  "conflicting_metadata": {
+    "multiple_current_versions": 0,
+    "duplicate_canonical_keys": 28
+  },
+  "title_normalization_errors": 0,
+  "article_number_extraction_accuracy": null,
+  "article_number_extraction_note": "No legally reviewed field-level truth exists; coverage is reported, accuracy is not fabricated.",
+  "provision_hierarchy_complete_rate": 0.0,
+  "page_numbers_invented": 0,
+  "by_document_type_and_source": {
+    "security_fixture|unknown": {
+      "chunks": 10,
+      "missing_article": 10,
+      "missing_anchor": 10
+    },
+    "unknown|unknown": {
+      "chunks": 578,
+      "missing_article": 578,
+      "missing_anchor": 235
+    }
+  }
+}

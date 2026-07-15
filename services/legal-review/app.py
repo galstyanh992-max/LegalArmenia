@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import hmac
 import json
 from datetime import UTC, datetime
@@ -36,6 +37,7 @@ class ReviewStore:
         ]
         self.by_id = {item["review_item_id"]: item for item in self.items}
         self.labels_path = labels
+        self.batch_sha256 = hashlib.sha256(batch.read_bytes()).hexdigest()
         self.reviewer_id = reviewer_id
         self.lock = Lock()
         labels.parent.mkdir(parents=True, exist_ok=True)
@@ -48,7 +50,31 @@ class ReviewStore:
             for line in self.labels_path.read_text(encoding="utf-8").splitlines()
             if line
         ]
+        previous = "GENESIS"
+        for row in rows:
+            if row.get("previous_hash") != previous:
+                raise ValueError("review history hash chain is invalid")
+            expected = row.get("record_hash")
+            material = {key: value for key, value in row.items() if key != "record_hash"}
+            actual = hashlib.sha256(
+                json.dumps(material, ensure_ascii=False, sort_keys=True).encode()
+            ).hexdigest()
+            if not expected or not hmac.compare_digest(expected, actual):
+                raise ValueError("review history record hash is invalid")
+            previous = expected
         return {row["review_item_id"]: row for row in rows}
+
+    def status(self) -> dict[str, Any]:
+        completed = len(self.labels())
+        return {
+            "reviewer_id": self.reviewer_id,
+            "completed": completed,
+            "total": len(self.items),
+            "remaining": len(self.items) - completed,
+            "batch_sha256": self.batch_sha256,
+            "model_scores_visible": False,
+            "history_append_only": True,
+        }
 
     def next_item(self) -> dict[str, Any] | None:
         done = self.labels()
@@ -96,6 +122,13 @@ class ReviewStore:
             labels = self.labels()
             if record["review_item_id"] in labels:
                 raise ValueError("item already reviewed")
+            record["batch_sha256"] = self.batch_sha256
+            record["previous_hash"] = (
+                list(labels.values())[-1]["record_hash"] if labels else "GENESIS"
+            )
+            record["record_hash"] = hashlib.sha256(
+                json.dumps(record, ensure_ascii=False, sort_keys=True).encode()
+            ).hexdigest()
             with self.labels_path.open("a", encoding="utf-8") as stream:
                 stream.write(json.dumps(record, ensure_ascii=False) + "\n")
         return record
@@ -138,6 +171,15 @@ def handler_factory(store: ReviewStore, token: str, ui: Path):
                         "completed": len(store.labels()),
                         "total": len(store.items),
                     },
+                )
+                return
+            if self.path == "/api/status":
+                self.send_json(HTTPStatus.OK, store.status())
+                return
+            if self.path == "/api/export":
+                self.send_json(
+                    HTTPStatus.OK,
+                    {"status": store.status(), "labels": list(store.labels().values())},
                 )
                 return
             self.send_json(HTTPStatus.NOT_FOUND, {"error": "not found"})

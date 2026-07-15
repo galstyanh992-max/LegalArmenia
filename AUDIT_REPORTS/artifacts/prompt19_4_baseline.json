@@ -1,0 +1,41 @@
+{
+  "captured_at": "2026-07-15T00:00:00+04:00",
+  "branch": "codex/prompt-19-4-deterministic-search-hardening",
+  "parent_hash": "ecbe09a2c84a2c7ad57ff2b110c8a959da6c5c6b",
+  "original_dirty_worktree": {
+    "path": "D:/1V/LegalArmenia-clean",
+    "branch": "codex/supabase-replay-verification",
+    "head": "cf652431d5119dab76d7937f075eb440aa2ca002",
+    "status_sha256_crlf": "89edd69eae9c596e181c09c2acc1bc2128069d713eb541931c47fbdac278bc30",
+    "tracked_diff_sha256_crlf": "371255e78c53818e70c94e8fb5d01f34dae8518a0d77c55ff1b79a2b4476ee74",
+    "cached_diff_sha256_crlf": "9c1caacb8b66bbec8165361739aba372078ba5a362879cc5f404abd467a86cc3",
+    "status_lines": 150
+  },
+  "frozen_dataset": {
+    "canonical_sha256": "9d324b10918a66bad74ed468faeec027952858235f5df433ca5702488c2a0381",
+    "frozen_gold_file_sha256": "37421cb2a6ec62a01ea76240c4180915382e9f731a24fe8abc55d2fcc59994da",
+    "train_file_sha256": "5baa1cd1c0ce51978a7691712d2aa0bfc5298683b40077ac516dc25f78d0af13",
+    "dev_file_sha256": "97d24eec84c692cfa512a985b75bb06f946e3d3e4ff63ec33d2098257114f8ce",
+    "test_file_sha256": "97f17850bed91eff2b7654b236a0b10f3e0f5a932109996ae25cb7b316680f89",
+    "sizes": {
+      "total": 280,
+      "train": 168,
+      "dev": 56,
+      "test": 56
+    },
+    "legal_review_status": "ENGINEERING_GOLD_PENDING_LEGAL_REVIEW"
+  },
+  "baseline_metrics": {
+    "recall_at_10": 0.9608,
+    "mrr": 0.8743,
+    "ndcg_at_10": 0.9027,
+    "citation_document_accuracy": 0.8431,
+    "citation_provision_accuracy": 0.8235,
+    "injection_pass_rate": 0.5
+  },
+  "scorer_v1_sha256": "a9c7411d197f371e0dee0a8546d149d82e8099f30277c67b7a06eefd46377113",
+  "retrieval_rpc_sha256": "3e9942b4640ed8c11a2da1513513e1c6c1e894e19ae334e4e6b47592d3545df7",
+  "failure_list_sha256": "fb51180d6e7fe0a5050964a303fa344d8a4e1e3c36a3959491c3b7ca1b9b6584",
+  "production_writes": 0,
+  "production_deployments": 0
+}

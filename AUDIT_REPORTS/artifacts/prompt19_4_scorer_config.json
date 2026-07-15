@@ -1,0 +1,30 @@
+{
+  "version": "deterministic_legal_scorer_v2_train_dev_frozen",
+  "frozen_before_test": true,
+  "test_used_for_tuning": false,
+  "weights": {
+    "v1_legal_feature_score": 0.56,
+    "exact_full_provision": 0.34,
+    "exact_article": 0.306,
+    "exact_document_number": 0.2924,
+    "exact_title": 0.2788,
+    "partial_provision": 0.1428,
+    "normalized_title": 0.238,
+    "date_match": 0.153,
+    "case_number_match": 0.2652,
+    "specificity": 0.1,
+    "authority": 0.08,
+    "official_source": 0.04,
+    "prompt_manipulation_penalty": -0.55
+  },
+  "guards": {
+    "current_active_only": true,
+    "unknown_extended_only": true,
+    "repealed_historical_only": true,
+    "per_document_cap": 2,
+    "support_threshold": 0.22
+  },
+  "semantic_route": "Metric-AI only",
+  "qwen_used": false,
+  "ml_reranker_used": false
+}

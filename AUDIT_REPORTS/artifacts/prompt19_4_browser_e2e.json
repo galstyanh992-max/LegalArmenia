@@ -1,0 +1,19 @@
+{
+  "playwright_cli": true,
+  "app_env_source": "existing local .env; values not logged or copied",
+  "landing_loaded": true,
+  "login_loaded": true,
+  "protected_kb_redirected": true,
+  "authenticated_search_executed": false,
+  "authenticated_search_blocker": "No test-user credentials in local env.",
+  "legal_review_ui_loaded": true,
+  "blind_fields_verified": true,
+  "progress_verified": "0/2800",
+  "autosave_reload_verified": true,
+  "model_scores_visible": false,
+  "screenshots": [
+    "output/playwright/login.png",
+    "output/playwright/protected-kb.png",
+    "output/playwright/legal-review.png"
+  ]
+}

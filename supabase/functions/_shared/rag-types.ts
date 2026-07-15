@@ -12,6 +12,7 @@ export interface MetricRetrievalTelemetry {
   metric_ann_ok: boolean;
   fts_ok: boolean;
   fusion_ok: boolean;
+  reranker_mode?: "deterministic";
   reranker_ok: boolean;
   legacy_qwen_used: false;
   degraded: boolean;
