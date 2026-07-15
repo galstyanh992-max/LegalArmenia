@@ -49,13 +49,26 @@ export function isValidInternalCall(req: Request): boolean {
 
   // Check primary internal key
   const secret = Deno.env.get("INTERNAL_INGEST_KEY");
-  if (secret && provided === secret) return true;
+  if (secret && constantTimeEqual(provided, secret)) return true;
 
   // Check cron worker key (stored in vault, passed by pg_cron)
   const cronKey = Deno.env.get("CRON_WORKER_KEY");
-  if (cronKey && provided === cronKey) return true;
+  if (cronKey && constantTimeEqual(provided, cronKey)) return true;
 
   return false;
+}
+
+/** Compare credentials without content-dependent early returns. */
+export function constantTimeEqual(left: string, right: string): boolean {
+  const encoder = new TextEncoder();
+  const leftBytes = encoder.encode(left);
+  const rightBytes = encoder.encode(right);
+  const length = Math.max(leftBytes.length, rightBytes.length);
+  let difference = leftBytes.length ^ rightBytes.length;
+  for (let index = 0; index < length; index++) {
+    difference |= (leftBytes[index] ?? 0) ^ (rightBytes[index] ?? 0);
+  }
+  return difference === 0;
 }
 
 /**
@@ -98,7 +111,8 @@ function isWildcardAllowed(): boolean {
 function isLocalDevOrigin(origin: string): boolean {
   const hostname = parseOriginHostname(origin);
   if (!hostname) return false;
-  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+  return hostname === "localhost" || hostname === "127.0.0.1" ||
+    hostname === "::1";
 }
 
 /**
@@ -147,7 +161,9 @@ export function isAllowedOrigin(origin: string): boolean {
  * - If origin matches exact list or suffix → reflect origin + Vary: Origin.
  * - Otherwise → null (caller must 403).
  */
-export function getCorsHeaders(requestOrigin?: string | null): Record<string, string> | null {
+export function getCorsHeaders(
+  requestOrigin?: string | null,
+): Record<string, string> | null {
   // Wildcard only in non-production environments when explicitly enabled
   if (isWildcardAllowed()) {
     return {
@@ -192,13 +208,18 @@ export interface RequestValidation {
  *
  * 3. No Origin + no valid internal key → FAIL-CLOSED (403).
  */
-export function handleCors(req: Request): RequestValidation | { corsHeaders?: undefined; errorResponse: Response } {
+export function handleCors(
+  req: Request,
+): RequestValidation | { corsHeaders?: undefined; errorResponse: Response } {
   // ── Mode 1: Internal call with valid key ──
   if (isValidInternalCall(req)) {
     if (req.method === "OPTIONS") {
       return {
         corsHeaders: INTERNAL_CORS_HEADERS,
-        errorResponse: new Response(null, { status: 204, headers: INTERNAL_CORS_HEADERS }),
+        errorResponse: new Response(null, {
+          status: 204,
+          headers: INTERNAL_CORS_HEADERS,
+        }),
         mode: "internal",
       };
     }
@@ -214,7 +235,10 @@ export function handleCors(req: Request): RequestValidation | { corsHeaders?: un
     const fallback = { "Content-Type": "application/json" };
     return {
       errorResponse: new Response(
-        JSON.stringify({ error: "cors_not_allowed", reason: "Origin header required for browser requests" }),
+        JSON.stringify({
+          error: "cors_not_allowed",
+          reason: "Origin header required for browser requests",
+        }),
         { status: 403, headers: fallback },
       ),
     };
@@ -259,7 +283,10 @@ export function validateBrowserRequest(
   if (!authHeader?.startsWith("Bearer ")) {
     return new Response(
       JSON.stringify({ error: "Authorization required" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
   return null;
@@ -282,14 +309,24 @@ export function validateInternalRequest(
   const secret = Deno.env.get("INTERNAL_INGEST_KEY");
   if (!secret) {
     return new Response(
-      JSON.stringify({ error: "Server misconfigured: INTERNAL_INGEST_KEY not set" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      JSON.stringify({
+        error: "Server misconfigured: INTERNAL_INGEST_KEY not set",
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 
   return new Response(
-    JSON.stringify({ error: "Unauthorized: invalid or missing x-internal-key" }),
-    { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    JSON.stringify({
+      error: "Unauthorized: invalid or missing x-internal-key",
+    }),
+    {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    },
   );
 }
 
@@ -347,7 +384,9 @@ export function checkInputSize(
 
 /** Generate a short unique request ID for tracing */
 function generateRequestId(): string {
-  return `req_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 8)}`;
+  return `req_${Date.now().toString(36)}_${
+    Math.random().toString(36).substring(2, 8)
+  }`;
 }
 
 /**
@@ -355,10 +394,14 @@ function generateRequestId(): string {
  * Includes: x-internal-key, x-request-id, content-type.
  * Optionally pass x-user-id for audit (NOT used for auth).
  */
-export function buildInternalHeaders(extraHeaders?: Record<string, string>): Record<string, string> {
+export function buildInternalHeaders(
+  extraHeaders?: Record<string, string>,
+): Record<string, string> {
   const key = Deno.env.get("INTERNAL_INGEST_KEY");
   if (!key) {
-    throw new Error("INTERNAL_INGEST_KEY is not set — cannot make internal calls");
+    throw new Error(
+      "INTERNAL_INGEST_KEY is not set — cannot make internal calls",
+    );
   }
   const base: Record<string, string> = {
     "Content-Type": "application/json",
