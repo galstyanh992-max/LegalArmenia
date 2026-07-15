@@ -1,0 +1,962 @@
+[
+  {
+    "id": "parser-positive-1",
+    "text": "10-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "10"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-2",
+    "text": "հոդված 11 մաս 2",
+    "expected": {
+      "article": "11"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-3",
+    "text": "статья 12 часть 2",
+    "expected": {
+      "article": "12"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-4",
+    "text": "Article 13(2)",
+    "expected": {
+      "article": "13"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-5",
+    "text": "14-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "14"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-6",
+    "text": "15-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "15"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-7",
+    "text": "հոդված 16 մաս 2",
+    "expected": {
+      "article": "16"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-8",
+    "text": "статья 17 часть 2",
+    "expected": {
+      "article": "17"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-9",
+    "text": "Article 18(2)",
+    "expected": {
+      "article": "18"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-10",
+    "text": "19-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "19"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-11",
+    "text": "20-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "20"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-12",
+    "text": "հոդված 21 մաս 2",
+    "expected": {
+      "article": "21"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-13",
+    "text": "статья 22 часть 2",
+    "expected": {
+      "article": "22"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-14",
+    "text": "Article 23(2)",
+    "expected": {
+      "article": "23"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-15",
+    "text": "24-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "24"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-16",
+    "text": "25-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "25"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-17",
+    "text": "հոդված 26 մաս 2",
+    "expected": {
+      "article": "26"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-18",
+    "text": "статья 27 часть 2",
+    "expected": {
+      "article": "27"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-19",
+    "text": "Article 28(2)",
+    "expected": {
+      "article": "28"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-20",
+    "text": "29-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "29"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-21",
+    "text": "30-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "30"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-22",
+    "text": "հոդված 31 մաս 2",
+    "expected": {
+      "article": "31"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-23",
+    "text": "статья 32 часть 2",
+    "expected": {
+      "article": "32"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-24",
+    "text": "Article 33(2)",
+    "expected": {
+      "article": "33"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-25",
+    "text": "34-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "34"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-26",
+    "text": "35-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "35"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-27",
+    "text": "հոդված 36 մաս 2",
+    "expected": {
+      "article": "36"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-28",
+    "text": "статья 37 часть 2",
+    "expected": {
+      "article": "37"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-29",
+    "text": "Article 38(2)",
+    "expected": {
+      "article": "38"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-30",
+    "text": "39-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "39"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-31",
+    "text": "40-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "40"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-32",
+    "text": "հոդված 41 մաս 2",
+    "expected": {
+      "article": "41"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-33",
+    "text": "статья 42 часть 2",
+    "expected": {
+      "article": "42"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-34",
+    "text": "Article 43(2)",
+    "expected": {
+      "article": "43"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-35",
+    "text": "44-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "44"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-36",
+    "text": "45-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "45"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-37",
+    "text": "հոդված 46 մաս 2",
+    "expected": {
+      "article": "46"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-38",
+    "text": "статья 47 часть 2",
+    "expected": {
+      "article": "47"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-39",
+    "text": "Article 48(2)",
+    "expected": {
+      "article": "48"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-40",
+    "text": "49-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "49"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-41",
+    "text": "50-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "50"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-42",
+    "text": "հոդված 51 մաս 2",
+    "expected": {
+      "article": "51"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-43",
+    "text": "статья 52 часть 2",
+    "expected": {
+      "article": "52"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-44",
+    "text": "Article 53(2)",
+    "expected": {
+      "article": "53"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-45",
+    "text": "54-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "54"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-46",
+    "text": "55-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "55"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-47",
+    "text": "հոդված 56 մաս 2",
+    "expected": {
+      "article": "56"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-48",
+    "text": "статья 57 часть 2",
+    "expected": {
+      "article": "57"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-49",
+    "text": "Article 58(2)",
+    "expected": {
+      "article": "58"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-50",
+    "text": "59-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "59"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-51",
+    "text": "60-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "60"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-52",
+    "text": "հոդված 61 մաս 2",
+    "expected": {
+      "article": "61"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-53",
+    "text": "статья 62 часть 2",
+    "expected": {
+      "article": "62"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-54",
+    "text": "Article 63(2)",
+    "expected": {
+      "article": "63"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-55",
+    "text": "64-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "64"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-56",
+    "text": "65-րդ հոդվածի 2-րդ մաս",
+    "expected": {
+      "article": "65"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-57",
+    "text": "հոդված 66 մաս 2",
+    "expected": {
+      "article": "66"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-58",
+    "text": "статья 67 часть 2",
+    "expected": {
+      "article": "67"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-59",
+    "text": "Article 68(2)",
+    "expected": {
+      "article": "68"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-positive-60",
+    "text": "69-րդ հոդվածի 3-րդ կետի «ա» ենթակետ",
+    "expected": {
+      "article": "69"
+    },
+    "positive": true
+  },
+  {
+    "id": "parser-negative-1",
+    "text": "2026 թվականի 1 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-2",
+    "text": "գործը քննվել է 2 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-3",
+    "text": "N 3-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-4",
+    "text": "score 4",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-5",
+    "text": "2026 թվականի 5 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-6",
+    "text": "գործը քննվել է 6 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-7",
+    "text": "N 7-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-8",
+    "text": "score 8",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-9",
+    "text": "2026 թվականի 9 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-10",
+    "text": "գործը քննվել է 10 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-11",
+    "text": "N 11-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-12",
+    "text": "score 12",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-13",
+    "text": "2026 թվականի 13 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-14",
+    "text": "գործը քննվել է 14 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-15",
+    "text": "N 15-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-16",
+    "text": "score 16",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-17",
+    "text": "2026 թվականի 17 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-18",
+    "text": "գործը քննվել է 18 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-19",
+    "text": "N 19-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-20",
+    "text": "score 20",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-21",
+    "text": "2026 թվականի 21 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-22",
+    "text": "գործը քննվել է 22 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-23",
+    "text": "N 23-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-24",
+    "text": "score 24",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-25",
+    "text": "2026 թվականի 25 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-26",
+    "text": "գործը քննվել է 26 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-27",
+    "text": "N 27-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-28",
+    "text": "score 28",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-29",
+    "text": "2026 թվականի 29 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-30",
+    "text": "գործը քննվել է 30 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-31",
+    "text": "N 31-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-32",
+    "text": "score 32",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-33",
+    "text": "2026 թվականի 33 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-34",
+    "text": "գործը քննվել է 34 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-35",
+    "text": "N 35-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-36",
+    "text": "score 36",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-37",
+    "text": "2026 թվականի 37 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-38",
+    "text": "գործը քննվել է 38 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-39",
+    "text": "N 39-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-40",
+    "text": "score 40",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-41",
+    "text": "2026 թվականի 41 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-42",
+    "text": "գործը քննվել է 42 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-43",
+    "text": "N 43-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-44",
+    "text": "score 44",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-45",
+    "text": "2026 թվականի 45 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-46",
+    "text": "գործը քննվել է 46 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-47",
+    "text": "N 47-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-48",
+    "text": "score 48",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-49",
+    "text": "2026 թվականի 49 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-50",
+    "text": "գործը քննվել է 50 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-51",
+    "text": "N 51-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-52",
+    "text": "score 52",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-53",
+    "text": "2026 թվականի 53 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-54",
+    "text": "գործը քննվել է 54 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-55",
+    "text": "N 55-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-56",
+    "text": "score 56",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-57",
+    "text": "2026 թվականի 57 որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-58",
+    "text": "գործը քննվել է 58 անգամ",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-59",
+    "text": "N 59-Ա որոշում",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  },
+  {
+    "id": "parser-negative-60",
+    "text": "score 60",
+    "expected": {
+      "provision_key": ""
+    },
+    "positive": false
+  }
+]

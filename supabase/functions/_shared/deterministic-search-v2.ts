@@ -151,7 +151,14 @@ function trustedProvision(row: MetricCorpusRow) {
       structured.point && `pt:${structured.point}`,
       structured.subpoint && `sp:${structured.subpoint}`,
     ].filter(Boolean).join("/");
-    return { ...structured, provision_key };
+    return {
+      ...structured,
+      chapter: "",
+      section: "",
+      range_end: "",
+      provision_key,
+      confidence: 1,
+    };
   }
   return parseLegalProvision(`${row.citation_anchor ?? ""}`, {
     trustedStructure: true,

@@ -49,19 +49,19 @@ function row(overrides: Partial<MetricCorpusRow> = {}): MetricCorpusRow {
 Deno.test("Armenian, Russian and mixed provision forms normalize deterministically", () => {
   assertEquals(
     parseLegalProvision("71-րդ հոդվածի 2-րդ մաս").provision_key,
-    "a:71/p:2",
+    "article:71|part:2",
   );
   assertEquals(
     parseLegalProvision("статья 71, часть 2, пункт 5").provision_key,
-    "a:71/p:2/pt:5",
+    "article:71|part:2|point:5",
   );
   assertEquals(
     parseLegalProvision("5-րդ կետի «ա» ենթակետ").provision_key,
-    "pt:5/sp:ա",
+    "point:5|subpoint:ա",
   );
   assertEquals(
     parseLegalProvision("article 12.1 — part 3").provision_key,
-    "a:12.1/p:3",
+    "article:12.1|part:3",
   );
 });
 

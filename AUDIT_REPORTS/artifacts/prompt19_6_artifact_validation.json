@@ -1,0 +1,10 @@
+{
+  "required_reports": 10,
+  "required_reports_present": 10,
+  "json_parse_errors": 0,
+  "jsonl_line_errors": 0,
+  "temporary_evaluation_files_remaining": 0,
+  "secret_hits": 0,
+  "env_files_in_diff": 0,
+  "valid": true
+}

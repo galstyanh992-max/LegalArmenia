@@ -1,0 +1,21 @@
+{
+  "contract_version": "legal-citation-metadata-v1",
+  "rows": 588,
+  "coverage": {
+    "document_id": 588,
+    "canonical_title": 588,
+    "document_number": 395,
+    "provision_key": 0,
+    "source_url": 0,
+    "document_version_id": 0,
+    "authority": 0,
+    "effective_dates": 0
+  },
+  "confidence": {
+    "high": 536,
+    "medium": 52,
+    "low": 0
+  },
+  "body_text_used_for_identity_fields": false,
+  "overwrite_existing_metadata": false
+}

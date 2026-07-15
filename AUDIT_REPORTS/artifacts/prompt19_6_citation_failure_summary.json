@@ -1,0 +1,11 @@
+{
+  "total": 7,
+  "by_class": {
+    "AUTHORITY_MISMATCH": 1,
+    "DUPLICATE_SOURCE_CONFUSION": 2,
+    "GOLD_LABEL_UNCERTAIN": 3,
+    "WRONG_DOCUMENT_VERSION": 1
+  },
+  "legally_adjudicated": 0,
+  "gold_changed": 0
+}

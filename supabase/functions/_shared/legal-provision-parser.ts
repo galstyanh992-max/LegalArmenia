@@ -3,38 +3,96 @@ export interface LegalProvision {
   part: string;
   point: string;
   subpoint: string;
+  chapter: string;
+  section: string;
+  range_end: string;
   provision_key: string;
+  confidence: number;
 }
 
-const ARTICLE =
-  /(?:հոդված(?:ի|ը|ում)?|стать(?:я|и|ю|е)|article)\s*[№#:]?\s*(\d+(?:[.\-–]\d+)?)(?:\s*[-‑–]?(?:րդ|й|я))?/iu;
-const PREFIXED_ARTICLE =
-  /\b(\d+(?:[.\-–]\d+)?)\s*[-‑–]?(?:րդ|й)\s+(?:հոդված|стать)/iu;
-const PART =
-  /(?:մաս(?:ի|ը|ում)?|част(?:ь|и|ью)|part)\s*[№#:]?\s*(\d+(?:\.\d+)?)(?:\s*[-‑–]?(?:ին|րդ|й|я))?/iu;
-const PREFIXED_PART = /\b(\d+(?:\.\d+)?)\s*[-‑–]?(?:րդ|й)\s+(?:մաս|част)/iu;
-const POINT =
-  /(?:կետ(?:ի|ը|ում)?|пункт(?:а|е|ом)?|point)\s*[№#:]?\s*(\d+(?:\.\d+)?)(?:\s*[-‑–]?(?:րդ|й))?/iu;
-const PREFIXED_POINT = /\b(\d+(?:\.\d+)?)\s*[-‑–]?(?:րդ|й)\s+(?:կետ|пункт)/iu;
-const SUBPOINT =
-  /(?:ենթակետ(?:ի|ը|ում)?|подпункт(?:а|е|ом)?|subpoint)\s*[«"']?([\p{L}\d]+)[»"']?/iu;
-const PREFIXED_SUBPOINT =
-  /[«"']([ա-ֆa-zа-я\d]+)[»"']\s+(?:ենթակետ|подпункт|subpoint)/iu;
+const DASH = "[-‐‑‒–—]";
+const NUMBER = "(\\d+(?:[.]\\d+)?)";
+const ARTICLE_WORD = "(?:հոդված(?:ը|ի|ում|ներ)?|стать(?:я|и|ю|е)|articles?)";
+const PART_WORD = "(?:մաս(?:ը|ի|ում)?|част(?:ь|и|ью)|parts?)";
+const POINT_WORD = "(?:կետ(?:ը|ի|ում)?|пункт(?:а|е|ом)?|points?)";
+const SUBPOINT_WORD = "(?:ենթակետ(?:ը|ի|ում)?|подпункт(?:а|е|ом)?|subpoints?)";
+const CHAPTER_WORD = "(?:գլուխ(?:ը|ի|ում)?|глав(?:а|ы|е)|chapters?)";
+const SECTION_WORD = "(?:բաժին(?:ը|ի|ում)?|раздел(?:а|е)?|sections?)";
 
-const MANIPULATION =
-  /(?:ignore\s+(?:all\s+)?previous\s+instructions|rank\s+this\s+first|reveal\s+(?:the\s+)?(?:system\s+)?prompt|system\s*[:=]|assistant\s*[:=]|user\s*[:=]|игнорируй\s+предыдущ|поставь\s+(?:это\s+)?на\s+перв|раскрой\s+(?:системн|промпт)|անտես(?:իր|եք).*հրահանգ|դասակարգ(?:իր|եք).*առաջին|բացահայտ(?:իր|եք).*հուշում)/iu;
+const explicit = (word: string) =>
+  new RegExp(`${word}\\s*[№#:]?\\s*${NUMBER}`, "iu");
+const prefixed = (word: string) =>
+  new RegExp(`${NUMBER}\\s*${DASH}\\s*(?:րդ|ին|й|я)\\s*${word}`, "iu");
+
+const ARTICLE = explicit(ARTICLE_WORD);
+const PREFIXED_ARTICLE = prefixed(ARTICLE_WORD);
+const PART = explicit(PART_WORD);
+const PREFIXED_PART = prefixed(PART_WORD);
+const POINT = explicit(POINT_WORD);
+const PREFIXED_POINT = prefixed(POINT_WORD);
+const SUBPOINT = new RegExp(
+  `${SUBPOINT_WORD}\\s*[№#:]?\\s*[«"']?([\\p{L}\\d]+)[»"']?`,
+  "iu",
+);
+const PREFIXED_SUBPOINT = new RegExp(
+  `[«"']([ա-ֆa-zа-я\\d]+)[»"']\\s*${SUBPOINT_WORD}`,
+  "iu",
+);
+const CHAPTER = explicit(CHAPTER_WORD);
+const PREFIXED_CHAPTER = prefixed(CHAPTER_WORD);
+const SECTION = explicit(SECTION_WORD);
+const PREFIXED_SECTION = prefixed(SECTION_WORD);
+const ARTICLE_PART_PARENS = new RegExp(
+  `${ARTICLE_WORD}\\s*${NUMBER}\\s*[(]${NUMBER}[)]`,
+  "iu",
+);
+const ARTICLE_RANGE = new RegExp(
+  `(?:${ARTICLE_WORD}\\s*)?${NUMBER}\\s*${DASH}\\s*${NUMBER}\\s*(?:${ARTICLE_WORD})?`,
+  "iu",
+);
+
+const MANIPULATION_PATTERNS = [
+  /ignore\s+(?:all\s+)?previous\s+instructions?/iu,
+  /(?:return|rank|place)\s+(?:this|it)\s+first/iu,
+  /reveal\s+(?:the\s+)?(?:system\s+)?prompt/iu,
+  /(?:change|override|increase)\s+(?:the\s+)?(?:rank|score)/iu,
+  /(?:system|assistant|user)\s*[:=]/iu,
+  /игнорируй\s+(?:все\s+)?предыдущие\s+инструкции/iu,
+  /(?:поставь|верни|ранжируй)\s+(?:это\s+)?(?:первым|на\s+первое)/iu,
+  /(?:раскрой|покажи)\s+(?:системный\s+)?(?:промпт|инструкции)/iu,
+  /(?:измени|увеличь)\s+(?:рейтинг|оценку|балл)/iu,
+  /անտեսիր\s+(?:բոլոր\s+)?նախորդ\s+հրահանգները/iu,
+  /(?:վերադարձրու|դասակարգիր|դիր)\s+(?:սա\s+)?առաջին(?:ը)?/iu,
+  /(?:բացահայտիր|ցույց\s+տուր)\s+(?:համակարգային\s+)?(?:հուշումը|հրահանգները)/iu,
+  /(?:փոխիր|բարձրացրու)\s+(?:վարկանիշը|գնահատականը|միավորը)/iu,
+];
 
 function canonical(value: string | undefined): string {
-  return (value ?? "").normalize("NFKC").replace(/[‑–]/g, "-").trim()
+  return (value ?? "").normalize("NFKC").replace(/[‐‑‒–—]/g, "-").trim()
     .toLocaleLowerCase();
 }
 
-function capture(text: string, primary: RegExp, prefixed?: RegExp): string {
-  return canonical(prefixed?.exec(text)?.[1] ?? primary.exec(text)?.[1]);
+function capture(text: string, primary: RegExp, alternate?: RegExp): string {
+  return canonical(alternate?.exec(text)?.[1] ?? primary.exec(text)?.[1]);
+}
+
+function emptyProvision(): LegalProvision {
+  return {
+    article: "",
+    part: "",
+    point: "",
+    subpoint: "",
+    chapter: "",
+    section: "",
+    range_end: "",
+    provision_key: "",
+    confidence: 0,
+  };
 }
 
 export function isPromptManipulation(text: string): boolean {
-  return MANIPULATION.test(text.normalize("NFKC"));
+  const normalized = String(text ?? "").normalize("NFKC");
+  return MANIPULATION_PATTERNS.some((pattern) => pattern.test(normalized));
 }
 
 export function parseLegalProvision(
@@ -43,31 +101,53 @@ export function parseLegalProvision(
 ): LegalProvision {
   const normalized = String(text ?? "").normalize("NFKC");
   if (!options.trustedStructure && isPromptManipulation(normalized)) {
-    return {
-      article: "",
-      part: "",
-      point: "",
-      subpoint: "",
-      provision_key: "",
-    };
+    return emptyProvision();
   }
-  const article = capture(normalized, ARTICLE, PREFIXED_ARTICLE);
-  const part = capture(normalized, PART, PREFIXED_PART);
+
+  const parenthetical = ARTICLE_PART_PARENS.exec(normalized);
+  const range = ARTICLE_RANGE.exec(normalized);
+  const article = canonical(
+    parenthetical?.[1] ?? capture(normalized, ARTICLE, PREFIXED_ARTICLE) ??
+      range?.[1],
+  );
+  const part = canonical(
+    parenthetical?.[2] ?? capture(normalized, PART, PREFIXED_PART),
+  );
   const point = capture(normalized, POINT, PREFIXED_POINT);
   const subpoint = capture(normalized, SUBPOINT, PREFIXED_SUBPOINT);
-  const key = [
-    article && `a:${article}`,
-    part && `p:${part}`,
-    point && `pt:${point}`,
-    subpoint && `sp:${subpoint}`,
-  ].filter(Boolean).join("/");
-  return { article, part, point, subpoint, provision_key: key };
+  const chapter = capture(normalized, CHAPTER, PREFIXED_CHAPTER);
+  const section = capture(normalized, SECTION, PREFIXED_SECTION);
+  const rangeEnd = canonical(range?.[2]);
+  const provisionKey = [
+    article && `article:${article}`,
+    rangeEnd && `range-end:${rangeEnd}`,
+    part && `part:${part}`,
+    point && `point:${point}`,
+    subpoint && `subpoint:${subpoint}`,
+    chapter && `chapter:${chapter}`,
+    section && `section:${section}`,
+  ].filter(Boolean).join("|");
+  const components = [article, part, point, subpoint, chapter, section].filter(
+    Boolean,
+  ).length;
+  return {
+    article,
+    part,
+    point,
+    subpoint,
+    chapter,
+    section,
+    range_end: rangeEnd,
+    provision_key: provisionKey,
+    confidence: components ? (options.trustedStructure ? 1 : 0.99) : 0,
+  };
 }
 
 export function provisionSpecificity(value: LegalProvision): number {
   if (value.subpoint) return 1;
   if (value.point) return 0.85;
   if (value.part) return 0.65;
-  if (value.article) return 0.45;
+  if (value.article || value.range_end) return 0.45;
+  if (value.chapter || value.section) return 0.3;
   return 0;
 }

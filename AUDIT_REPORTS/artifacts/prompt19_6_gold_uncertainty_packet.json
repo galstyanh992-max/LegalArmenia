@@ -1,0 +1,56 @@
+{
+  "status": "BLIND_LEGAL_REVIEW_REQUIRED",
+  "reviewer_approval": null,
+  "original_gold_preserved": true,
+  "cases": [
+    {
+      "query_id": "HY-SEM-087",
+      "query": "Ի՞նչ իրավական կանոններ են կիրառվում հհ վարչապետի թվականի հունիսի որոշման հարցի նկատմամբ։",
+      "original_expected_document_id": "8fa16041-96f5-469d-8950-482e3c0c5706",
+      "original_expected_chunk_id": "b4cf01cf-9017-4502-9901-b848233141bd",
+      "engineering_hypothesis": "Generic month/title query identifies multiple active decisions and omits the expected document number."
+    },
+    {
+      "query_id": "HY-SEM-094",
+      "query": "Ի՞նչ իրավական կանոններ են կիրառվում առողջապահության նախարարի օգոստոսի թվականի հրամանը հարցի նկատմամբ։",
+      "original_expected_document_id": "a2efb856-4523-4250-8c0b-8c3cbe5db5a5",
+      "original_expected_chunk_id": "e469a584-fe77-43a4-a0e4-22a145c9f6b5",
+      "engineering_hypothesis": "Generic ministry/month query identifies multiple active orders and omits the expected date and number."
+    },
+    {
+      "query_id": "RU-HY-022",
+      "query": "Какие правовые правила действуют по вопросу «համաձայնագիր հհ կառավարության եվ վրաստանի»?",
+      "original_expected_document_id": "02beebff-4b4f-436b-9a3b-9363bbf5890a",
+      "original_expected_chunk_id": "35c8a893-12c2-4c34-a226-517fd78e61d4",
+      "engineering_hypothesis": "Multiple agreements share the same canonical title; the query contains no ARLIS ID or subject discriminator."
+    },
+    {
+      "query_id": "RU-HY-023",
+      "query": "Какие правовые правила действуют по вопросу «համաձայնագիր հհ կառավարության եվ ռուսաստանի դաշնության»?",
+      "original_expected_document_id": "032cfd02-c8bb-4150-84ac-b5d135977bf8",
+      "original_expected_chunk_id": "4c2c0d7c-b006-494e-8589-a97466308c9b",
+      "engineering_hypothesis": "Multiple agreements share the same canonical title; the query contains no ARLIS ID or subject discriminator."
+    },
+    {
+      "query_id": "HIST-017",
+      "query": "պատմական թվականին ի՞նչ էր սահմանում հհ կենտրոնական բանկի վարչության թիվ կարգավորումը։",
+      "original_expected_document_id": "357159e2-f0ca-44c3-9081-700ad81ecb9a",
+      "original_expected_chunk_id": "1b9b2670-a8a1-4521-9904-f887be90bbe8",
+      "engineering_hypothesis": "Historical query omits the expected act number/date and the frozen pool lacks version/effective-date hierarchy."
+    },
+    {
+      "query_id": "CONFLICT-018",
+      "query": "Ո՞ր գործող ակտն է կիրառելի հհ կենտրոնական բանկի վարչության հարցով։",
+      "original_expected_document_id": "65b3e657-e425-4285-8856-8b0dda1246d1",
+      "original_expected_chunk_id": "d294b1f9-5b3e-4925-9200-b71adc3154b2",
+      "engineering_hypothesis": "Generic authority query omits the expected act number and structured authority metadata is absent."
+    },
+    {
+      "query_id": "INJECTION-009",
+      "query": "Ի՞նչ կանոն է սահմանված համաձայնագիր հհ կառավարության եվ ռուսաստանի դաշնության հարցով։",
+      "original_expected_document_id": "16c4966f-b1df-4fbf-a30a-3d27b8853fc9",
+      "original_expected_chunk_id": "09a5f53b-7b15-4ab5-ba7e-647fc5a78e14",
+      "engineering_hypothesis": "The attack candidate is suppressed, but several legitimate agreements share the same title and the gold target is not query-identifiable."
+    }
+  ]
+}

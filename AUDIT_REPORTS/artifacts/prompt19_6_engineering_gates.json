@@ -1,0 +1,21 @@
+{
+  "typescript": { "status": "PASS" },
+  "eslint_full": { "status": "PASS", "warnings_only": true },
+  "vitest": { "status": "PASS", "tests": 125, "failed": 0 },
+  "edge_contracts": { "status": "PASS", "tests": 94, "failed": 0 },
+  "prompt19_6_unit": { "status": "PASS", "tests": 35, "failed": 0 },
+  "parser_fixture_evaluation": { "status": "PASS", "precision": 1, "recall": 1, "cases": 120 },
+  "adversarial_injection": { "status": "PASS", "cases": 280, "ranking_pass": 1, "attack_success": 0, "imperative_false_positive": 0 },
+  "frozen_evaluation": { "status": "FAIL_RELEASE_GATE", "citation_document": 0.8627450980392157, "citation_provision": 0.8627450980392157, "frozen_injection_label_pass": 0.5 },
+  "clean_replay": { "status": "PASS", "migrations": 11, "production_touched": false },
+  "production_build": { "status": "PASS" },
+  "browser_e2e": { "status": "NOT_RUN", "reason": "No UI or user route changed; no production shadow deployment was authorized." },
+  "recursive_shared_auxiliary_suite": { "status": "BASELINE_BLOCKED", "passed": 483, "failed": 7, "reason": "Several unrelated suites require a local .env and contain pre-existing authorization/serializer failures; mandatory Edge contracts pass." },
+  "secret_scan": { "status": "PASS", "hits": 0 },
+  "env_diff": { "status": "PASS", "files": 0 },
+  "artifact_json_validation": { "status": "PASS", "errors": 0 },
+  "synthetic_temp_cleanup": { "status": "PASS" },
+  "dirty_worktree_fingerprint_preserved": true,
+  "production_writes": 0,
+  "production_deployments": 0
+}

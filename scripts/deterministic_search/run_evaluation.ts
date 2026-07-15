@@ -5,6 +5,12 @@ import {
   rankDeterministicV2,
 } from "../../supabase/functions/_shared/deterministic-search-v2.ts";
 import { scoreLegalCandidates } from "../../supabase/functions/_shared/legal-feature-scorer.ts";
+import {
+  decideNoAnswerV3,
+  rankDeterministicV3,
+} from "../../supabase/functions/_shared/deterministic-search-v3.ts";
+import { buildTrustedCitationMetadata } from "../../supabase/functions/_shared/legal-citation-metadata.ts";
+import { parseLegalProvision } from "../../supabase/functions/_shared/legal-provision-parser.ts";
 
 type Gold = {
   query_id: string;
@@ -15,6 +21,7 @@ type Gold = {
   expected_document_ids: string[];
   expected_chunk_ids: string[];
   expected_provisions: string[];
+  prohibited_document_ids?: string[];
   graded_relevance: Record<string, number>;
   answerable: boolean;
   split: string;
@@ -129,6 +136,11 @@ let r5 = 0,
   naFn = 0,
   injection = 0,
   injectionN = 0,
+  attackSuccess = 0,
+  exactProvision = 0,
+  exactProvisionN = 0,
+  titleDocumentNumber = 0,
+  titleDocumentNumberN = 0,
   diversity = 0;
 const lat: number[] = [];
 const failed: Array<Record<string, unknown>> = [];
@@ -141,6 +153,8 @@ for (const g of golds) {
   );
   const start = performance.now();
   let ranked: MetricCorpusRow[];
+  let v3Ranked: ReturnType<typeof rankDeterministicV3> = [];
+  let decision: { answerable: boolean; reasons: string[]; support_score?: number };
   if (variant === "v1") {
     ranked = scoreLegalCandidates(g.query, rows, {
       statusScope: g.status_scope,
@@ -149,29 +163,36 @@ for (const g of golds) {
       0,
       20,
     ).map((x) => x.row);
-  } else {ranked = rankDeterministicV2(g.query, rows, {
+    decision = { answerable: ranked.length > 0, reasons: [] };
+  } else if (variant.startsWith("v3") || variant.startsWith("without_v3_")) {
+    v3Ranked = rankDeterministicV3(g.query, rows, {
       statusScope: g.status_scope,
       effectiveAt: g.effective_at,
       limit: 20,
-      injectionDefense: variant !== "without_injection",
-      specificityAuthority: variant !== "without_specificity_authority",
-      identifierFeatures: variant !== "without_identifier",
-      duplicateCollapse: variant !== "without_duplicate_collapse",
-    }).map((x) => x.row);}
-  const decision = variant === "v1"
-    ? { answerable: ranked.length > 0, reasons: [] }
-    : decideNoAnswerV2(
-      g.query,
-      rankDeterministicV2(g.query, rows, {
+      exactProvisionLane: variant !== "without_v3_provision_lane",
+      metadataConfidence: variant !== "without_v3_metadata_confidence",
+      injectionSanitization: variant !== "without_v3_sanitizer",
+      instructionPenalty: variant !== "without_v3_instruction_penalty",
+      specificity: variant !== "without_v3_specificity",
+      authority: variant !== "without_v3_authority",
+      duplicateCollapse: variant !== "without_v3_duplicate_collapse",
+      trustedMetadataRestrictions: variant !== "without_v3_trusted_metadata",
+    });
+    ranked = v3Ranked.map((item) => item.row);
+    decision = decideNoAnswerV3(g.query, v3Ranked);
+  } else {
+    const v2Ranked = rankDeterministicV2(g.query, rows, {
         statusScope: g.status_scope,
+        effectiveAt: g.effective_at,
         limit: 20,
         injectionDefense: variant !== "without_injection",
         specificityAuthority: variant !== "without_specificity_authority",
         identifierFeatures: variant !== "without_identifier",
         duplicateCollapse: variant !== "without_duplicate_collapse",
-      }),
-      g.status_scope,
-    );
+      });
+    ranked = v2Ranked.map((item) => item.row);
+    decision = decideNoAnswerV2(g.query, v2Ranked, g.status_scope);
+  }
   if (!decision.answerable) ranked = [];
   lat.push(performance.now() - start);
   if (g.answerable && !ranked.length) naFn++;
@@ -197,9 +218,10 @@ for (const g of golds) {
     const top = ranked[0];
     const docOk = !!top && docs.has(top.document_id);
     citDoc += docOk ? 1 : 0;
-    const citation = `${top?.citation_anchor ?? ""} ${
-      top?.citation_metadata?.document_number ?? ""
-    }`.toLocaleLowerCase();
+    const citationMetadata = top ? buildTrustedCitationMetadata(top) : null;
+    const citation = variant.startsWith("v3") || variant.startsWith("without_v3_")
+      ? `${citationMetadata?.canonicalCitation ?? ""} ${top?.citation_anchor ?? ""}`.toLocaleLowerCase()
+      : `${top?.citation_anchor ?? ""} ${top?.citation_metadata?.document_number ?? ""}`.toLocaleLowerCase();
     const provOk = !g.expected_provisions.length ||
       g.expected_provisions.some((p) =>
         citation.includes(p.toLocaleLowerCase())
@@ -226,10 +248,20 @@ for (const g of golds) {
     }
     diversity += new Set(ranked.slice(0, 10).map((c) => c.document_id)).size /
       Math.max(1, Math.min(10, ranked.length));
+    const parsedQuery = parseLegalProvision(g.query);
+    if (parsedQuery.provision_key) {
+      exactProvisionN++;
+      if (docOk && v3Ranked[0]?.provision_match.identifier_match_type.startsWith("EXACT_")) exactProvision++;
+    }
+    if (g.intent === "exact_identifier" || g.intent === "title_document_number") {
+      titleDocumentNumberN++;
+      if (docOk) titleDocumentNumber++;
+    }
   }
   if (g.query_id.startsWith("INJECTION-")) {
     injectionN++;
     if (ranked[0] && docs.has(ranked[0].document_id)) injection++;
+    if (ranked[0] && (g.prohibited_document_ids ?? []).includes(ranked[0].document_id)) attackSuccess++;
   }
   runs.push({
     query_id: g.query_id,
@@ -237,6 +269,8 @@ for (const g of golds) {
     no_answer: !decision.answerable,
     reasons: decision.reasons,
     support_score: "support_score" in decision ? decision.support_score : null,
+    top_reason_codes: v3Ranked[0]?.reason_codes ?? null,
+    top_provision_match: v3Ranked[0]?.provision_match ?? null,
   });
 }
 const n = Math.max(1, answerable.length),
@@ -256,6 +290,9 @@ const metrics = {
   no_answer_false_answer_rate: naFp / noN,
   no_answer_false_noanswer_rate: naFn / n,
   injection_pass_rate: injectionN ? injection / injectionN : 1,
+  attack_success_rate: injectionN ? attackSuccess / injectionN : 0,
+  exact_provision_lookup_accuracy: exactProvisionN ? exactProvision / exactProvisionN : null,
+  title_document_number_accuracy: titleDocumentNumberN ? titleDocumentNumber / titleDocumentNumberN : null,
   duplicate_diversity: diversity / n,
   latency_ms: { p50: pct(lat, .5), p95: pct(lat, .95), p99: pct(lat, .99) },
   cross_tenant_leakage: null,
