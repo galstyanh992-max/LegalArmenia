@@ -18,8 +18,8 @@
       "bytes": 7642
     },
     "AUDIT_REPORTS/artifacts/prompt19_4_engineering_gates.json": {
-      "sha256": "526890b746b01cc3eebe9e12d9f997fa8de608fa337362dcae478c70e5c972bf",
-      "bytes": 2499
+      "sha256": "17cd2df54f28b01e2b4751b82547d5e98472188dc7778d53c786160b0b99d142",
+      "bytes": 2621
     },
     "AUDIT_REPORTS/artifacts/prompt19_4_evaluation_metrics.json": {
       "sha256": "d291cd8498d671a56ee0e532e4edcc6f457f41822a5b662eaf22990b8c39b33a",
@@ -42,8 +42,8 @@
       "bytes": 213
     },
     "AUDIT_REPORTS/artifacts/prompt19_4_live_verification.json": {
-      "sha256": "8eed7f519ff1cd072775044c16fe19751b4d6aaadd954085c712c25373c46227",
-      "bytes": 617
+      "sha256": "5f6b705b8992662afd957f2d184c5bb44b8dc610069333541cf13a83f658d4ca",
+      "bytes": 1094
     },
     "AUDIT_REPORTS/artifacts/prompt19_4_metadata_quality.json": {
       "sha256": "82bf791556eeeb221eb15195b91eb3ee65a1f06c3d15eea74d15bd50bb6c08b4",
@@ -66,8 +66,8 @@
       "bytes": 851
     },
     "AUDIT_REPORTS/artifacts/prompt19_4_security_report.json": {
-      "sha256": "ee48c6fdfe7cedff844a4198175f9c450eecdefc3c5a5039cb28c1775e660436",
-      "bytes": 135
+      "sha256": "5a964b5fbef7a225301a0e965692f36b6a9cfbe810b79f5883a81f392a1c93f6",
+      "bytes": 134
     },
     "AUDIT_REPORTS/artifacts/prompt19_4_tenant_staging.json": {
       "sha256": "238da8cd5e04997bb592fe626c897a031f85b5afe252c6c8902d178f7586778e",

@@ -6,7 +6,7 @@ Replace Quick Tunnel with an approved persistent Cloudflare Tunnel hostname, ori
 
 ## Supabase
 
-Keep RPC execution least-privileged and RLS-aware. Current Supabase platform changes were checked: nested Edge Function calls have hosted rate limits, and anonymous OpenAPI schema access was removed; neither authorizes a production change here. Replay the existing migration in disposable local/staging databases before approval.
+Keep RPC execution least-privileged and RLS-aware. Current Supabase platform changes were checked: nested Edge Function calls have hosted rate limits, and anonymous OpenAPI schema access was removed; neither authorizes a production change here. The disposable local replay now passes all 9 migrations and confirms the Metric RPC is executable. Staging replay remains required before approval.
 
 ## Rollout
 
@@ -18,4 +18,4 @@ Keep RPC execution least-privileged and RLS-aware. Current Supabase platform cha
 6. Obtain explicit migration/deployment/secret approval.
 7. Canary deterministic V2; monitor citation, no-answer, tenant and latency signals; rollback per runbook.
 
-No migration or deployment was performed.
+No production migration or deployment was performed. Only a disposable local Docker database was reset and replayed.
