@@ -24,19 +24,28 @@ interface EmbedBody {
   text?: string;
 }
 
+const EXPECTED_MODEL = "armenian-text-embeddings-2-large";
+const EXPECTED_DIMENSION = 1024;
+const MAX_QUERY_CHARS = 8_000;
+
 serve(async (req) => {
   const cors = handleCors(req);
   if (cors.errorResponse) return cors.errorResponse;
   const headers = { ...cors.corsHeaders, "Content-Type": "application/json" };
 
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers,
+    });
   }
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
-    if (!supabaseUrl || !anonKey) throw new Error("Supabase env not configured");
+    if (!supabaseUrl || !anonKey) {
+      throw new Error("Supabase env not configured");
+    }
 
     // Auth guard: internal edge calls use x-internal-key; browser calls require user JWT.
     if (!isValidInternalCall(req)) {
@@ -44,32 +53,61 @@ serve(async (req) => {
       const authClient = createClient(supabaseUrl, anonKey, {
         global: { headers: { Authorization: authHeader } },
       });
-      const { data: { user }, error: authError } = await authClient.auth.getUser();
+      const { data: { user }, error: authError } = await authClient.auth
+        .getUser();
       if (authError || !user) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers });
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers,
+        });
       }
     }
 
     const endpoint = Deno.env.get("EMBEDDING_ENDPOINT");
     if (!endpoint) {
       // Not configured -> signal caller to use FTS fallback.
-      return new Response(JSON.stringify({ error: "embedding_endpoint_unset" }), { status: 503, headers });
+      return new Response(
+        JSON.stringify({ error: "embedding_endpoint_unset" }),
+        { status: 503, headers },
+      );
     }
     // Edge cannot reach localhost/private IPs on the VPS. A non-routable endpoint here
     // means semantic search is silently degraded — surface it instead of timing out.
-    if (/(127\.0\.0\.1|localhost|0\.0\.0\.0|\[?::1\]?|:\/\/10\.|:\/\/192\.168\.|:\/\/172\.(1[6-9]|2\d|3[01])\.)/i.test(endpoint)) {
-      console.warn("[embed-query] EMBEDDING_ENDPOINT is not routable from Supabase Edge (localhost/private IP); set a public HTTPS URL in Edge Secrets");
-      return new Response(JSON.stringify({ error: "embedding_endpoint_unroutable" }), { status: 503, headers });
+    if (
+      /(127\.0\.0\.1|localhost|0\.0\.0\.0|\[?::1\]?|:\/\/10\.|:\/\/192\.168\.|:\/\/172\.(1[6-9]|2\d|3[01])\.)/i
+        .test(endpoint)
+    ) {
+      console.warn(
+        "[embed-query] EMBEDDING_ENDPOINT is not routable from Supabase Edge (localhost/private IP); set a public HTTPS URL in Edge Secrets",
+      );
+      return new Response(
+        JSON.stringify({ error: "embedding_endpoint_unroutable" }),
+        { status: 503, headers },
+      );
     }
 
     const body = (await req.json()) as EmbedBody;
     const text = (body.text ?? "").trim();
     if (!text) {
-      return new Response(JSON.stringify({ error: "text is required" }), { status: 400, headers });
+      return new Response(JSON.stringify({ error: "text is required" }), {
+        status: 400,
+        headers,
+      });
+    }
+    if (text.length > MAX_QUERY_CHARS) {
+      return new Response(
+        JSON.stringify({
+          error: "query_too_large",
+          max_chars: MAX_QUERY_CHARS,
+        }),
+        { status: 413, headers },
+      );
     }
 
     const apiKey = Deno.env.get("EMBEDDING_API_KEY");
-    const upstreamHeaders: Record<string, string> = { "Content-Type": "application/json" };
+    const upstreamHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
     if (apiKey) upstreamHeaders["X-API-Key"] = apiKey;
 
     const controller = new AbortController();
@@ -82,6 +120,17 @@ serve(async (req) => {
         body: JSON.stringify({ texts: text }),
         signal: controller.signal,
       });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return new Response(
+          JSON.stringify({ error: "embedding_service_timeout" }),
+          {
+            status: 504,
+            headers,
+          },
+        );
+      }
+      throw error;
     } finally {
       clearTimeout(timeout);
     }
@@ -99,17 +148,31 @@ serve(async (req) => {
       vectors?: number[][];
     };
     const vector = payload.vectors?.[0];
-    if (!Array.isArray(vector) || vector.length === 0) {
-      return new Response(JSON.stringify({ error: "empty_embedding" }), { status: 502, headers });
+    if (
+      !Array.isArray(vector) ||
+      vector.length !== EXPECTED_DIMENSION ||
+      vector.some((value) => !Number.isFinite(value)) ||
+      (payload.dimension != null && payload.dimension !== EXPECTED_DIMENSION)
+    ) {
+      return new Response(JSON.stringify({ error: "invalid_embedding" }), {
+        status: 502,
+        headers,
+      });
     }
 
     return new Response(
-      JSON.stringify({ vector, dimension: payload.dimension ?? vector.length, model: payload.model ?? null }),
+      JSON.stringify({
+        vector,
+        dimension: EXPECTED_DIMENSION,
+        model: EXPECTED_MODEL,
+      }),
       { status: 200, headers },
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "embed-query failed" }),
+      JSON.stringify({
+        error: error instanceof Error ? error.message : "embed-query failed",
+      }),
       { status: 500, headers },
     );
   }

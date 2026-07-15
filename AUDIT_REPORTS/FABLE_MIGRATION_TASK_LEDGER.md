@@ -4,6 +4,7 @@ Strategy: `B_BASELINE_PLUS_FORWARD_MIGRATIONS`. Main scaffold history and Prompt
 
 | ID | Задача | Вход | Разрешённые пути | Статус | Verification | Blocker | Handoff |
 | -- | ------ | ---- | ---------------- | ------ | ------------ | ------- | ------- |
+| 19.5A | Live Metric infrastructure without search cutover | Authorized additive migration, secure local environment, live project `avmgtsonawtzebvazgcr` | Target migration, `embed-query`, reports 89–94, read-only live tests | PARTIAL_BLOCKED | RPC exists and is PostgREST-visible; CORS fixed; provider health 1024 PASS; Edge 55/55, typecheck and build PASS; corpus/Qwen/old dual invariants PASS | Valid internal Edge 200 unavailable to operator; production RPC smoke exceeds 60s statement timeout; citation/injection gates remain failed | Optimize and re-authorize a new additive RPC repair; do not cut over users |
 | T1 | Restart branch from merged main | PR #7 merged | git | FIXED_VERIFIED | Historical main scaffold evidence retained | None | Integrated into Prompt 16/17 |
 | T2 | Legacy archive (186 E1 files) | reports 17/18 | `supabase/migrations_legacy/` | FIXED_VERIFIED | All 186 entries are contained in the 237-file Prompt 16 archive | None | Superseded by 16.1 |
 | T3 | Legacy manifest | archive | `supabase/migrations_legacy/LEGACY_MIGRATION_MANIFEST.md` | FIXED_VERIFIED | Main 186-row mapping is a subset of the Prompt 16 manifest | None | Superseded by 16.1 |
