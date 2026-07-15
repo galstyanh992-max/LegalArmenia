@@ -1,0 +1,140 @@
+{
+  "citation_document_accuracy": 0.8431372549019608,
+  "citation_provision_accuracy": 0.8235294117647058,
+  "answerable_test_cases": 51,
+  "failure_count": 9,
+  "reason_counts": {
+    "WRONG_TOP_DOCUMENT": 8,
+    "TOP_CITATION_ANCHOR_MISSING": 3,
+    "TOP_ARTICLE_METADATA_MISSING": 9,
+    "CORRECT_DOCUMENT_WRONG_CHUNK_OR_PROVISION": 1,
+    "EMPTY_AFTER_LEGAL_GUARDS": 1
+  },
+  "page_citations_fabricated": 0,
+  "release_gate_passed": false,
+  "repair_conclusion": "Candidate generation/metadata and legally reviewed provision labels must be repaired before reranker training can reach citation 1.00.",
+  "failures": [
+    {
+      "query_id": "HY-SEM-087",
+      "top_candidate_id": "4d18f0e8-2bf5-49bf-825b-eb2f39aeda4c",
+      "expected_candidate_ids_in_pool": [
+        "b4cf01cf-9017-4502-9901-b848233141bd"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "WRONG_TOP_DOCUMENT",
+        "TOP_CITATION_ANCHOR_MISSING",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "HY-SEM-094",
+      "top_candidate_id": "2804217c-a7eb-4ebb-a042-e019d4d0b319",
+      "expected_candidate_ids_in_pool": [
+        "e469a584-fe77-43a4-a0e4-22a145c9f6b5"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "WRONG_TOP_DOCUMENT",
+        "TOP_CITATION_ANCHOR_MISSING",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "EXACT-028",
+      "top_candidate_id": "42eaf991-c95c-45f1-8432-673eb3d45903",
+      "expected_candidate_ids_in_pool": [
+        "42eaf991-c95c-45f1-8432-673eb3d45903",
+        "26c3dab8-af4b-4106-b173-9bdd6aa6400b"
+      ],
+      "document_correct": true,
+      "provision_correct": false,
+      "reason_codes": [
+        "CORRECT_DOCUMENT_WRONG_CHUNK_OR_PROVISION",
+        "TOP_CITATION_ANCHOR_MISSING",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "RU-HY-022",
+      "top_candidate_id": "123ec9a8-5e22-47bb-85cc-2f7356b5edb8",
+      "expected_candidate_ids_in_pool": [
+        "35c8a893-12c2-4c34-a226-517fd78e61d4"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "WRONG_TOP_DOCUMENT",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "RU-HY-023",
+      "top_candidate_id": "05234029-4d46-4f66-89b1-6322f45d12c4",
+      "expected_candidate_ids_in_pool": [
+        "4c2c0d7c-b006-494e-8589-a97466308c9b"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "WRONG_TOP_DOCUMENT",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "HIST-017",
+      "top_candidate_id": "146240bd-3d8d-4e07-bef0-f9e76a2cf535",
+      "expected_candidate_ids_in_pool": [
+        "1b9b2670-a8a1-4521-9904-f887be90bbe8"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "WRONG_TOP_DOCUMENT",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "CONFLICT-018",
+      "top_candidate_id": "146240bd-3d8d-4e07-bef0-f9e76a2cf535",
+      "expected_candidate_ids_in_pool": [
+        "d294b1f9-5b3e-4925-9200-b71adc3154b2"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "WRONG_TOP_DOCUMENT",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "CONFLICT-020",
+      "top_candidate_id": null,
+      "expected_candidate_ids_in_pool": [
+        "06f4caa7-7613-4fde-9196-a57a3aea43cc"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "EMPTY_AFTER_LEGAL_GUARDS",
+        "WRONG_TOP_DOCUMENT",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    },
+    {
+      "query_id": "INJECTION-009",
+      "top_candidate_id": "05234029-4d46-4f66-89b1-6322f45d12c4",
+      "expected_candidate_ids_in_pool": [
+        "09a5f53b-7b15-4ab5-ba7e-647fc5a78e14"
+      ],
+      "document_correct": false,
+      "provision_correct": false,
+      "reason_codes": [
+        "WRONG_TOP_DOCUMENT",
+        "TOP_ARTICLE_METADATA_MISSING"
+      ]
+    }
+  ]
+}

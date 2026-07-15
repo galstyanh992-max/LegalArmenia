@@ -1,0 +1,43 @@
+{
+  "production_writes": 0,
+  "production_deployments": 0,
+  "production_secret_changes": 0,
+  "secret_scan": {
+    "files_scanned": 180,
+    "jwt_hits": 0,
+    "supabase_secret_hits": 0,
+    "provider_key_hits": 0,
+    "private_key_hits": 0,
+    "env_files_in_diff": 0
+  },
+  "custom_service": {
+    "authenticated": true,
+    "model_info_authenticated": true,
+    "liveness_readiness_separate": true,
+    "bounded_batch_and_text": true,
+    "candidate_ids_preserved": true,
+    "duplicate_and_invented_ids_rejected": true,
+    "nonfinite_scores_rejected": true,
+    "untrusted_metadata_rejected": true,
+    "request_body_logging": false,
+    "contract_tests": {"passed": 5, "failed": 0}
+  },
+  "review_service": {
+    "local_bind_only": true,
+    "bearer_authenticated": true,
+    "reviewer_label_files_separate": true,
+    "other_reviewer_labels_hidden": true,
+    "model_route_score_rank_hidden": true,
+    "contract_tests": {"passed": 2, "failed": 0}
+  },
+  "tenant_fixture": {
+    "scope": "LOCAL_DISPOSABLE_TWO_TENANT_FIXTURE",
+    "checks_passed": 9,
+    "checks_failed": 0,
+    "cross_tenant_leakage": 0,
+    "production_rls_measured": false
+  },
+  "frozen_injection_ranking_pass_rate": 0.5,
+  "all_release_security_gates_passed": false,
+  "blocker": "Frozen injection ranking and real production-like tenant authorization boundary remain unresolved."
+}

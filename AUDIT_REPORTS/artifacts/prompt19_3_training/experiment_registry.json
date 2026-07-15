@@ -1,0 +1,155 @@
+{
+  "dataset_hash": "cbfedf84b95a4ea9471705dc35c60d272514897948f61d240d82f2cb3f8f24ea",
+  "base_model": "distilbert/distilbert-base-multilingual-cased",
+  "revision": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+  "architecture": "frozen DistilBERT multilingual pair encoder + separate relevance/status/temporal/citation/authority linear heads",
+  "runtime": {
+    "python": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+    "torch": "2.11.0+cpu",
+    "device": "cpu",
+    "dtype": "float32"
+  },
+  "inference": {
+    "batch_size": 16,
+    "max_length": 128,
+    "pair_count": 3238,
+    "mean_batch_inference_ms": 355.59389064043086,
+    "p95_batch_inference_ms": 371.5298100009022,
+    "embedding_dimension": 768
+  },
+  "experiments": [
+    {
+      "mrr": 0.3823015873015873,
+      "ndcg_at_10": 0.5315830102226373,
+      "recall_at_10": 1.0,
+      "objective": "pointwise",
+      "negative_ratio": 2,
+      "seed": 1932,
+      "training_seconds": 17.712935199999265,
+      "train_pair_count": 1251
+    },
+    {
+      "mrr": 0.4002116402116402,
+      "ndcg_at_10": 0.5468602553763963,
+      "recall_at_10": 1.0,
+      "objective": "pointwise",
+      "negative_ratio": 4,
+      "seed": 1932,
+      "training_seconds": 22.10790409999936,
+      "train_pair_count": 2115
+    },
+    {
+      "mrr": 0.5142857142857142,
+      "ndcg_at_10": 0.6327302719306865,
+      "recall_at_10": 1.0,
+      "objective": "pointwise",
+      "negative_ratio": 8,
+      "seed": 1932,
+      "training_seconds": 26.05655999999908,
+      "train_pair_count": 2901
+    },
+    {
+      "mrr": 0.410079365079365,
+      "ndcg_at_10": 0.5530204303089478,
+      "recall_at_10": 1.0,
+      "objective": "pairwise",
+      "negative_ratio": 2,
+      "seed": 1932,
+      "training_seconds": 24.46988650000094,
+      "train_pair_count": 1251
+    },
+    {
+      "mrr": 0.5348148148148147,
+      "ndcg_at_10": 0.6513077379369063,
+      "recall_at_10": 1.0,
+      "objective": "pairwise",
+      "negative_ratio": 4,
+      "seed": 1932,
+      "training_seconds": 29.251238299999386,
+      "train_pair_count": 2115
+    },
+    {
+      "mrr": 0.5466666666666666,
+      "ndcg_at_10": 0.6596632235428893,
+      "recall_at_10": 1.0,
+      "objective": "pairwise",
+      "negative_ratio": 8,
+      "seed": 1932,
+      "training_seconds": 32.62742489999982,
+      "train_pair_count": 2901
+    },
+    {
+      "mrr": 0.4032010582010581,
+      "ndcg_at_10": 0.5493545428463119,
+      "recall_at_10": 1.0,
+      "objective": "listwise",
+      "negative_ratio": 2,
+      "seed": 1932,
+      "training_seconds": 23.095808699999907,
+      "train_pair_count": 1251
+    },
+    {
+      "mrr": 0.5598412698412698,
+      "ndcg_at_10": 0.6684792306935583,
+      "recall_at_10": 1.0,
+      "objective": "listwise",
+      "negative_ratio": 4,
+      "seed": 1932,
+      "training_seconds": 27.007095599999957,
+      "train_pair_count": 2115
+    },
+    {
+      "mrr": 0.5594708994708995,
+      "ndcg_at_10": 0.6691898449938402,
+      "recall_at_10": 1.0,
+      "objective": "listwise",
+      "negative_ratio": 8,
+      "seed": 1932,
+      "training_seconds": 30.466224200001307,
+      "train_pair_count": 2901
+    },
+    {
+      "mrr": 0.3928306878306878,
+      "ndcg_at_10": 0.5417642439355213,
+      "recall_at_10": 1.0,
+      "objective": "combined",
+      "negative_ratio": 2,
+      "seed": 1932,
+      "training_seconds": 28.504657299999963,
+      "train_pair_count": 1251
+    },
+    {
+      "mrr": 0.5366666666666666,
+      "ndcg_at_10": 0.6511652511251488,
+      "recall_at_10": 1.0,
+      "objective": "combined",
+      "negative_ratio": 4,
+      "seed": 1932,
+      "training_seconds": 32.64708950000022,
+      "train_pair_count": 2115
+    },
+    {
+      "mrr": 0.5718518518518518,
+      "ndcg_at_10": 0.6785807276678347,
+      "recall_at_10": 1.0,
+      "objective": "combined",
+      "negative_ratio": 8,
+      "seed": 1932,
+      "training_seconds": 37.83445010000105,
+      "train_pair_count": 2901
+    }
+  ],
+  "selected_experiment": {
+    "mrr": 0.5718518518518518,
+    "ndcg_at_10": 0.6785807276678347,
+    "recall_at_10": 1.0,
+    "objective": "combined",
+    "negative_ratio": 8,
+    "seed": 1932,
+    "training_seconds": 37.83445010000105,
+    "train_pair_count": 2901
+  },
+  "head_sha256": "3495d7f52224ecb1cd3cce9673ca3b7cac86816b36afcfa823d86efe4d3bbdf2",
+  "frozen_test_used_for_selection": false,
+  "qwen_used": false
+}

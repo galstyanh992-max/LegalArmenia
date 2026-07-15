@@ -1,0 +1,9 @@
+{
+  "pair_count": 3238,
+  "train_pair_count": 2901,
+  "dev_pair_count": 337,
+  "positive_count": 432,
+  "sha256": "a10a241f03851dfcda60ad49a18ae7d9fdb43987a8c562ca610005e765e15e6e",
+  "frozen_test_pairs": 0,
+  "legal_reviewed": false
+}

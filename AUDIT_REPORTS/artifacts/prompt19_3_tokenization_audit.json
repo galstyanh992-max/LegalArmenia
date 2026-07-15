@@ -1,0 +1,142 @@
+{
+  "status": "ENGINEERING_TOKENIZATION_AUDIT",
+  "corpus_text_count": 300,
+  "russian_query_count": 100,
+  "candidates": [
+    {
+      "repository": "FacebookAI/xlm-roberta-base",
+      "revision": "e73636d4f797dec63c3081bb6ed5c7b0bb3f2089",
+      "architecture": "XLMRobertaForMaskedLM",
+      "tokenizer_class": "XLMRobertaTokenizer",
+      "vocabulary_size": 250002,
+      "license": "mit",
+      "commercial_use_conclusion": "PERMITTED_SUBJECT_TO_LICENSE_TERMS",
+      "parameter_count": 278885778,
+      "configured_max_sequence_length": 512,
+      "weights_lfs_manifest_sha256": "b956d158ce43c7a761cce677f3d54c3a65b7b004e0a7ea5429123b363d5b47dd",
+      "weight_file_count": 5,
+      "armenian_tokens_per_character_mean": 0.292982908571681,
+      "armenian_tokens_per_word_mean": 2.559263054990575,
+      "armenian_p50_tokens": 450.5,
+      "armenian_p95_tokens": 575,
+      "truncation_rate_at_128": 0.9766666666666667,
+      "truncation_rate_at_256": 0.9333333333333333,
+      "russian_query_mean_tokens": 30.73,
+      "legal_term_mean_subtokens": 1.2,
+      "legal_term_split_rate": 0.1,
+      "article_number_roundtrip_rate": 1.0,
+      "section_markers": {
+        "§": [
+          "▁§"
+        ],
+        "N": [
+          "▁N"
+        ],
+        "հոդված": [
+          "▁հոդված"
+        ],
+        "մաս": [
+          "▁մաս"
+        ],
+        "կետ": [
+          "▁կետ"
+        ]
+      },
+      "normalization": "tokenizer-native pair encoding; raw classifier scores must be calibrated separately"
+    },
+    {
+      "repository": "distilbert/distilbert-base-multilingual-cased",
+      "revision": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+      "architecture": "DistilBertForMaskedLM",
+      "tokenizer_class": "BertTokenizer",
+      "vocabulary_size": 119547,
+      "license": "apache-2.0",
+      "commercial_use_conclusion": "PERMITTED_SUBJECT_TO_LICENSE_TERMS",
+      "parameter_count": 135445755,
+      "configured_max_sequence_length": 512,
+      "weights_lfs_manifest_sha256": "28aef49e14abf1607b854654ab723662ba2ff6fef24bfb96496d81a5ce0dd066",
+      "weight_file_count": 4,
+      "armenian_tokens_per_character_mean": 0.47680333320613566,
+      "armenian_tokens_per_word_mean": 4.174040900638974,
+      "armenian_p50_tokens": 751.0,
+      "armenian_p95_tokens": 928,
+      "truncation_rate_at_128": 0.99,
+      "truncation_rate_at_256": 0.97,
+      "russian_query_mean_tokens": 42.95,
+      "legal_term_mean_subtokens": 2.5,
+      "legal_term_split_rate": 0.6,
+      "article_number_roundtrip_rate": 1.0,
+      "section_markers": {
+        "§": [
+          "§"
+        ],
+        "N": [
+          "N"
+        ],
+        "հոդված": [
+          "հ",
+          "##ո",
+          "##դ",
+          "##ված"
+        ],
+        "մաս": [
+          "մ",
+          "##աս"
+        ],
+        "կետ": [
+          "կ",
+          "##ետ"
+        ]
+      },
+      "normalization": "tokenizer-native pair encoding; raw classifier scores must be calibrated separately"
+    },
+    {
+      "repository": "google-bert/bert-base-multilingual-cased",
+      "revision": "3f076fdb1ab68d5b2880cb87a0886f315b8146f8",
+      "architecture": "BertForMaskedLM",
+      "tokenizer_class": "BertTokenizer",
+      "vocabulary_size": 119547,
+      "license": "apache-2.0",
+      "commercial_use_conclusion": "PERMITTED_SUBJECT_TO_LICENSE_TERMS",
+      "parameter_count": 178566653,
+      "configured_max_sequence_length": 512,
+      "weights_lfs_manifest_sha256": "52bbb77d3b7c65ebba9b1e6a6c0995b2fe99ca564e834a5f8e2e3aa73fa98fd4",
+      "weight_file_count": 4,
+      "armenian_tokens_per_character_mean": 0.47680333320613566,
+      "armenian_tokens_per_word_mean": 4.174040900638974,
+      "armenian_p50_tokens": 751.0,
+      "armenian_p95_tokens": 928,
+      "truncation_rate_at_128": 0.99,
+      "truncation_rate_at_256": 0.97,
+      "russian_query_mean_tokens": 42.95,
+      "legal_term_mean_subtokens": 2.5,
+      "legal_term_split_rate": 0.6,
+      "article_number_roundtrip_rate": 1.0,
+      "section_markers": {
+        "§": [
+          "§"
+        ],
+        "N": [
+          "N"
+        ],
+        "հոդված": [
+          "հ",
+          "##ո",
+          "##դ",
+          "##ված"
+        ],
+        "մաս": [
+          "մ",
+          "##աս"
+        ],
+        "կետ": [
+          "կ",
+          "##ետ"
+        ]
+      },
+      "normalization": "tokenizer-native pair encoding; raw classifier scores must be calibrated separately"
+    }
+  ],
+  "qwen_candidates": 0,
+  "selection_rule": "Prefer lower Armenian fragmentation/truncation, production-compatible license, and measured task quality; model card claims are insufficient."
+}

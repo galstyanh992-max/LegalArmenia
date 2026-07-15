@@ -1,0 +1,20 @@
+{
+  "status": "PREPARED_PENDING_REAL_REVIEWERS",
+  "seed": 1930,
+  "query_count": 280,
+  "candidate_pair_count": 2800,
+  "candidates_per_query": 10,
+  "canonical_batch_sha256": "3ee84bc68a22a57960f7ac9268f49cd38482831b0eb37191f689a6096af19187",
+  "blinded_fields_absent": [
+    "retrieval_route",
+    "source_model",
+    "vector_score",
+    "reranker_score",
+    "system_rank"
+  ],
+  "reviewer_slots": [
+    "A",
+    "B"
+  ],
+  "legal_approval_claimed": false
+}

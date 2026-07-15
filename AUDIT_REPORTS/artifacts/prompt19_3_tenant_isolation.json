@@ -1,0 +1,18 @@
+{
+  "scope": "LOCAL_DISPOSABLE_TWO_TENANT_FIXTURE",
+  "production_rls_measured": false,
+  "checks": {
+    "retrieval_tenant-a_only": true,
+    "reranker_tenant-a_only": true,
+    "retrieval_tenant-b_only": true,
+    "reranker_tenant-b_only": true,
+    "fusion_rejects_mixed_tenants": true,
+    "lawyer_a_only_assigned_case": true,
+    "lawyer_b_only_assigned_case": true,
+    "cache_tenant_scoped": true,
+    "logs_contain_no_fixture_text": true
+  },
+  "passed": true,
+  "cross_tenant_leakage": 0,
+  "qualification": "This validates the local authorization-boundary harness, not production Supabase RLS or a deployed staging environment."
+}

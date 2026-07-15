@@ -1,0 +1,24 @@
+{
+  "status": "ENGINEERING_WEAK_SUPERVISION_PENDING_LEGAL_REVIEW",
+  "seed": 1931,
+  "query_count": 2716,
+  "train_count": 2016,
+  "dev_count": 700,
+  "frozen_test_count": 56,
+  "frozen_test_examples_added": 0,
+  "source_parent_count": 194,
+  "excluded_parent_count": 30,
+  "hard_negative_count": 1130,
+  "negative_type_counts": {
+    "easy_negative": 193,
+    "semantic_hard_negative": 193,
+    "lexical_hard_negative": 194,
+    "status_hard_negative": 330,
+    "adversarial_negative": 194,
+    "wrong_identifier_negative": 24,
+    "near_duplicate_or_wrong_provision_negative": 2
+  },
+  "expanded_dataset_sha256": "599be689c6eacc0652232334bbb48f903e10ad9db5f759da756f65c565d01b35",
+  "hard_negatives_sha256": "9af5692f2739daa20dd3e0d460a470812a70db0edc2c770b3896b49fbcb57b2e",
+  "legal_approval_claimed": false
+}

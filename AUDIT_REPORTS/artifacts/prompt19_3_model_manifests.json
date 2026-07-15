@@ -1,0 +1,52 @@
+{
+  "selected_architecture": "frozen DistilBERT multilingual pair encoder with independent relevance/status/temporal/citation/authority linear heads",
+  "selection_basis": "three-encoder fixed-seed pilot plus complete dev-only objective matrix; frozen test excluded from selection",
+  "models": [
+    {
+      "repository": "FacebookAI/xlm-roberta-base",
+      "revision": "e73636d4f797dec63c3081bb6ed5c7b0bb3f2089",
+      "architecture": "XLMRobertaModel",
+      "license": "MIT",
+      "parameter_count": 278885778,
+      "weights_sha256": "6fd4797bc397c3b8b55d6bb5740366b57e6a3ce91c04c77f22aafc0c128e6feb",
+      "weights_bytes": 1115567652,
+      "commercial_use_conclusion": "PERMITTED_SUBJECT_TO_MIT_TERMS",
+      "pilot_only": true
+    },
+    {
+      "repository": "distilbert/distilbert-base-multilingual-cased",
+      "revision": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+      "architecture": "DistilBertModel",
+      "license": "Apache-2.0",
+      "parameter_count": 135445755,
+      "weights_sha256": "fcf002be901b9ad708e0df430b8d18deaa4b3fe3519e24e9017a5ee17ca2c228",
+      "weights_bytes": 541795680,
+      "commercial_use_conclusion": "PERMITTED_SUBJECT_TO_APACHE_2_0_TERMS",
+      "selected_for_full_engineering_experiment": true
+    },
+    {
+      "repository": "google-bert/bert-base-multilingual-cased",
+      "revision": "3f076fdb1ab68d5b2880cb87a0886f315b8146f8",
+      "architecture": "BertModel",
+      "license": "Apache-2.0",
+      "parameter_count": 178566653,
+      "weights_sha256": "876f584f15ebf14887dec17539c114bb99a032e96b9e72507a51c41e205337fc",
+      "weights_bytes": 714290682,
+      "commercial_use_conclusion": "PERMITTED_SUBJECT_TO_APACHE_2_0_TERMS",
+      "pilot_only": true
+    }
+  ],
+  "custom_head": {
+    "sha256": "5b63b151cc7a885e18906fb68748ba3a08f107b6b3adb95b942d274815c0cdde",
+    "format": "JSON float32 linear multi-head",
+    "base_model_revision": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+    "training_seed": 1932,
+    "max_sequence_length": 128,
+    "batch_size": 16,
+    "device": "CPU",
+    "quantization": "none",
+    "qwen_used": false
+  },
+  "oversized_model_weights_committed": false,
+  "external_storage": "immutable Hugging Face revisions and local cache; download by repository+revision and verify SHA-256"
+}

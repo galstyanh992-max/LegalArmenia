@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "check_count": 18,
+  "failed_checks": [],
+  "checks": {
+    "parent_commit": true,
+    "frozen_test_hash": true,
+    "expanded_query_minimum": true,
+    "frozen_test_not_expanded": true,
+    "leakage": true,
+    "legal_review_truthful": true,
+    "three_base_encoders": true,
+    "qwen_absent": true,
+    "weights_not_committed": true,
+    "test_not_used_for_selection": true,
+    "custom_rejected_truthfully": true,
+    "citation_gate_truthful": true,
+    "injection_gate_truthful": true,
+    "tenant_fixture_passed": true,
+    "production_tenant_not_overclaimed": true,
+    "production_writes_zero": true,
+    "production_deployments_zero": true,
+    "reports_53_64": true
+  }
+}

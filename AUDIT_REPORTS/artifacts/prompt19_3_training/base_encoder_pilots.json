@@ -1,0 +1,54 @@
+{
+  "seed": 1934,
+  "objective": "pointwise pilot",
+  "test_split_used": false,
+  "qwen_used": false,
+  "results": [
+    {
+      "repository": "FacebookAI/xlm-roberta-base",
+      "revision": "e73636d4f797dec63c3081bb6ed5c7b0bb3f2089",
+      "pilot_train_pairs": 192,
+      "pilot_dev_pairs": 89,
+      "max_length": 64,
+      "batch_size": 16,
+      "frozen_encoder": true,
+      "p50_batch_ms": 401.2435499998901,
+      "p95_batch_ms": 460.7211949997688,
+      "dimension": 768,
+      "parameter_count": 278043648,
+      "dev_mrr": 0.36666666666666664,
+      "dev_group_count": 12
+    },
+    {
+      "repository": "distilbert/distilbert-base-multilingual-cased",
+      "revision": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+      "pilot_train_pairs": 192,
+      "pilot_dev_pairs": 89,
+      "max_length": 64,
+      "batch_size": 16,
+      "frozen_encoder": true,
+      "p50_batch_ms": 181.35445000007167,
+      "p95_batch_ms": 208.33013500032376,
+      "dimension": 768,
+      "parameter_count": 134734080,
+      "dev_mrr": 0.37996031746031744,
+      "dev_group_count": 12
+    },
+    {
+      "repository": "google-bert/bert-base-multilingual-cased",
+      "revision": "3f076fdb1ab68d5b2880cb87a0886f315b8146f8",
+      "pilot_train_pairs": 192,
+      "pilot_dev_pairs": 89,
+      "max_length": 64,
+      "batch_size": 16,
+      "frozen_encoder": true,
+      "p50_batch_ms": 399.7964000000138,
+      "p95_batch_ms": 476.0536250007133,
+      "dimension": 768,
+      "parameter_count": 177853440,
+      "dev_mrr": 0.4069444444444445,
+      "dev_group_count": 12
+    }
+  ],
+  "selection_note": "Pilot metrics are architecture screening only; full selected configuration is chosen on the complete dev engineering pairs."
+}
