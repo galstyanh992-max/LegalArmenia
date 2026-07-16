@@ -1,4 +1,4 @@
-﻿-- =============================================================================
+-- =============================================================================
 -- Prompt 19.7 Phase 15: Metric RPC V3 — Additive Structured Metadata Search
 -- Does NOT modify search_legal_corpus_metric, search_legal_corpus_metric_v2,
 -- or search_legal_corpus_dual. All existing RPCs remain available for rollback.
@@ -49,7 +49,7 @@ returns table (
   metadata_source text,
   document_version_id uuid,
   authority_type text,
-  source_url text,
+  page_source_url text,
   page_from_physical integer,
   page_to_physical integer,
   duplicate_group text,
@@ -199,6 +199,7 @@ begin
   -- Lane 3: Exact document/title/number identifier lane
   identifier_lane as materialized (
     select sc.chunk_id, 'identifier'::text as lane,
+      null::real as provision_score,
       row_number() over (order by sc.chunk_id) as lane_rank,
       null::real as vector_similarity, null::real as fts_score,
       true as identifier_match,
@@ -260,6 +261,7 @@ begin
   ),
   metric_lane as (
     select mr.chunk_id, 'metric_ann'::text as lane,
+      null::real as provision_score,
       row_number() over (order by mr.vector_similarity desc, mr.chunk_id) as lane_rank,
       mr.vector_similarity, null::real as fts_score, false as identifier_match,
       null::text as identifier_match_type, null::real as identifier_match_score
@@ -267,7 +269,7 @@ begin
   ),
   -- Lane 5: Sanitized Armenian FTS
   chunk_fts_candidates as materialized (
-    select sc.chunk_id
+    select sc.chunk_id, sc.fts_vector
     from public.search_chunks sc
     join public.document_versions dv on dv.version_id = sc.version_id and dv.is_current = true
     cross join settings s
@@ -293,6 +295,7 @@ begin
   ),
   fts_lane as (
     select cf.chunk_id, 'armenian_fts'::text as lane,
+      null::real as provision_score,
       row_number() over (order by cf.fts_score desc, cf.chunk_id) as lane_rank,
       null::real as vector_similarity, cf.fts_score, false as identifier_match,
       null::text as identifier_match_type, null::real as identifier_match_score
@@ -360,7 +363,7 @@ begin
     left join public.legal_provisions lp on lp.chunk_id = sc.chunk_id
       and lp.review_status in ('pending', 'approved')
       and lp.parser_version = 'prompt19_7_v1'
-    left join public.legal_document_metadata ldm on ldm.source_file_id = sc.source_document_id::text
+    left join public.legal_document_metadata ldm on ldm.document_id = sc.document_id
       and ldm.review_status in ('pending', 'approved')
       and ldm.parser_version = 'prompt19_7_v1'
     left join public.legal_source_page_mappings lpm on lpm.chunk_id = sc.chunk_id

@@ -1,4 +1,4 @@
-﻿// =============================================================================
+// =============================================================================
 // Prompt 19.7 Phase 16: Deterministic Scorer V4
 // Additive — extends V3 with structured metadata, PDF page mapping, version
 // validity, authority taxonomy, canonical source, and duplicate grouping.
@@ -108,11 +108,10 @@ function canonicalSourceScore(row: MetricCorpusRow | MetricV3CorpusRow): number 
 }
 
 function pageMappingScore(row: MetricCorpusRow | MetricV3CorpusRow): number {
+  // Only trust legal_source_page_mappings (via V3 page_from_physical)
+  // Do NOT fall back to search_chunks.page_from - not trusted PDF mapping
   const v3 = row as MetricV3CorpusRow;
   if (v3.page_from_physical != null) return 1.0;
-  // Fall back to search_chunks page_from
-  const sc = row as any;
-  if (sc.page_from != null || sc.page_to != null) return 0.50;
   return 0.0;
 }
 
@@ -190,7 +189,7 @@ export function rankDeterministicV4(
     const authType = getAuthorityType(row);
 
     // V4-specific scores
-    const pageScore = options.pageMappingBoost === false ? 0 : pageMappingScore(row) * 0.02;
+    const pageScore = options.pageMappingBoost === true ? pageMappingScore(row) * 0.02 : 0;
     const versionScore = options.versionValidityGuard === false ? 0 : versionValidityScore(row, options.effectiveAt) * 0.03;
     const authScore = options.authorityTaxonomyBoost === false ? 0 : authorityScore(authType) * 0.015;
     const canonicalScore = options.canonicalSourcePreference === false ? 0 : canonicalSourceScore(row) * 0.01;

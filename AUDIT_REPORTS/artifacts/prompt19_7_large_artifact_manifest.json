@@ -1,0 +1,75 @@
+﻿{
+  "manifest_version": "1.0",
+  "generated_at": "2026-07-16T02:00:00Z",
+  "policy": "Large JSONL artifacts are NOT committed to Git. They are stored locally outside the repository. This manifest preserves checksums and reproduction instructions.",
+  "artifacts": [
+    {
+      "artifact_name": "source_inventory.jsonl",
+      "committed": false,
+      "record_count": 184277,
+      "size_bytes": 185193824,
+      "sha256": "0290F6F8A2A6CD32352F3E6169B3345323AD5A16DA70730206DC322EAE44924A",
+      "schema_version": "prompt19_7_inventory_v1",
+      "generated_by": "py scripts/prompt19_7/source_inventory.py",
+      "local_storage_path_redacted": true,
+      "reproduction_command": "py scripts/prompt19_7/source_inventory.py"
+    },
+    {
+      "artifact_name": "source_matching.jsonl",
+      "committed": false,
+      "record_count": 183685,
+      "size_bytes": 114186354,
+      "sha256": "3BBC9388F26F4D2EB73FE908BD86715F21DFDC2F46A2BEE2DEBF9FEBF99036B7",
+      "schema_version": "prompt19_7_matching_v1",
+      "generated_by": "py scripts/prompt19_7/source_matching.py",
+      "local_storage_path_redacted": true,
+      "reproduction_command": "py scripts/prompt19_7/source_matching.py"
+    },
+    {
+      "artifact_name": "source_metadata_adapters.jsonl",
+      "committed": false,
+      "record_count": 10000,
+      "size_bytes": 8794242,
+      "sha256": "E33C12837860193F9E41D6FE693A4E9DE506C962EDC217AFF744DFB192DB7952",
+      "schema_version": "prompt19_7_adapter_v1",
+      "generated_by": "py scripts/prompt19_7/source_adapters.py",
+      "local_storage_path_redacted": true,
+      "reproduction_command": "py scripts/prompt19_7/source_adapters.py"
+    },
+    {
+      "artifact_name": "version_lineage.jsonl",
+      "committed": false,
+      "record_count": 10000,
+      "size_bytes": 2560000,
+      "sha256": "90D9BB89069798E69BBFB1F29BADDFC73BB674D11C1D3CE7C2D23CF538000903",
+      "schema_version": "prompt19_7_version_v1",
+      "generated_by": "py scripts/prompt19_7/version_lineage.py",
+      "local_storage_path_redacted": true,
+      "reproduction_command": "py scripts/prompt19_7/version_lineage.py"
+    },
+    {
+      "artifact_name": "provision_reconstruction.jsonl",
+      "committed": false,
+      "record_count": 5000,
+      "size_bytes": 2240597,
+      "sha256": "DE0FEA323152C10EA2FC56BEA381B4F823C5B2E5D5FF333F19952B5F4C16FCBD",
+      "schema_version": "prompt19_7_provision_v1",
+      "generated_by": "py scripts/prompt19_7/provision_reconstruction.py",
+      "local_storage_path_redacted": true,
+      "reproduction_command": "py scripts/prompt19_7/provision_reconstruction.py"
+    },
+    {
+      "artifact_name": "pdf_classification_sample.jsonl",
+      "committed": false,
+      "record_count": 2000,
+      "size_bytes": 1788719,
+      "sha256": "3AA2FA08542EA96FE81A85E27586678CA5A76D47A50D4AF4C531A4C23489CCBC",
+      "schema_version": "prompt19_7_pdfclass_v1",
+      "generated_by": "py scripts/prompt19_7/pdf_classification.py",
+      "local_storage_path_redacted": true,
+      "reproduction_command": "py scripts/prompt19_7/pdf_classification.py"
+    }
+  ],
+  "total_size_bytes": 314578436,
+  "retention_policy": "Artifacts are regenerable from source data via scripts. Summary JSON files are committed as evidence. Raw JSONL is excluded via .gitignore."
+}
