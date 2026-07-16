@@ -1,0 +1,33 @@
+﻿{
+  "run_id": "prompt19_7_run_001",
+  "generated_at": "2026-07-16T01:00:00Z",
+  "artifacts": [
+    {"name": "source_inventory.jsonl", "path": "AUDIT_REPORTS/artifacts/source_inventory.jsonl", "records": 184277},
+    {"name": "source_inventory_summary.json", "path": "AUDIT_REPORTS/artifacts/source_inventory_summary.json"},
+    {"name": "pdf_classification_sample.jsonl", "path": "AUDIT_REPORTS/artifacts/pdf_classification_sample.jsonl", "records": 2000},
+    {"name": "pdf_classification_summary.json", "path": "AUDIT_REPORTS/artifacts/pdf_classification_summary.json"},
+    {"name": "source_matching.jsonl", "path": "AUDIT_REPORTS/artifacts/source_matching.jsonl", "records": 183685},
+    {"name": "source_matching_summary.json", "path": "AUDIT_REPORTS/artifacts/source_matching_summary.json"},
+    {"name": "source_metadata_adapters.jsonl", "path": "AUDIT_REPORTS/artifacts/source_metadata_adapters.jsonl", "records": 10000},
+    {"name": "source_metadata_adapters_summary.json", "path": "AUDIT_REPORTS/artifacts/source_metadata_adapters_summary.json"},
+    {"name": "provision_reconstruction.jsonl", "path": "AUDIT_REPORTS/artifacts/provision_reconstruction.jsonl", "records": 5000},
+    {"name": "provision_reconstruction_summary.json", "path": "AUDIT_REPORTS/artifacts/provision_reconstruction_summary.json"},
+    {"name": "version_lineage.jsonl", "path": "AUDIT_REPORTS/artifacts/version_lineage.jsonl", "records": 10000},
+    {"name": "version_lineage_summary.json", "path": "AUDIT_REPORTS/artifacts/version_lineage_summary.json"},
+    {"name": "authority_taxonomy.json", "path": "AUDIT_REPORTS/artifacts/authority_taxonomy.json"},
+    {"name": "duplicate_resolution.json", "path": "AUDIT_REPORTS/artifacts/duplicate_resolution.json"},
+    {"name": "dry_run_backfill_summary.json", "path": "AUDIT_REPORTS/artifacts/dry_run_backfill_summary.json"}
+  ],
+  "migrations": [
+    {"name": "20260716000100_additive_legal_metadata_schema.sql", "type": "additive"},
+    {"name": "20260716000200_metric_rpc_v3.sql", "type": "additive"}
+  ],
+  "rollbacks": [
+    {"name": "20260716000100_additive_legal_metadata_schema_rollback.sql"},
+    {"name": "20260716000200_metric_rpc_v3_rollback.sql"}
+  ],
+  "tests": [
+    {"name": "metric-rpc-v3.contract.test.ts", "tests": 4, "status": "PASS"},
+    {"name": "deterministic-search-v4.test.ts", "tests": 6, "status": "PASS"}
+  ]
+}

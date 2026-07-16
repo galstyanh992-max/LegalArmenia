@@ -1,0 +1,40 @@
+{
+  "total_records": 183685,
+  "output_records": 10000,
+  "family_counts": {
+    "arlis_general": 183505,
+    "government_decision": 101,
+    "law_code": 72,
+    "ECHR": 7
+  },
+  "confidence_counts": {
+    "high": 74532,
+    "medium": 1,
+    "low": 109152
+  },
+  "type_counts": {
+    "decision": 49554,
+    "order": 5638,
+    "unknown": 115291,
+    "law": 12846,
+    "decree": 280,
+    "commission": 62,
+    "constitution": 3,
+    "judgment": 10,
+    "echr_decision": 1
+  },
+  "authority_counts": {
+    "unknown": 134221,
+    "minister": 4208,
+    "government": 35525,
+    "prime_minister": 8433,
+    "national_assembly": 420,
+    "president": 800,
+    "constitutional_court": 69,
+    "echr": 9
+  },
+  "with_source_url": 74532,
+  "source_url_coverage_pct": 40.6,
+  "elapsed_seconds": 4.92,
+  "generated_at": "2026-07-16T00:47:53.977226+00:00"
+}
