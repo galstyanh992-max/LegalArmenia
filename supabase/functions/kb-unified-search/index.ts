@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { log, err } from "../_shared/safe-logger.ts";
+import { runV3Shadow } from "../_shared/v3-shadow.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -76,6 +77,22 @@ serve(async (req) => {
     if (error) throw new Error(error.message);
 
     const rows = (Array.isArray(data) ? data : []) as CorpusRow[];
+    // V3 shadow (Stage B) — OFF by default, failure-isolated, never alters the primary response.
+    await runV3Shadow({
+      supabaseUrl: Deno.env.get("SUPABASE_URL")!,
+      serviceRoleKey: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      requestId,
+      query,
+      embedding: null,
+      contentDomain: null,
+      statusScope,
+      effectiveAt: null,
+      limit: rpcLimit,
+      annLimit: Math.max(rpcLimit, 100),
+      ftsLimit: Math.min(Math.max(rpcLimit, 50), 100),
+      primaryChunkIds: rows.map((r) => r.chunk_id),
+      primaryRoute: "search_legal_corpus_metric",
+    });
     const kbRows = rows.filter((row) => row.content_domain === "knowledge_base").slice(0, MAX_KB_CHUNKS);
     const practiceRows = rows.filter((row) => row.content_domain === "practice").slice(0, MAX_PRACTICE_CHUNKS);
 

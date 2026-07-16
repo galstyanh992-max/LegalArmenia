@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { log, warn, err } from "../_shared/safe-logger.ts";
 import { handleCors, checkInternalAuth, callInternalFunction } from "../_shared/edge-security.ts";
 import { applyTemporalValidation, buildTemporalWarnings, normalizeEffectiveDate } from "../_shared/temporal-validity-engine.ts";
+import { runV3Shadow } from "../_shared/v3-shadow.ts";
 
 type SearchTables = "kb" | "practice" | "both";
 
@@ -96,6 +97,22 @@ serve(async (req) => {
 
     const rows = (Array.isArray(data) ? data as CorpusRow[] : [])
       .filter((row) => passesSemanticThreshold(row, semanticThreshold));
+    // V3 shadow (Stage B) — OFF by default, failure-isolated, never alters the primary response.
+    await runV3Shadow({
+      supabaseUrl: Deno.env.get("SUPABASE_URL")!,
+      serviceRoleKey: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      requestId,
+      query,
+      embedding: metricEmbedding,
+      contentDomain: contentDomainFor(searchTables),
+      statusScope,
+      effectiveAt: normalizedReferenceDate,
+      limit: rpcLimit,
+      annLimit: Math.min(Math.max(safeLimit * 4, 100), 200),
+      ftsLimit: Math.min(Math.max(safeLimit * 3, 50), 100),
+      primaryChunkIds: rows.map((r) => r.chunk_id),
+      primaryRoute: "search_legal_corpus_metric",
+    });
     const hasSemanticRows = rows.some(isSemanticRow);
     const hasKeywordRows = rows.some(isKeywordRow);
     const retrievalMode = resolveRetrievalMode(hasSemanticRows, hasKeywordRows);
