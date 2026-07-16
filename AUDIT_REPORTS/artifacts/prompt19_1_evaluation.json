@@ -1,0 +1,736 @@
+{
+  "schema_version": 1,
+  "model": "Metric-AI/armenian-text-embeddings-2-large",
+  "dimension": 1024,
+  "dataset_kind": "provisional_synthetic_legal_architecture_set",
+  "counts": {
+    "armenian_semantic": 30,
+    "russian_to_armenian": 15,
+    "exact_identifier": 15,
+    "unknown_only": 10,
+    "historical": 10,
+    "no_answer": 10
+  },
+  "cases": [
+    {
+      "id": "semantic_01",
+      "category": "armenian_semantic",
+      "query": "ինչպես պետք է կատարվի պայմանագրային պարտավորությունը",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186a1",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_02",
+      "category": "armenian_semantic",
+      "query": "գործատուի կողմից աշխատանքային պայմանագրի դադարեցման պայմանները",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186ab",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_03",
+      "category": "armenian_semantic",
+      "query": "երեխայի շահը ընտանեկան վեճի ժամանակ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186b5",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_04",
+      "category": "armenian_semantic",
+      "query": "հարկի վճարման ժամկետ և պարտավորություն",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186bf",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_05",
+      "category": "armenian_semantic",
+      "query": "երբ է անձը համարվում անմեղ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186c9",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_06",
+      "category": "armenian_semantic",
+      "query": "ինչպես բողոքարկել վարչական ակտը",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186d3",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_07",
+      "category": "armenian_semantic",
+      "query": "բաց թողնված դատավարական ժամկետ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186dd",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_08",
+      "category": "armenian_semantic",
+      "query": "սեփականության իրավունքի խախտման պաշտպանություն",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186e7",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_09",
+      "category": "armenian_semantic",
+      "query": "երբ ներկայացնել սնանկության դիմում",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186f1",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_10",
+      "category": "armenian_semantic",
+      "query": "անձնական տվյալների մշակման օրինական հիմքը",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186fb",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_11",
+      "category": "armenian_semantic",
+      "query": "շինարարության թույլտվության հատուկ կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018705",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_12",
+      "category": "armenian_semantic",
+      "query": "հողամասի նպատակային նշանակության փոփոխություն",
+      "expected_document_id": "00000000-0000-0000-0000-00000001870f",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_13",
+      "category": "armenian_semantic",
+      "query": "մաքսային արտոնության փաստաթղթեր",
+      "expected_document_id": "00000000-0000-0000-0000-000000018719",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_14",
+      "category": "armenian_semantic",
+      "query": "համայնքային գույքի վարձակալության կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018723",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_15",
+      "category": "armenian_semantic",
+      "query": "լիցենզիայի ժամկետի երկարաձգման դիմում",
+      "expected_document_id": "00000000-0000-0000-0000-00000001872d",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_16",
+      "category": "armenian_semantic",
+      "query": "սոցիալական նպաստի վերահաշվարկ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018737",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_17",
+      "category": "armenian_semantic",
+      "query": "բնապահպանական վճարի հաշվարկման բանաձև",
+      "expected_document_id": "00000000-0000-0000-0000-000000018741",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_18",
+      "category": "armenian_semantic",
+      "query": "հանրային ծառայության մրցույթի ընթացակարգ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001874b",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_19",
+      "category": "armenian_semantic",
+      "query": "կրթական ծրագրի հավատարմագրման պահանջներ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018755",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_20",
+      "category": "armenian_semantic",
+      "query": "առևտրային անվան գրանցման պայմաններ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001875f",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_21",
+      "category": "armenian_semantic",
+      "query": "նախկին կենսաթոշակային հաշվարկի կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018769",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_22",
+      "category": "armenian_semantic",
+      "query": "պետական տուրքի նախկին դրույքաչափ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018773",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_23",
+      "category": "armenian_semantic",
+      "query": "տարեկան հաշվետվության հին ձևաչափ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001877d",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_24",
+      "category": "armenian_semantic",
+      "query": "ապրանքների ներմուծման նախկին քվոտա",
+      "expected_document_id": "00000000-0000-0000-0000-000000018787",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_25",
+      "category": "armenian_semantic",
+      "query": "բնակարանային փոխհատուցման հին չափորոշիչ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018791",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_26",
+      "category": "armenian_semantic",
+      "query": "ճանապարհային վճարի նախկին մեթոդ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001879b",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_27",
+      "category": "armenian_semantic",
+      "query": "արտահանման հատուկ թույլտվության հին կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187a5",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_28",
+      "category": "armenian_semantic",
+      "query": "պարտադիր ապահովագրության նախկին պայմաններ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187af",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_29",
+      "category": "armenian_semantic",
+      "query": "տեղական վճարի նախկին չափ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187b9",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "semantic_30",
+      "category": "armenian_semantic",
+      "query": "տեխնիկական զննության հին պարբերականություն",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187c3",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_01",
+      "category": "russian_to_armenian",
+      "query": "как исполняются договорные обязательства",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186a1",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_02",
+      "category": "russian_to_armenian",
+      "query": "увольнение работника по инициативе работодателя",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186ab",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_03",
+      "category": "russian_to_armenian",
+      "query": "интересы ребенка в семейном споре",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186b5",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_04",
+      "category": "russian_to_armenian",
+      "query": "срок уплаты налогового обязательства",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186bf",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_05",
+      "category": "russian_to_armenian",
+      "query": "презумпция невиновности обвиняемого",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186c9",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_06",
+      "category": "russian_to_armenian",
+      "query": "обжалование административного акта",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186d3",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_07",
+      "category": "russian_to_armenian",
+      "query": "восстановление пропущенного процессуального срока",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186dd",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_08",
+      "category": "russian_to_armenian",
+      "query": "защита права собственности",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186e7",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_09",
+      "category": "russian_to_armenian",
+      "query": "заявление о банкротстве должника",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186f1",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_10",
+      "category": "russian_to_armenian",
+      "query": "законное основание обработки персональных данных",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186fb",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_11",
+      "category": "russian_to_armenian",
+      "query": "специальный порядок разрешения на строительство",
+      "expected_document_id": "00000000-0000-0000-0000-000000018705",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_12",
+      "category": "russian_to_armenian",
+      "query": "изменение целевого назначения земельного участка",
+      "expected_document_id": "00000000-0000-0000-0000-00000001870f",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_13",
+      "category": "russian_to_armenian",
+      "query": "документы для таможенной льготы",
+      "expected_document_id": "00000000-0000-0000-0000-000000018719",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_14",
+      "category": "russian_to_armenian",
+      "query": "аренда муниципального имущества",
+      "expected_document_id": "00000000-0000-0000-0000-000000018723",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "ru_hy_15",
+      "category": "russian_to_armenian",
+      "query": "продление срока лицензии",
+      "expected_document_id": "00000000-0000-0000-0000-00000001872d",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_01",
+      "category": "exact_identifier",
+      "query": "eval:law:001",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186a1",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_02",
+      "category": "exact_identifier",
+      "query": "eval:law:002",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186ab",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_03",
+      "category": "exact_identifier",
+      "query": "eval:law:003",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186b5",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_04",
+      "category": "exact_identifier",
+      "query": "eval:law:004",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186bf",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_05",
+      "category": "exact_identifier",
+      "query": "eval:law:005",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186c9",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_06",
+      "category": "exact_identifier",
+      "query": "Վարչական ակտի բողոքարկում",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186d3",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_07",
+      "category": "exact_identifier",
+      "query": "Դատավարական ժամկետի վերականգնում",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186dd",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_08",
+      "category": "exact_identifier",
+      "query": "Սեփականության իրավունքի պաշտպանություն",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186e7",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_09",
+      "category": "exact_identifier",
+      "query": "Սնանկության դիմում",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186f1",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_10",
+      "category": "exact_identifier",
+      "query": "Անձնական տվյալների մշակում",
+      "expected_document_id": "00000000-0000-0000-0000-0000000186fb",
+      "expected_status": "active",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_11",
+      "category": "exact_identifier",
+      "query": "EVAL-011",
+      "expected_document_id": "00000000-0000-0000-0000-000000018705",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_12",
+      "category": "exact_identifier",
+      "query": "EVAL-012",
+      "expected_document_id": "00000000-0000-0000-0000-00000001870f",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_13",
+      "category": "exact_identifier",
+      "query": "EVAL-013",
+      "expected_document_id": "00000000-0000-0000-0000-000000018719",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_14",
+      "category": "exact_identifier",
+      "query": "EVAL-014",
+      "expected_document_id": "00000000-0000-0000-0000-000000018723",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "exact_15",
+      "category": "exact_identifier",
+      "query": "EVAL-015",
+      "expected_document_id": "00000000-0000-0000-0000-00000001872d",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_01",
+      "category": "unknown_only",
+      "query": "շինարարության թույլտվության հատուկ կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018705",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_02",
+      "category": "unknown_only",
+      "query": "հողամասի նպատակային նշանակության փոփոխություն",
+      "expected_document_id": "00000000-0000-0000-0000-00000001870f",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_03",
+      "category": "unknown_only",
+      "query": "մաքսային արտոնության փաստաթղթեր",
+      "expected_document_id": "00000000-0000-0000-0000-000000018719",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_04",
+      "category": "unknown_only",
+      "query": "համայնքային գույքի վարձակալության կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018723",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_05",
+      "category": "unknown_only",
+      "query": "լիցենզիայի ժամկետի երկարաձգման դիմում",
+      "expected_document_id": "00000000-0000-0000-0000-00000001872d",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_06",
+      "category": "unknown_only",
+      "query": "սոցիալական նպաստի վերահաշվարկ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018737",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_07",
+      "category": "unknown_only",
+      "query": "բնապահպանական վճարի հաշվարկման բանաձև",
+      "expected_document_id": "00000000-0000-0000-0000-000000018741",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_08",
+      "category": "unknown_only",
+      "query": "հանրային ծառայության մրցույթի ընթացակարգ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001874b",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_09",
+      "category": "unknown_only",
+      "query": "կրթական ծրագրի հավատարմագրման պահանջներ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018755",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "unknown_10",
+      "category": "unknown_only",
+      "query": "առևտրային անվան գրանցման պայմաններ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001875f",
+      "expected_status": "unknown",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_01",
+      "category": "historical",
+      "query": "նախկին կենսաթոշակային հաշվարկի կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018769",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_02",
+      "category": "historical",
+      "query": "պետական տուրքի նախկին դրույքաչափ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018773",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_03",
+      "category": "historical",
+      "query": "տարեկան հաշվետվության հին ձևաչափ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001877d",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_04",
+      "category": "historical",
+      "query": "ապրանքների ներմուծման նախկին քվոտա",
+      "expected_document_id": "00000000-0000-0000-0000-000000018787",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_05",
+      "category": "historical",
+      "query": "բնակարանային փոխհատուցման հին չափորոշիչ",
+      "expected_document_id": "00000000-0000-0000-0000-000000018791",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_06",
+      "category": "historical",
+      "query": "ճանապարհային վճարի նախկին մեթոդ",
+      "expected_document_id": "00000000-0000-0000-0000-00000001879b",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_07",
+      "category": "historical",
+      "query": "արտահանման հատուկ թույլտվության հին կարգ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187a5",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_08",
+      "category": "historical",
+      "query": "պարտադիր ապահովագրության նախկին պայմաններ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187af",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_09",
+      "category": "historical",
+      "query": "տեղական վճարի նախկին չափ",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187b9",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "historical_10",
+      "category": "historical",
+      "query": "տեխնիկական զննության հին պարբերականություն",
+      "expected_document_id": "00000000-0000-0000-0000-0000000187c3",
+      "expected_status": "repealed",
+      "expected_source": "arlis"
+    },
+    {
+      "id": "no_answer_01",
+      "category": "no_answer",
+      "query": "քվանտային աստղադիտակի հելիումային սառեցման սխեմա",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_02",
+      "category": "no_answer",
+      "query": "մարսյան հողի կենսաբանական փորձարկման արդյունք",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_03",
+      "category": "no_answer",
+      "query": "ջազային իմպրովիզացիայի հարմոնիկ վերլուծություն",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_04",
+      "category": "no_answer",
+      "query": "միջնադարյան ճարտարապետության գունային պիգմենտ",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_05",
+      "category": "no_answer",
+      "query": "ծովային կետի միգրացիոն երթուղի",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_06",
+      "category": "no_answer",
+      "query": "նեյտրոնային աստղի մագնիսական դաշտ",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_07",
+      "category": "no_answer",
+      "query": "հնագիտական խեցեղենի ջերմային մշակում",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_08",
+      "category": "no_answer",
+      "query": "լեռնային սառցադաշտի տարեկան շարժում",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_09",
+      "category": "no_answer",
+      "query": "բուսաբանական այգու խոլորձների խնամք",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    },
+    {
+      "id": "no_answer_10",
+      "category": "no_answer",
+      "query": "սիմֆոնիկ նվագախմբի հարվածային գործիքներ",
+      "expected_document_id": null,
+      "expected_status": null,
+      "expected_source": null
+    }
+  ]
+}

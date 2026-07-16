@@ -1,0 +1,2 @@
+﻿{"run_id":"prompt19_7_run_001","timestamp":"2026-07-16T00:44:00Z","type":"ENCODING","source":"source_inventory.py","message":"UnicodeEncodeError on print (Armenian chars in cp1251 console)","resolved":true,"resolution":"Files written before crash; summary readable via Get-Content"}
+{"run_id":"prompt19_7_run_001","timestamp":"2026-07-16T00:48:30Z","type":"REGEX_ERROR","source":"version_lineage.py","message":"Unterminated subpattern in Armenian Unicode regex","resolved":true,"resolution":"Replaced with ASCII fallback patterns"}

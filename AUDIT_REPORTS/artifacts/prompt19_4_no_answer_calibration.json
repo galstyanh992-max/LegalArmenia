@@ -1,0 +1,11 @@
+{
+  "selected": "intent-aware evidence-rule ensemble",
+  "split": "dev",
+  "test_used_for_selection": false,
+  "support_threshold": 0.22,
+  "dev_false_answer_rate": 0,
+  "dev_false_noanswer_rate": 0,
+  "frozen_test_false_answer_rate": 0,
+  "frozen_test_false_noanswer_rate": 0,
+  "rejected": "Prompt 19.3 custom-model threshold"
+}

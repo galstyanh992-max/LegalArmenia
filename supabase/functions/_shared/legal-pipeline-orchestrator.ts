@@ -104,7 +104,14 @@ export interface LegalPipelineResult {
 
 export interface LegalPipelineDeps {
   /** Required: full-text + semantic retrieval. */
-  runRAG: (query: string, opts: unknown) => Promise<unknown>;
+  runRAG: (
+    query: string,
+    opts: {
+      engine: LegalReasoningOutput;
+      referenceDate?: string | null;
+      [key: string]: unknown;
+    },
+  ) => Promise<unknown>;
 
   /**
    * Optional: citation verification.
@@ -214,7 +221,11 @@ export async function runRetrievalStage(
 
   try {
     const query = buildReasoningSearchQuery(result.reasoning, input.userQuery || "");
-    const ragOpts = { referenceDate: input.effectiveAt, ...input.options };
+    const ragOpts = {
+      engine: result.reasoning,
+      referenceDate: input.effectiveAt,
+      ...input.options,
+    };
 
     result.rag = await deps.runRAG(query, ragOpts);
 

@@ -1,0 +1,45 @@
+{
+  "version": "deterministic-legal-scorer-v3",
+  "architecture": "deterministic",
+  "semantic_model": "armenian-text-embeddings-2-large",
+  "qwen_used": false,
+  "cross_encoder_used": false,
+  "hard_guards": [
+    "status_scope",
+    "effective_date",
+    "tenant_authorization"
+  ],
+  "feature_groups": {
+    "exact_citation": [
+      "exact_provision",
+      "article_part",
+      "document_number",
+      "canonical_title",
+      "case_date"
+    ],
+    "retrieval": [
+      "metric_similarity",
+      "ann_rank",
+      "sanitized_fts",
+      "fts_rank",
+      "weighted_rrf"
+    ],
+    "legal": [
+      "specificity",
+      "trusted_authority",
+      "status",
+      "temporal",
+      "official_source",
+      "current_version"
+    ],
+    "security_quality": [
+      "metadata_confidence",
+      "chunk_completeness",
+      "duplicate_penalty",
+      "instruction_penalty",
+      "source_diversity"
+    ]
+  },
+  "user_cutover": false,
+  "feature_flag": false
+}

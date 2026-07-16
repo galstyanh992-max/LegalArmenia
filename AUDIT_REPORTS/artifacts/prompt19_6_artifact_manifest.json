@@ -1,0 +1,125 @@
+{
+  "file_count": 30,
+  "files": {
+    "prompt19_6_adversarial_metrics.json": {
+      "sha256": "e761cdf04bc611526e9424761f169616a509290da7e4108341a826e9d99a74a8",
+      "bytes": 625
+    },
+    "prompt19_6_artifact_validation.json": {
+      "sha256": "133c6c79b132c1e47f370e11a7994020c91218501fd3b4eddcc638661c270f9b",
+      "bytes": 223
+    },
+    "prompt19_6_baseline.json": {
+      "sha256": "b16ddd3c068b55b96980ad5764eeceb2adb44755556cd1e379730010a8b0610d",
+      "bytes": 1315
+    },
+    "prompt19_6_citation_failure_summary.json": {
+      "sha256": "ebf5ed2011c04352f4f9a1290980884fcc73869b4c556ebc646ba357e39d1a44",
+      "bytes": 216
+    },
+    "prompt19_6_citation_failures.jsonl": {
+      "sha256": "9a5c6fe407b8e16e9670a6ee93fc4d34ef52913e279dff9de36973c0e7295ef3",
+      "bytes": 11762
+    },
+    "prompt19_6_engineering_gates.json": {
+      "sha256": "df2ad9a4661b5db9a7b415d6bd98c962aa84f8e2525d18dd98a9f6e1be6accb6",
+      "bytes": 1540
+    },
+    "prompt19_6_failed_queries.jsonl": {
+      "sha256": "07637c8643634280879e09a3e5106f52f9ad14eef0d17195c936870198e47468",
+      "bytes": 918
+    },
+    "prompt19_6_feature_ablation.json": {
+      "sha256": "135125491da83ccfd4306eb85cecebd4f7f89fe245966e3ba08049719baaee0f",
+      "bytes": 7902
+    },
+    "prompt19_6_gold_uncertainty_packet.json": {
+      "sha256": "690e22d4be3288cf8c0d9acabd43d7c69a46192756c5f7b878730b578e316376",
+      "bytes": 3826
+    },
+    "prompt19_6_injection_dataset.jsonl": {
+      "sha256": "15f6e3511944ac53578874b9f3b5e8a079d2a98a829e146752f9c4358e4036db",
+      "bytes": 66050
+    },
+    "prompt19_6_legal_review_status.json": {
+      "sha256": "d463648286ff155b80f013f03b91c9a7de1fba153225cf9e20d5bf49d3fe9661",
+      "bytes": 150
+    },
+    "prompt19_6_parser_fixtures.json": {
+      "sha256": "1b6d12b545b6b34e54736d5dbac4339d56a7c2695d166c98d6cc34983aad9393",
+      "bytes": 18813
+    },
+    "prompt19_6_provision_mapping.json": {
+      "sha256": "18ae44ed418b2aa2d45b34d08b5d050ab29d696a883250c83d7dca94d0a091e9",
+      "bytes": 73
+    },
+    "prompt19_6_raw_evaluation_metrics.json": {
+      "sha256": "9767e84faeb074e606d0dddd51a27a26c1fcc51714115aea5457c4d4a1e062b8",
+      "bytes": 10241
+    },
+    "prompt19_6_release_gates.json": {
+      "sha256": "c8db9e69954c20fce6be6ba141c70d2deacb1e779b64e8eb836fce716d7870fc",
+      "bytes": 2274
+    },
+    "prompt19_6_rollback_plan.json": {
+      "sha256": "9e579948ee275da779e6c00f00dcea0a401592c3951942f2eac27e7419fe8501",
+      "bytes": 228
+    },
+    "prompt19_6_scorer_v3_config.json": {
+      "sha256": "4887bb0c234cd1b8db5b365626838d11dc558fba510ace1cbc877c1a2450c7d5",
+      "bytes": 965
+    },
+    "prompt19_6_shadow_comparison.json": {
+      "sha256": "bc67340d7beb131510128871a875d5d587217c749ca20fc4cbf853f55e4e5868",
+      "bytes": 218
+    },
+    "prompt19_6_tenant_staging.json": {
+      "sha256": "28429d08b98717073431f5b88fc66a77b5a827e6747aac06664842f6ba27b31d",
+      "bytes": 266
+    },
+    "prompt19_6_trusted_metadata_manifest.json": {
+      "sha256": "b887f052fc6b65c582615425d0c433735c12cf9d027f01b3da140ec5e0126a11",
+      "bytes": 449
+    },
+    "prompt19_6_v2_test.json": {
+      "sha256": "823c13165090cd31faed390a093f27151d72f7f74a77aa0baf7a3cdf2df8d800",
+      "bytes": 64160
+    },
+    "prompt19_6_v3_test.json": {
+      "sha256": "7bb55a31d413c5cd8f970e7dd130fe93b080f177c330713735dc95006a137d7b",
+      "bytes": 74634
+    },
+    "prompt19_6_without_v3_authority_test.json": {
+      "sha256": "b935bfa8dbd95359f06a344a3779f530c0b219dc75de63425a4aefb2234dc986",
+      "bytes": 74675
+    },
+    "prompt19_6_without_v3_duplicate_collapse_test.json": {
+      "sha256": "40685723dd88a2abe32737b391d92f9c4a7c682054f7a4eb0193c65a3869483e",
+      "bytes": 74683
+    },
+    "prompt19_6_without_v3_instruction_penalty_test.json": {
+      "sha256": "20f8ff2cfbef00ef301978d0e09093528babb146243e61b60ec68606ded9925e",
+      "bytes": 74683
+    },
+    "prompt19_6_without_v3_metadata_confidence_test.json": {
+      "sha256": "fbf00440ab9251aaf85afa168283f78c3fe53ec50706231ab33b76a38928875a",
+      "bytes": 74683
+    },
+    "prompt19_6_without_v3_provision_lane_test.json": {
+      "sha256": "db2fb57cba18bb935c8304b768b65d75ab83954fdd420675640598f5df5d18bd",
+      "bytes": 74770
+    },
+    "prompt19_6_without_v3_sanitizer_test.json": {
+      "sha256": "e91898a45e0a6952974783c1fd76d05fcc24c691edc7be83fc0b6c9535fd1ba0",
+      "bytes": 74673
+    },
+    "prompt19_6_without_v3_specificity_test.json": {
+      "sha256": "66f1666b23ea35c6ab23559a10cfb47ed7a1769fec9a2309818ec6a76dfd1efd",
+      "bytes": 74675
+    },
+    "prompt19_6_without_v3_trusted_metadata_test.json": {
+      "sha256": "647e05f180410a0c66a0eea82c420f77e88a0177f920d3592e4a9cd68506b5ac",
+      "bytes": 74680
+    }
+  }
+}

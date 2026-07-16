@@ -1,0 +1,7 @@
+{
+  "executed": false,
+  "reason": "Production writes/deployments were prohibited; offline gates did not pass.",
+  "feature_flag": false,
+  "user_visible_route_changed": false,
+  "full_private_queries_logged": false
+}

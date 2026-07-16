@@ -1,0 +1,78 @@
+{
+  "taxonomy": {
+    "unknown": {
+      "authority_type": "unknown",
+      "authority_rank": 99,
+      "binding_scope": "unknown",
+      "jurisdiction": "armenia",
+      "issuing_body": "unknown",
+      "official_source": "arlis.am",
+      "document_count": 134221
+    },
+    "minister": {
+      "authority_type": "minister",
+      "authority_rank": 9,
+      "binding_scope": "subordinate",
+      "jurisdiction": "armenia",
+      "issuing_body": "minister",
+      "official_source": "arlis.am",
+      "document_count": 4208
+    },
+    "government": {
+      "authority_type": "government",
+      "authority_rank": 7,
+      "binding_scope": "national_binding",
+      "jurisdiction": "armenia",
+      "issuing_body": "government",
+      "official_source": "arlis.am",
+      "document_count": 35525
+    },
+    "prime_minister": {
+      "authority_type": "prime_minister",
+      "authority_rank": 8,
+      "binding_scope": "national_binding",
+      "jurisdiction": "armenia",
+      "issuing_body": "prime_minister",
+      "official_source": "arlis.am",
+      "document_count": 8433
+    },
+    "national_assembly": {
+      "authority_type": "national_assembly",
+      "authority_rank": 4,
+      "binding_scope": "national_binding",
+      "jurisdiction": "armenia",
+      "issuing_body": "national_assembly",
+      "official_source": "arlis.am",
+      "document_count": 420
+    },
+    "president": {
+      "authority_type": "president",
+      "authority_rank": 8,
+      "binding_scope": "national_binding",
+      "jurisdiction": "armenia",
+      "issuing_body": "president",
+      "official_source": "arlis.am",
+      "document_count": 800
+    },
+    "constitutional_court": {
+      "authority_type": "constitutional_court",
+      "authority_rank": 2,
+      "binding_scope": "national_binding",
+      "jurisdiction": "armenia",
+      "issuing_body": "constitutional_court",
+      "official_source": "arlis.am",
+      "document_count": 69
+    },
+    "echr": {
+      "authority_type": "echr",
+      "authority_rank": 6,
+      "binding_scope": "international_binding",
+      "jurisdiction": "european_court",
+      "issuing_body": "echr",
+      "official_source": "echr.coe.int",
+      "document_count": 9
+    }
+  },
+  "total_authorities": 8,
+  "generated_at": "2026-07-16T00:49:25.617166+00:00"
+}

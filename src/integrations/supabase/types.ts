@@ -3244,6 +3244,52 @@ export type Database = {
           version_id: string
         }[]
       }
+      search_legal_corpus_metric: {
+        Args: {
+          p_ann_limit?: number
+          p_content_domain?: Database["public"]["Enums"]["content_domain"]
+          p_effective_at?: string
+          p_fts_limit?: number
+          p_limit?: number
+          p_metric_embedding: string | null
+          p_query_text: string
+          p_status_scope?: string
+        }
+        Returns: {
+          ann_rank: number | null
+          chunk_id: string
+          citation_anchor: string | null
+          content_domain: Database["public"]["Enums"]["content_domain"]
+          doc_id: string | null
+          document_id: string
+          document_rank: number
+          duplicate_group: string
+          effective_from: string | null
+          effective_to: string | null
+          fts_rank: number | null
+          fts_score: number | null
+          identifier_match: boolean
+          language: string
+          legal_status_warning: string | null
+          match_reason: string
+          norm_status: Database["public"]["Enums"]["normalized_status"]
+          retrieval_model: string
+          retrieval_route: string
+          route_sources: string[]
+          rrf_score: number
+          score: number
+          source: string
+          source_rank: number
+          source_url: string | null
+          status_eligible: boolean
+          status_reason_code: string
+          status_scope: string
+          text_snippet: string
+          title: string
+          vector_similarity: number | null
+          version_id: string
+        }[]
+      }
       search_legal_unit_chunks_preview: {
         Args: {
           p_content_domain?: Database["public"]["Enums"]["content_domain"]

@@ -1,0 +1,22 @@
+{
+  "dataset_cases": 280,
+  "attack_cases": 240,
+  "legal_imperative_controls": 40,
+  "injection_ranking_pass": 1,
+  "attack_success_rate": 0,
+  "injection_detection_recall": 1,
+  "genuine_legal_imperative_false_positive_rate": 0,
+  "forged_feature_block_rate": 1,
+  "ablation_attack_success_rate": {
+    "without_sanitizer": 0,
+    "without_instruction_penalty": 0,
+    "without_trusted_metadata_restrictions": 0.20833333333333334
+  },
+  "parser_precision": 1,
+  "parser_recall": 1,
+  "parser_true_positive": 60,
+  "parser_false_negative": 0,
+  "parser_false_positive": 0,
+  "parser_true_negative": 60,
+  "failed_ids": []
+}

@@ -11,6 +11,7 @@ interface SearchRequest {
   category?: "criminal" | "civil" | "administrative" | "echr" | "constitutional" | null;
   limitDocs?: number;
   limitChunksPerDoc?: number;
+  statusScope?: "current" | "extended" | "historical";
 }
 
 interface TopChunk {
@@ -70,7 +71,7 @@ interface CorpusRow {
 
 type CorpusRpcClient = {
   rpc: (
-    fn: "search_legal_corpus_dual",
+    fn: "search_legal_corpus_metric",
     params: Record<string, unknown>,
   ) => Promise<{ data: unknown; error: { message?: string } | null }>;
 };
@@ -153,6 +154,7 @@ serve(async (req) => {
     // === Parse & validate ===
     const body: SearchRequest = await req.json();
     const { category = null, limitDocs = 20, limitChunksPerDoc = 4 } = body;
+    const statusScope = normalizeStatusScope(body.statusScope);
     const rawQuery = body.query;
 
     if (!rawQuery || typeof rawQuery !== "string") {
@@ -172,14 +174,14 @@ serve(async (req) => {
     const safeChunksPerDoc = Math.max(1, Math.min(Number(limitChunksPerDoc) || 4, 6));
 
     log("kb-search", "Search start", { requestId, qLen: query.length, category });
-    const rpcClient = sb as unknown as CorpusRpcClient;
+    const rpcClient = serviceClient as unknown as CorpusRpcClient;
 
     // === PRIMARY: unified corpus search ===
     let path = "chunks";
     let results: SearchResultDocument[];
 
     try {
-      results = await searchViaChunksRpc(rpcClient, query, category, safeLimitDocs, safeChunksPerDoc);
+      results = await searchViaChunksRpc(rpcClient, query, category, safeLimitDocs, safeChunksPerDoc, statusScope);
     } catch (e) {
       warn("kb-search", "Chunks RPC failed, falling back", { requestId });
       results = [];
@@ -189,7 +191,7 @@ serve(async (req) => {
     if (results.length === 0) {
       path = "fallback";
       try {
-        results = await searchViaFallbackRpc(rpcClient, query, category, safeLimitDocs);
+        results = await searchViaFallbackRpc(rpcClient, query, category, safeLimitDocs, statusScope);
       } catch (e) {
         err("kb-search", "Fallback RPC also failed", e, { requestId });
         results = [];
@@ -204,9 +206,24 @@ serve(async (req) => {
         retrieval_mode: "keyword_only",
         semantic_ok: false,
         semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
-        qwen_semantic_ok: false,
-        qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_DISABLED",
+        metric_semantic_ok: false,
+        metric_semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
+        embedding_model: "armenian-text-embeddings-2-large",
+        embedding_dimension: 1024,
+        identifier_ok: true,
+        metric_ann_ok: false,
+        fts_ok: true,
+        fusion_ok: true,
+        reranker_ok: false,
+        legacy_qwen_used: false,
+        degraded: false,
+        degraded_reason: null,
+        retrieval_route: "identifier+fts",
         threshold_applied: false,
+        reranker_applied: false,
+        rerank_ok: false,
+        rerank_error: "RERANKER_NOT_CONFIGURED",
+        status_scope: statusScope,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
@@ -224,21 +241,21 @@ async function searchViaChunksRpc(
   category: string | null,
   limitDocs: number,
   chunksPerDoc: number,
+  statusScope: "current" | "extended" | "historical",
 ): Promise<SearchResultDocument[]> {
-  const { data, error } = await sb.rpc("search_legal_corpus_dual", {
+  const rpcLimit = Math.min(Math.max(limitDocs * chunksPerDoc, limitDocs), 50);
+  const { data, error } = await sb.rpc("search_legal_corpus_metric", {
     p_query_text: query,
     p_metric_embedding: null,
-    p_qwen_embedding: null,
     p_content_domain: "practice",
-    p_norm_status: "active",
-    p_limit: Math.max(limitDocs * chunksPerDoc, limitDocs),
-    p_metric_limit: 0,
-    p_qwen_limit: 0,
-    p_bm25_limit: Math.max(limitDocs * chunksPerDoc, 30),
+    p_status_scope: statusScope,
     p_effective_at: null,
+    p_limit: rpcLimit,
+    p_ann_limit: 100,
+    p_fts_limit: Math.min(Math.max(rpcLimit, 50), 100),
   });
 
-  if (error) throw new Error(`search_legal_corpus_dual RPC: ${error.message}`);
+  if (error) throw new Error(`search_legal_corpus_metric RPC: ${error.message}`);
   if (!data) return [];
 
   const rows = (Array.isArray(data) ? data : []) as CorpusRow[];
@@ -313,18 +330,17 @@ async function searchViaFallbackRpc(
   query: string,
   category: string | null,
   limitDocs: number,
+  statusScope: "current" | "extended" | "historical",
 ): Promise<SearchResultDocument[]> {
-  const { data, error } = await sb.rpc("search_legal_corpus_dual", {
+  const { data, error } = await sb.rpc("search_legal_corpus_metric", {
     p_query_text: query,
     p_metric_embedding: null,
-    p_qwen_embedding: null,
     p_content_domain: "practice",
-    p_norm_status: "active",
+    p_status_scope: statusScope,
     p_limit: limitDocs,
-    p_metric_limit: 0,
-    p_qwen_limit: 0,
-    p_bm25_limit: Math.max(limitDocs, 30),
     p_effective_at: null,
+    p_ann_limit: Math.max(limitDocs, 100),
+    p_fts_limit: Math.min(Math.max(limitDocs, 50), 100),
   });
 
   if (error) throw new Error(`fallback corpus RPC: ${error.message}`);
@@ -370,6 +386,10 @@ function normalizeSearchQuery(raw: string): string {
 
   if (q.length > 200) q = q.substring(0, 200);
   return q;
+}
+
+function normalizeStatusScope(value: unknown): "current" | "extended" | "historical" {
+  return value === "current" || value === "historical" ? value : "extended";
 }
 
 function jsonRes(body: Record<string, unknown>, status: number): Response {

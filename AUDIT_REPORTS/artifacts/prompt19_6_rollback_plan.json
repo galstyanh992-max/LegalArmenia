@@ -1,0 +1,9 @@
+{
+  "production_deployed": false,
+  "rollback_required": false,
+  "steps": [
+    "Keep METRIC_RPC_SHADOW_ENABLED=false",
+    "Do not deploy V3 modules",
+    "Revert the Prompt 19.6 commit if local changes must be removed"
+  ]
+}

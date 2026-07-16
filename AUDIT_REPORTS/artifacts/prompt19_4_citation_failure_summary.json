@@ -1,0 +1,16 @@
+{
+  "classified_before_v2_evaluation": true,
+  "failure_count": 9,
+  "counts_by_class": {
+    "AUTHORITY_ORDERING_FAILURE": 1,
+    "CORRECT_DOCUMENT_WRONG_CHUNK": 1,
+    "GENERAL_RULE_BEATS_SPECIFIC_RULE": 1,
+    "IDENTIFIER_MATCH_UNDERWEIGHTED": 2,
+    "STATUS_MISMATCH": 1,
+    "TITLE_MATCH_UNDERWEIGHTED": 1,
+    "WRONG_DOCUMENT": 1,
+    "WRONG_DOCUMENT_VERSION": 1
+  },
+  "source_baseline_sha256": "c5897a2aa975e7562d32d0633f1f8a99711c9850a8e62c65e671f2cd062e2b64",
+  "jsonl_sha256": "fb51180d6e7fe0a5050964a303fa344d8a4e1e3c36a3959491c3b7ca1b9b6584"
+}

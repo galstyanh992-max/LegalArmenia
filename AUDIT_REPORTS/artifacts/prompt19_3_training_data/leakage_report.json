@@ -1,0 +1,133 @@
+{
+  "frozen_test_mutated": false,
+  "expanded_query_count": 2716,
+  "exact_query_duplicates_within_expansion": 0,
+  "normalized_query_duplicates_within_expansion": 0,
+  "normalized_query_collisions_with_frozen_test": [],
+  "expected_chunk_overlap_with_frozen_test": [],
+  "document_family_overlap_with_frozen_test": [],
+  "generated_test_templates": 0,
+  "excluded_parent_queries": [
+    {
+      "query_id": "HY-SEM-009",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-010",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HY-SEM-015",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-017",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-023",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-026",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HY-SEM-031",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-038",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-040",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-041",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-043",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-045",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HY-SEM-056",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-057",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-059",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HY-SEM-060",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "RU-HY-010",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "RU-HY-011",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "RU-HY-012",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "RU-HY-013",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HIST-005",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HIST-007",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HIST-012",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "DUP-005",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "HY-SEM-065",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-072",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-073",
+      "reason": "NORMALIZED_FROZEN_TEST_COLLISION"
+    },
+    {
+      "query_id": "HY-SEM-077",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "RU-HY-017",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    },
+    {
+      "query_id": "RU-HY-018",
+      "reason": "DUPLICATE_NON_TEST_PARENT"
+    }
+  ],
+  "passed": true
+}

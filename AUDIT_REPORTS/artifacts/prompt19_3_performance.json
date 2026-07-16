@@ -1,0 +1,38 @@
+{
+  "hardware": {
+    "cpu": "Intel Xeon E5-2699 v3",
+    "physical_cores": 18,
+    "logical_processors": 36,
+    "gpu": null,
+    "dtype": "float32"
+  },
+  "base_model": "custom_head.json",
+  "head_sha256": "5b63b151cc7a885e18906fb68748ba3a08f107b6b3adb95b942d274815c0cdde",
+  "startup_ms": 11183.35389999993,
+  "working_set_bytes": 491372544,
+  "candidate_counts": {
+    "10": {
+      "requests": 12,
+      "p50_ms": 234.42890000023908,
+      "p95_ms": 237.13370000041323,
+      "p99_ms": 242.03549999947427,
+      "throughput_rps": 4.30300668648016,
+      "errors": 0
+    },
+    "20": {
+      "requests": 12,
+      "p50_ms": 476.8265499997142,
+      "p95_ms": 487.87129999982426,
+      "p99_ms": 496.6671000001952,
+      "throughput_rps": 2.100070788137632,
+      "errors": 0
+    }
+  },
+  "concurrency_4": {
+    "requests": 12,
+    "successful": 12,
+    "elapsed_ms": 2912.6229000012245,
+    "throughput_rps": 4.119997820519421
+  },
+  "cost_per_query_usd_local": 0.0
+}

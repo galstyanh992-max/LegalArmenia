@@ -1,0 +1,28 @@
+{
+  "branch": "codex/prompt-19-6-citation-injection-final",
+  "parent_hash": "8694b9ea33098ae7d95aed489e59d8392193de1e",
+  "live_project": "avmgtsonawtzebvazgcr",
+  "live_rpc_v2_sha256": "36b5cb469966353c677415e5205f135aeb3f52d1f839c15d0736964da8580a5a",
+  "scorer_v2_config_sha256": "2243f0e9cf100e61823bcf332eb32a682e5a348fb8d769555f9c4d1258b464e9",
+  "frozen_gold_sha256": "37421cb2a6ec62a01ea76240c4180915382e9f731a24fe8abc55d2fcc59994da",
+  "candidate_pools_sha256": "7e12187cd4c0d3c8bf14faa29b00d78a53dddf8fba139f9c19458907bbe0ba7d",
+  "citation_failure_sha256": "fb51180d6e7fe0a5050964a303fa344d8a4e1e3c36a3959491c3b7ca1b9b6584",
+  "injection_fixture_sha256": "57911c575488a21e7fac8dccb77426ac793374f9a8b48b3cd3253c29c4e3de4a",
+  "original_dirty_worktree_fingerprint": "883b6538cdb5e2027668fcdeb9b52d914e741e839cc159f451b5260a58603a6c",
+  "original_dirty_worktree_lines": 150,
+  "live_edge": {
+    "embed_query": {
+      "version": 55,
+      "status": "ACTIVE",
+      "hash": "37bd2e5c650b0453950fc4b58d4efcf5b139e6baa39f69b914661b5547a0cf63"
+    },
+    "vector_search": {
+      "version": 43,
+      "status": "ACTIVE",
+      "hash": "3ea127279bbf1090b3c880b1c871a2bfd1c1a7010c26043c6f9277a33aec85af"
+    }
+  },
+  "metric_rpc_shadow_enabled": false,
+  "production_writes": 0,
+  "production_deployments": 0
+}

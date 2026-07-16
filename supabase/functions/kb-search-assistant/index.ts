@@ -27,9 +27,24 @@ interface SearchOutput {
   retrieval_mode: "keyword_only";
   semantic_ok: false;
   semantic_error: string;
-  qwen_semantic_ok: false;
-  qwen_semantic_error: string;
+  metric_semantic_ok: false;
+  metric_semantic_error: string;
+  embedding_model: "armenian-text-embeddings-2-large";
+  embedding_dimension: 1024;
+  identifier_ok: boolean;
+  metric_ann_ok: false;
+  fts_ok: boolean;
+  fusion_ok: boolean;
+  reranker_ok: false;
+  legacy_qwen_used: false;
+  degraded: boolean;
+  degraded_reason: string | null;
+  retrieval_route: "identifier+fts";
   threshold_applied: false;
+  reranker_applied: false;
+  rerank_ok: false;
+  rerank_error: string;
+  status_scope: "current" | "extended" | "historical";
 }
 
 interface CorpusRow {
@@ -69,7 +84,9 @@ serve(async (req) => {
     }
     // === END AUTH GUARD ===
 
-    const { query, limit = 20 } = await req.json();
+    const { query, limit = 20, statusScope: rawStatusScope } = await req.json();
+    const statusScope = normalizeStatusScope(rawStatusScope);
+    const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 50);
 
     if (!query || typeof query !== "string") {
       return new Response(
@@ -128,16 +145,14 @@ serve(async (req) => {
     let searchResults: KBSearchResult[] = [];
     
     if (keywords.length > 0) {
-      const { data, error } = await supabase.rpc("search_legal_corpus_dual", {
+      const { data, error } = await supabase.rpc("search_legal_corpus_metric", {
         p_query_text: keywords.join(" "),
         p_metric_embedding: null,
-        p_qwen_embedding: null,
         p_content_domain: "knowledge_base",
-        p_norm_status: "active",
-        p_limit: Math.min(limit, 50),
-        p_metric_limit: 0,
-        p_qwen_limit: 0,
-        p_bm25_limit: Math.min(Math.max(limit, 20), 50),
+        p_status_scope: statusScope,
+        p_limit: Math.min(safeLimit, 50),
+        p_ann_limit: Math.max(Math.min(safeLimit, 50), 100),
+        p_fts_limit: Math.min(Math.max(safeLimit, 50), 100),
         p_effective_at: null,
       });
 
@@ -158,16 +173,14 @@ serve(async (req) => {
 
     // Fallback: use the raw query if keyword extraction produced no corpus hits
     if (searchResults.length === 0) {
-      const { data: ftsData, error: ftsError } = await supabase.rpc("search_legal_corpus_dual", {
+      const { data: ftsData, error: ftsError } = await supabase.rpc("search_legal_corpus_metric", {
         p_query_text: query,
         p_metric_embedding: null,
-        p_qwen_embedding: null,
         p_content_domain: "knowledge_base",
-        p_norm_status: "active",
-        p_limit: limit,
-        p_metric_limit: 0,
-        p_qwen_limit: 0,
-        p_bm25_limit: Math.max(limit, 20),
+        p_status_scope: statusScope,
+        p_limit: safeLimit,
+        p_ann_limit: Math.max(safeLimit, 100),
+        p_fts_limit: Math.min(Math.max(safeLimit, 50), 100),
         p_effective_at: null,
       });
 
@@ -188,7 +201,7 @@ serve(async (req) => {
 
     // Step 3: Format output according to requirements
     const output: SearchOutput = {
-      results: searchResults.slice(0, limit).map((r) => ({
+      results: searchResults.slice(0, safeLimit).map((r) => ({
         title: r.title,
         snippet: r.content_text.substring(0, 300) + (r.content_text.length > 300 ? "..." : ""),
         source: r.source_name || r.source_url || `ID: ${r.id}`,
@@ -200,9 +213,24 @@ serve(async (req) => {
       retrieval_mode: "keyword_only",
       semantic_ok: false,
       semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
-      qwen_semantic_ok: false,
-      qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_DISABLED",
+      metric_semantic_ok: false,
+      metric_semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
+      embedding_model: "armenian-text-embeddings-2-large",
+      embedding_dimension: 1024,
+      identifier_ok: true,
+      metric_ann_ok: false,
+      fts_ok: true,
+      fusion_ok: true,
+      reranker_ok: false,
+      legacy_qwen_used: false,
+      degraded: false,
+      degraded_reason: null,
+      retrieval_route: "identifier+fts",
       threshold_applied: false,
+      reranker_applied: false,
+      rerank_ok: false,
+      rerank_error: "RERANKER_NOT_CONFIGURED",
+      status_scope: statusScope,
     };
 
     // Log API usage
@@ -239,3 +267,7 @@ serve(async (req) => {
     );
   }
 });
+
+function normalizeStatusScope(value: unknown): "current" | "extended" | "historical" {
+  return value === "current" || value === "historical" ? value : "extended";
+}

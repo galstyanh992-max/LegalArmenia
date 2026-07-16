@@ -1,4 +1,4 @@
-# Environment variables (secrets)
+﻿# Environment variables (secrets)
 .env
 .env.local
 .env.*.local
@@ -63,3 +63,15 @@ temp/
 
 # Never track ad-hoc DB scripts with embedded credentials (DEEP-001)
 db_passwords.cjs
+
+# Prompt 19.7 large artifacts - regenerable from scripts, not committed
+AUDIT_REPORTS/artifacts/source_inventory.jsonl
+AUDIT_REPORTS/artifacts/source_matching.jsonl
+AUDIT_REPORTS/artifacts/source_metadata_adapters.jsonl
+AUDIT_REPORTS/artifacts/version_lineage.jsonl
+AUDIT_REPORTS/artifacts/provision_reconstruction.jsonl
+AUDIT_REPORTS/artifacts/pdf_classification_sample.jsonl
+
+
+
+

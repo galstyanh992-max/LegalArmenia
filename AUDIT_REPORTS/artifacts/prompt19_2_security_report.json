@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-07-15T01:30:00+04:00",
+  "production_writes": 0,
+  "production_deploys": 0,
+  "secret_scan": {
+    "files_scanned": 279,
+    "jwt_hits": 0,
+    "supabase_secret_hits": 0,
+    "private_key_hits": 0,
+    "env_diff_files": 0
+  },
+  "reranker_contract": {
+    "authenticated_endpoint": true,
+    "strict_candidate_id_validation": true,
+    "strict_score_validation": true,
+    "pinned_revision_validation": true,
+    "candidate_count_limit": true,
+    "text_length_limit": true,
+    "access_logging_disabled": true,
+    "timeout": true,
+    "single_retry": true,
+    "circuit_breaker": true,
+    "truthful_fallback": true
+  },
+  "retrieval_safety": {
+    "prompt_injection_test_cases": 10,
+    "test_split_injection_ranking_pass_rate": 0.5,
+    "unknown_status_warning_precision": 1.0,
+    "unknown_status_warning_recall": 1.0,
+    "repealed_warning_precision": 1.0,
+    "repealed_warning_recall": 0.75,
+    "current_scope_contamination_rate": 0.0,
+    "cross_tenant_isolation": {
+      "status": "NOT_MEASURABLE",
+      "reason": "Tenant data was intentionally excluded from the frozen corpus."
+    }
+  },
+  "passed": true,
+  "qualification": "Passing engineering controls does not replace pending two-lawyer legal review."
+}

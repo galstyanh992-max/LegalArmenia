@@ -1,0 +1,11 @@
+{
+  "captured_at": "2026-07-15T01:30:00+04:00",
+  "unapproved_qwen_model_calls": 0,
+  "unapproved_qwen_runtime_references": 0,
+  "approved_telemetry_fields": [
+    "legacy_qwen_used: false"
+  ],
+  "metric_embedding_model": "armenian-text-embeddings-2-large",
+  "embedding_dimension": 1024,
+  "passed": true
+}

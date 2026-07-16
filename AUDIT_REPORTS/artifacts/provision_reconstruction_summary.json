@@ -1,0 +1,15 @@
+{
+  "records_examined": 5000,
+  "records_with_article": 755,
+  "records_with_part": 26,
+  "records_with_point": 58,
+  "records_with_chapter": 0,
+  "article_coverage_pct": 15.1,
+  "high_confidence": 37,
+  "medium_confidence": 718,
+  "low_confidence": 4245,
+  "parser_version": "prompt19_7_v1",
+  "elapsed_seconds": 4.99,
+  "generated_at": "2026-07-16T00:47:19.712153+00:00",
+  "sample_size": 5000
+}

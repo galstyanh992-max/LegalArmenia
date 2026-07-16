@@ -728,11 +728,9 @@ serve(async (req) => {
 
     let cachedRagResult: unknown = null;
     let preciseSources: AnchorSource[] = [];
-    let legalReasoning: LegalReasoningOutput | null = null;
 
     const pipelineDeps = {
       runRAG: async (query: string, opts: { engine: LegalReasoningOutput }) => {
-        legalReasoning = opts.engine;
         const reasoningSearchQuery =
           (opts.engine.retrieval_plan as unknown as { search_query?: string }).search_query || query;
 
@@ -880,7 +878,10 @@ serve(async (req) => {
       functionContext: `ai-analyze:${role}`,
     }, pipelineDeps);
 
-    const legalReasoningContext = buildLegalReasoningContext(legalReasoning);
+    const legalReasoning = pipelineResult.reasoning;
+    const legalReasoningContext = legalReasoning
+      ? buildLegalReasoningContext(legalReasoning)
+      : "";
 
     // ====== TOKEN BUDGET LIMITER ======
     const budgeted = applyBudgets({

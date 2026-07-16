@@ -1,0 +1,32 @@
+{
+  "sample_size": 2000,
+  "total_pdfs_in_corpus": 183685,
+  "type_distribution": {
+    "TEXT_BASED": 1974,
+    "SCANNED": 0,
+    "MIXED": 26,
+    "ENCRYPTED": 0,
+    "CORRUPTED": 0,
+    "EMPTY": 0
+  },
+  "text_layer_yes": 2000,
+  "text_layer_no": 0,
+  "ocr_required": 26,
+  "bookmarks": 294,
+  "toc_detected": 294,
+  "articles_detected": 1534,
+  "tables_detected": 0,
+  "avg_pages": 7.3,
+  "median_pages": 2,
+  "max_pages": 282,
+  "min_pages": 1,
+  "errors": 0,
+  "error_samples": [],
+  "elapsed_seconds": 97.1,
+  "generated_at": "2026-07-16T00:43:57.816407+00:00",
+  "output_file": "D:\\1V\\LegalArmenia-prompt19-7\\AUDIT_REPORTS\\artifacts\\pdf_classification_sample.jsonl",
+  "estimated_text_based_pct": 98.7,
+  "estimated_scanned_pct": 0.0,
+  "estimated_mixed_pct": 1.3,
+  "estimated_ocr_needed": 0
+}

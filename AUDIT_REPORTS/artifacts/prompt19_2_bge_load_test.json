@@ -1,0 +1,89 @@
+{
+  "requests": 12,
+  "concurrency": 4,
+  "passed": true,
+  "success_count": 12,
+  "error_count": 0,
+  "duration_ms": 2154.7818999997617,
+  "throughput_requests_per_second": 5.569009095538313,
+  "latency_ms": {
+    "mean": 658.7149083331193,
+    "p50": 490.77310000029684,
+    "p95": 1121.4996899998368,
+    "p99": 1174.1712979997828
+  },
+  "results": [
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 825.9110999997574,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 944.6063999994294,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 1067.630999999892,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 1187.3391999997693,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 487.0099999998274,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 491.1638000003222,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 491.3533999997526,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 490.38240000027145,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 486.348999999791,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 481.19239999959973,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 478.3880999993926,
+      "ids_preserved": true
+    },
+    {
+      "ok": true,
+      "status": 200,
+      "latency_ms": 473.2520999996268,
+      "ids_preserved": true
+    }
+  ]
+}

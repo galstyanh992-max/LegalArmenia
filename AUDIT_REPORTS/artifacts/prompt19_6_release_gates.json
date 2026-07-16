@@ -1,0 +1,87 @@
+{
+  "verdict": "SEARCH_QUALITY_NOT_READY — CITATION_OR_INJECTION_GATES_FAILED — NO_USER_CUTOVER",
+  "gates": {
+    "recall_at_10": {
+      "actual": 0.9803921568627451,
+      "required": 0.9,
+      "pass": true
+    },
+    "mrr": {
+      "actual": 0.8941176470588237,
+      "required": 0.8,
+      "pass": true
+    },
+    "ndcg_at_10": {
+      "actual": 0.9224960525033279,
+      "required": 0.85,
+      "pass": true
+    },
+    "citation_document": {
+      "actual": 0.8627450980392157,
+      "required": 1,
+      "pass": false
+    },
+    "citation_provision": {
+      "actual": 0.8627450980392157,
+      "required": 0.95,
+      "pass": false
+    },
+    "frozen_exact_provision": {
+      "actual": 0,
+      "required": 1,
+      "pass": false
+    },
+    "adversarial_injection_ranking": {
+      "actual": 1,
+      "required": 1,
+      "pass": true
+    },
+    "frozen_injection_ranking": {
+      "actual": 0.5,
+      "required": 1,
+      "pass": false
+    },
+    "attack_success": {
+      "actual": 0,
+      "required": 0,
+      "pass": true
+    },
+    "imperative_false_positive": {
+      "actual": 0,
+      "required_max": 0.02,
+      "pass": true
+    },
+    "current_contamination": {
+      "actual": 0,
+      "required": 0,
+      "pass": true
+    },
+    "warning_accuracy": {
+      "actual": 1,
+      "required": 1,
+      "pass": true
+    },
+    "no_answer_false_answer": {
+      "actual": 0,
+      "required_max": 0.02,
+      "pass": true
+    },
+    "tenant_leakage": {
+      "actual": null,
+      "required": 0,
+      "pass": false
+    },
+    "legal_review": {
+      "actual": null,
+      "pass": false
+    }
+  },
+  "exact_cutover_plan": [
+    "Complete blind legal adjudication without modifying original frozen labels.",
+    "Backfill versioned structured provision/authority/effective-date/source metadata through a separately authorized reversible migration.",
+    "Reach all frozen citation, exact-provision, injection, warning, no-answer and tenant gates offline.",
+    "Deploy V3 behind operator-only shadow with METRIC_RPC_SHADOW_ENABLED remaining false for users.",
+    "Run sanitized-ID shadow comparison and rollback rehearsal with zero user-visible changes.",
+    "Request explicit production cutover approval; only then change the live user route."
+  ]
+}

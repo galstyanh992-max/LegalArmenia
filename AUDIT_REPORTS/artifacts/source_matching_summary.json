@@ -1,0 +1,26 @@
+{
+  "total_pdfs": 183685,
+  "match_counts": {
+    "EXACT_ID": 74532,
+    "EXACT_HASH": 0,
+    "EXACT_DOCUMENT_NUMBER": 0,
+    "EXACT_TITLE_NUMBER": 0,
+    "NORMALIZED_TEXT_HASH": 0,
+    "HIGH_CONFIDENCE_MULTI_SIGNAL": 0,
+    "FUZZY_MATCH": 0,
+    "AMBIGUOUS": 0,
+    "UNMATCHED": 109153
+  },
+  "matched_rate": 40.6,
+  "duplicate_id_groups": 5,
+  "duplicate_id_examples": [
+    "78256",
+    "78258",
+    "78259",
+    "78263",
+    "78264"
+  ],
+  "requires_review": 109153,
+  "elapsed_seconds": 6.92,
+  "generated_at": "2026-07-16T00:46:46.881817+00:00"
+}

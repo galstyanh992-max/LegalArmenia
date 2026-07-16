@@ -1,0 +1,19 @@
+{
+  "dry_run": true,
+  "rows_examined": 5000,
+  "rows_matched": 755,
+  "high_confidence": 37,
+  "medium_confidence": 718,
+  "low_confidence": 0,
+  "skipped": 4245,
+  "conflicts": 0,
+  "failures": 0,
+  "page_mappings": 0,
+  "provision_mappings": 755,
+  "version_mappings": 0,
+  "authority_mappings": 6386,
+  "source_url_recoveries": 9846,
+  "elapsed_seconds": 0.27,
+  "generated_at": "2026-07-16T00:49:28.526832+00:00",
+  "production_writes": 0
+}

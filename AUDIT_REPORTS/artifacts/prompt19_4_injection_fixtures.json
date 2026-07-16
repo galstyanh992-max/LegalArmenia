@@ -1,0 +1,12 @@
+{
+  "service_fixture_pass_rate": 1.0,
+  "frozen_ranking_pass_rate": 0.5,
+  "languages": [
+    "hy",
+    "ru",
+    "en"
+  ],
+  "legal_normative_false_positive_tests": 1,
+  "legal_normative_false_positives": 0,
+  "release_gate_passed": false
+}

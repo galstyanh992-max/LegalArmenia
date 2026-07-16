@@ -2,6 +2,28 @@
 // SHARED RAG TYPES — Single source of truth for search result shapes
 // =============================================================================
 
+export type StatusScope = "current" | "extended" | "historical";
+
+export interface MetricRetrievalTelemetry {
+  embedding_model: "armenian-text-embeddings-2-large";
+  embedding_dimension: 1024;
+  status_scope: StatusScope;
+  identifier_ok: boolean;
+  metric_ann_ok: boolean;
+  fts_ok: boolean;
+  fusion_ok: boolean;
+  reranker_mode?: "deterministic";
+  reranker_ok: boolean;
+  legacy_qwen_used: false;
+  degraded: boolean;
+  degraded_reason?: string | null;
+  retrieval_route: string;
+  reranker_model?: string;
+  reranker_revision?: string;
+  reranked_count?: number;
+  returned_count?: number;
+}
+
 /** Knowledge-base document returned by vector-search / unified corpus RPC */
 export interface KBSearchResult {
   id: string;
@@ -62,7 +84,11 @@ export interface PracticeSearchResult {
   score?: number;
 }
 
-export type RetrievalMode = "hybrid" | "vector" | "keyword_only" | "rpc_fallback";
+export type RetrievalMode =
+  | "hybrid"
+  | "vector"
+  | "keyword_only"
+  | "rpc_fallback";
 
 /**
  * Single item in the unified merged result list returned by kb-unified-search.
@@ -95,17 +121,34 @@ export interface VectorSearchResponse {
   semantic_ok?: boolean;
   /** Error message if semantic/vector retrieval was unavailable or failed */
   semantic_error?: string;
-  /** Whether optional Qwen/ECHR fallback retrieval ran for this request */
-  qwen_semantic_ok?: boolean;
-  /** Status message if optional Qwen/ECHR fallback retrieval did not run */
-  qwen_semantic_error?: string;
+  /** Whether Metric-AI semantic retrieval ran for this request */
+  metric_semantic_ok?: boolean;
+  /** Metric-AI semantic retrieval error */
+  metric_semantic_error?: string;
+  embedding_model?: "armenian-text-embeddings-2-large";
+  embedding_dimension?: 1024;
+  identifier_ok?: boolean;
+  metric_ann_ok?: boolean;
+  fts_ok?: boolean;
+  fusion_ok?: boolean;
+  reranker_ok?: boolean;
+  legacy_qwen_used?: false;
+  degraded?: boolean;
+  degraded_reason?: string | null;
+  retrieval_route?: string;
   /** Whether a semantic threshold was applied to vector branches */
   threshold_applied?: boolean;
   threshold_value?: number;
-  /** @deprecated Compatibility alias for semantic_ok; no AI reranker is used */
+  /** Always false until a separately evaluated reranker is configured */
   rerank_ok?: boolean;
-  /** @deprecated Compatibility alias for semantic_error */
+  /** Reranker status */
   rerank_error?: string;
+  reranker_applied?: boolean;
+  reranker_model?: string;
+  reranker_revision?: string;
+  reranked_count?: number;
+  returned_count?: number;
+  status_scope?: StatusScope;
   /** Request tracing ID */
   request_id?: string;
 }

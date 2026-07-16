@@ -1,0 +1,37 @@
+{
+  "environment_source": "D:/1V/LegalArmenia-clean/.env and .env.local (values not copied or logged)",
+  "direct_database": {
+    "executed": false,
+    "error_code": "DNS_ENOTFOUND",
+    "production_writes": 0
+  },
+  "postgrest_rpc": {
+    "http_status": 404,
+    "error_code": "PGRST202",
+    "rpc_found_in_live_schema_cache": false,
+    "production_writes": 0
+  },
+  "direct_metric_endpoint": {
+    "http_status": 200,
+    "endpoint_shape": "base_url",
+    "dimension": 1024,
+    "finite_vector": true,
+    "model_family": "armenian-text-embeddings-2-large",
+    "warm_latency_ms": 689.59,
+    "production_writes": 0
+  },
+  "embedding_edge": {
+    "http_status": 403,
+    "error_code": "cors_not_allowed",
+    "dimension_verified": false,
+    "note": "The upstream Metric endpoint is healthy. Supabase embed-query still fails at its deployed CORS/auth perimeter; no auth bypass was attempted."
+  },
+  "local_migration_replay": {
+    "status": "PASS",
+    "migration_count": 9,
+    "rpc_present": true,
+    "rpc_executable": true,
+    "seed_applied": false,
+    "production_writes": 0
+  }
+}

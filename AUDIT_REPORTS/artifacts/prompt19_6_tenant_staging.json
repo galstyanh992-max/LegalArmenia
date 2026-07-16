@@ -1,0 +1,7 @@
+{
+  "local_fixture_executed": false,
+  "local_fixture_cross_tenant_leakage": null,
+  "production_like_staging_executed": false,
+  "final_cross_tenant_leakage": null,
+  "blocker": "No approved production-like multi-tenant staging credentials/environment in scope."
+}

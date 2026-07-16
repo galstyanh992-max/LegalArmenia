@@ -1,0 +1,53 @@
+{
+  "file_count": 12,
+  "files": {
+    "AUDIT_REPORTS/artifacts/prompt19_3_baseline.json": {
+      "sha256": "19787b6e73d691b207bb03dcc6f10d46ae317c49bc3179dc686ae503f4a7d8e4",
+      "bytes": 2230
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_citation_failures.json": {
+      "sha256": "8e13342c1848810431bad771c57673a46fb6c559b7ebef8c1f6d71abd11b42c2",
+      "bytes": 4350
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_custom_evaluation.json": {
+      "sha256": "f2104f37dd256527206bfe41e6746670a6a44f41e8a149025ea6712ee54e29e3",
+      "bytes": 15977
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_engineering_gates.json": {
+      "sha256": "3881dfde0fb7eaeff96ae6d9211cb7f536f512ae7b8a88a0625a6ee3530f41d3",
+      "bytes": 1718
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_model_manifests.json": {
+      "sha256": "0d31164e7e4e2b79ae885ce728211bde2c9cb7fb4853d226dd5dab5da55211b3",
+      "bytes": 2277
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_no_answer_calibration.json": {
+      "sha256": "d9bfdeac3aaacfa59719409bdb98576249d6bb95b8da53f5c1f1c1028825a816",
+      "bytes": 213887
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_performance.json": {
+      "sha256": "37608cdb0c769903d65a68fb2e5f931149f99502c31518ef2665095ceb5c0212",
+      "bytes": 1010
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_rollback_runbook.md": {
+      "sha256": "2d0d510a40f8167e7e2dfbc6280677a2fa564ff75ccd39164e702840d355250c",
+      "bytes": 551
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_security_report.json": {
+      "sha256": "f36758f2112864b2b93bc82362dafc58deae58c3bd99653d3c3d078b0aa93772",
+      "bytes": 1363
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_tenant_fixture.json": {
+      "sha256": "db1027f152726d875d1c1e29a4ef4f41122e35edc01a2c8534cb49aa7bbc16e2",
+      "bytes": 973
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_tenant_isolation.json": {
+      "sha256": "5f5373a07535bb6a2319dbea9be9eba6a82257cbee33748cd726b6275d652793",
+      "bytes": 659
+    },
+    "AUDIT_REPORTS/artifacts/prompt19_3_tokenization_audit.json": {
+      "sha256": "cf0a930a0e83780e14a9111a1ba638ea1890f0985b2184379fc1c3b939cb1f55",
+      "bytes": 4846
+    }
+  }
+}

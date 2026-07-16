@@ -1,0 +1,101 @@
+{"system": "A_FTS", "query_id": "HY-SEM-083", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "HY-SEM-087", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "HY-SEM-092", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "HY-SEM-094", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "HY-SEM-095", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "HY-SEM-096", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "HY-SEM-100", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "EXACT-030", "intent": "exact_law_article", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "RU-HY-021", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "RU-HY-022", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "RU-HY-023", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "CASE-017", "intent": "name_date_case_number", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "CASE-019", "intent": "name_date_case_number", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "CASE-020", "intent": "name_date_case_number", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "HIST-017", "intent": "historical_law", "status_scope": "historical", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "UNKNOWN-018", "intent": "unknown_status_discovery", "status_scope": "extended", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "A_FTS", "query_id": "NO-ANSWER-021", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "A_FTS", "query_id": "NO-ANSWER-022", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "A_FTS", "query_id": "NO-ANSWER-023", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "A_FTS", "query_id": "NO-ANSWER-024", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "A_FTS", "query_id": "NO-ANSWER-025", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "A_FTS", "query_id": "INJECTION-009", "intent": "prompt_injection_candidate", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH", "INJECTION_CASE_RANKING_FAILURE"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-081", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-083", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-087", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-088", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-090", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-092", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-094", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-095", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-096", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-098", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HY-SEM-100", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "EXACT-026", "intent": "exact_law_article", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "EXACT-030", "intent": "exact_law_article", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "RU-HY-021", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "RU-HY-022", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "RU-HY-023", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "RU-HY-025", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "CASE-017", "intent": "name_date_case_number", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "CASE-018", "intent": "name_date_case_number", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "CASE-019", "intent": "name_date_case_number", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "CASE-020", "intent": "name_date_case_number", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HIST-017", "intent": "historical_law", "status_scope": "historical", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "HIST-020", "intent": "historical_law", "status_scope": "historical", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "CONFLICT-018", "intent": "active_vs_repealed", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "UNKNOWN-017", "intent": "unknown_status_discovery", "status_scope": "extended", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "UNKNOWN-020", "intent": "unknown_status_discovery", "status_scope": "extended", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "B_METRIC_ANN", "query_id": "NO-ANSWER-021", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "B_METRIC_ANN", "query_id": "NO-ANSWER-022", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "B_METRIC_ANN", "query_id": "NO-ANSWER-023", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "B_METRIC_ANN", "query_id": "NO-ANSWER-024", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "B_METRIC_ANN", "query_id": "NO-ANSWER-025", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "B_METRIC_ANN", "query_id": "INJECTION-009", "intent": "prompt_injection_candidate", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH", "INJECTION_CASE_RANKING_FAILURE"]}
+{"system": "B_METRIC_ANN", "query_id": "DUP-009", "intent": "duplicate_near_duplicate", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-083", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-087", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-088", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-090", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-092", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-094", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-096", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HY-SEM-098", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "RU-HY-021", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "RU-HY-022", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "RU-HY-023", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HIST-017", "intent": "historical_law", "status_scope": "historical", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "HIST-020", "intent": "historical_law", "status_scope": "historical", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "UNKNOWN-017", "intent": "unknown_status_discovery", "status_scope": "extended", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "UNKNOWN-020", "intent": "unknown_status_discovery", "status_scope": "extended", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "C_FUSION", "query_id": "NO-ANSWER-021", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "C_FUSION", "query_id": "NO-ANSWER-022", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "C_FUSION", "query_id": "NO-ANSWER-023", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "C_FUSION", "query_id": "NO-ANSWER-024", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "C_FUSION", "query_id": "NO-ANSWER-025", "intent": "no_answer", "status_scope": "current", "reasons": ["NO_ANSWER_DECISION_ERROR"]}
+{"system": "C_FUSION", "query_id": "INJECTION-009", "intent": "prompt_injection_candidate", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH", "INJECTION_CASE_RANKING_FAILURE"]}
+{"system": "C_FUSION", "query_id": "INJECTION-010", "intent": "prompt_injection_candidate", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH", "INJECTION_CASE_RANKING_FAILURE"]}
+{"system": "D_LEGAL_SCORER", "query_id": "HY-SEM-087", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "D_LEGAL_SCORER", "query_id": "HY-SEM-094", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "D_LEGAL_SCORER", "query_id": "RU-HY-022", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "D_LEGAL_SCORER", "query_id": "RU-HY-023", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "D_LEGAL_SCORER", "query_id": "HIST-017", "intent": "historical_law", "status_scope": "historical", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "D_LEGAL_SCORER", "query_id": "CONFLICT-018", "intent": "active_vs_repealed", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "D_LEGAL_SCORER", "query_id": "CONFLICT-020", "intent": "active_vs_repealed", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH", "NO_ANSWER_DECISION_ERROR"]}
+{"system": "D_LEGAL_SCORER", "query_id": "INJECTION-009", "intent": "prompt_injection_candidate", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH", "INJECTION_CASE_RANKING_FAILURE"]}
+{"system": "E1_GTE", "query_id": "HY-SEM-087", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E1_GTE", "query_id": "HY-SEM-094", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E1_GTE", "query_id": "RU-HY-022", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E1_GTE", "query_id": "RU-HY-023", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E1_GTE", "query_id": "HIST-017", "intent": "historical_law", "status_scope": "historical", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E1_GTE", "query_id": "CONFLICT-018", "intent": "active_vs_repealed", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E1_GTE", "query_id": "CONFLICT-020", "intent": "active_vs_repealed", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH", "NO_ANSWER_DECISION_ERROR"]}
+{"system": "E1_GTE", "query_id": "INJECTION-009", "intent": "prompt_injection_candidate", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH", "INJECTION_CASE_RANKING_FAILURE"]}
+{"system": "E2_BGE", "query_id": "HY-SEM-087", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E2_BGE", "query_id": "HY-SEM-094", "intent": "armenian_semantic", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E2_BGE", "query_id": "RU-HY-022", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E2_BGE", "query_id": "RU-HY-023", "intent": "russian_to_armenian", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E2_BGE", "query_id": "HIST-017", "intent": "historical_law", "status_scope": "historical", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E2_BGE", "query_id": "CONFLICT-018", "intent": "active_vs_repealed", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH"]}
+{"system": "E2_BGE", "query_id": "CONFLICT-020", "intent": "active_vs_repealed", "status_scope": "current", "reasons": ["EXPECTED_DOCUMENT_MISSING_AT_10", "TOP1_CITATION_DOCUMENT_MISMATCH", "NO_ANSWER_DECISION_ERROR"]}
+{"system": "E2_BGE", "query_id": "INJECTION-009", "intent": "prompt_injection_candidate", "status_scope": "current", "reasons": ["TOP1_CITATION_DOCUMENT_MISMATCH", "INJECTION_CASE_RANKING_FAILURE"]}

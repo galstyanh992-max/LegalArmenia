@@ -94,20 +94,20 @@ Deno.test("buildTemporalContextForPrompt contains validated sources and caution"
   assertEquals(context.validated_sources[0].temporal_status, "not_yet_effective");
 });
 
-Deno.test("RPC migration applies identical temporal predicate in retrieval arms", async () => {
-  const sql = await Deno.readTextFile("supabase/migrations/20260630120000_harden_temporal_validity_all_retrieval_paths.sql");
-  for (const cte of ["metric_candidates", "qwen_candidates", "bm25_candidates"]) {
-    assert(sql.includes(`${cte} as (`), `${cte} must exist`);
+Deno.test("Metric RPC applies identical temporal and scope predicates in retrieval lanes", async () => {
+  const sql = await Deno.readTextFile("supabase/migrations/20260714165009_metric_only_rpc_unknown_scope.sql");
+  for (const cte of ["metric_raw", "identifier_raw", "chunk_fts_raw", "metadata_fts_raw"]) {
+    assert(sql.includes(`${cte} as materialized (`), `${cte} must exist`);
   }
-  const required = [
-    "(sc.norm_status is null or sc.norm_status = 'active'::public.normalized_status)",
-    "(p_effective_at is null or sc.effective_from is null or sc.effective_from <= p_effective_at)",
-    "(p_effective_at is null or sc.effective_to is null or sc.effective_to > p_effective_at)",
-    "(p_effective_at is not null or dv.is_current = true)",
-  ];
-  for (const predicate of required) {
-    assert(sql.includes(predicate), `missing predicate: ${predicate}`);
-  }
+  assertEquals((sql.match(/sc\.norm_status = 'active'/g) || []).length, 4);
+  assertEquals((sql.match(/sc\.effective_from <= s\.effective_at/g) || []).length, 4);
+  assertEquals((sql.match(/sc\.effective_to > s\.effective_at/g) || []).length, 4);
+  assertEquals((sql.match(/dv\.is_current = true/g) || []).length, 4);
+  const functionBody = sql.slice(
+    sql.indexOf("create or replace function public.search_legal_corpus_metric"),
+    sql.indexOf("comment on function public.search_legal_corpus_metric"),
+  );
+  assert(!functionBody.toLowerCase().includes("qwen"));
 });
 
 Deno.test("vector-search forwards normalized effective date to RPC", async () => {
