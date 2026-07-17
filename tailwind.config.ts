@@ -47,7 +47,8 @@ export default {
         "mobile-2xl": ["1.5rem", { lineHeight: "2rem" }],
       },
       fontFamily: {
-        sans: ["Inter", "SF Pro", "IBM Plex Sans", "sans-serif"],
+        sans: ["Lato", "Inter", "SF Pro", "sans-serif"],
+        serif: ["EB Garamond", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
