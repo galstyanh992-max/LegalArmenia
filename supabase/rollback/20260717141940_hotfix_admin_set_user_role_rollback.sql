@@ -1,4 +1,4 @@
-﻿-- =============================================================================
+-- =============================================================================
 -- CRITICAL SECURITY CONTAINMENT ROLLBACK
 -- for 20260717141940_hotfix_admin_set_user_role.sql
 -- =============================================================================
@@ -7,7 +7,8 @@
 --   * PUBLIC EXECUTE;
 --   * anon EXECUTE;
 --   * authenticated EXECUTE;
---   * the historical authenticated-admin fallback body;
+--   * the historical fail-open `app.get_my_role() <> 'admin'` production body;
+--   * the local-only 20260712120006 authenticated-admin fallback body;
 --   * the known fail-open production condition.
 --
 -- Behavior:
@@ -18,7 +19,7 @@
 --
 -- Restoring service_role functionality after this containment rollback
 -- requires a NEW reviewed forward migration. Do not re-enable by editing
--- this file or by replaying the vulnerable historical definition.
+-- this file or by replaying any vulnerable historical definition.
 -- =============================================================================
 
 revoke all on function public.admin_set_user_role(uuid, app.app_role)

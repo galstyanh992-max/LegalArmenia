@@ -27,6 +27,12 @@ function stripSqlComments(sql: string): string {
   return sql.split(/\r?\n/).filter((line) => !/^\s*--/.test(line)).join("\n");
 }
 
+// Collapse all whitespace runs to a single space so authorization-pattern
+// regexes match regardless of line breaks / indentation.
+function normalizeSql(sql: string): string {
+  return stripSqlComments(sql).replace(/\s+/g, " ").trim();
+}
+
 describe("hotfix admin_set_user_role contract", () => {
   let migration = "";
   let rollback = "";
@@ -61,11 +67,13 @@ describe("hotfix admin_set_user_role contract", () => {
     assertStringIncludes(migration, "set search_path = ''");
   });
 
-  it("uses IS DISTINCT FROM 'service_role' for JWT role check", async () => {
+  it("positively requires IS DISTINCT FROM 'service_role' JWT check", async () => {
     migration = migration || await readSql(MIGRATION_PATH);
-    assertStringIncludes(
-      migration,
-      "(auth.jwt() ->> 'role') is distinct from 'service_role'",
+    const code = normalizeSql(migration);
+    assert(
+      /\(auth\.jwt\(\)\s*->>\s*'role'\)\s+is\s+distinct\s+from\s+'service_role'/i
+        .test(code),
+      "function body must use (auth.jwt() ->> 'role') IS DISTINCT FROM 'service_role'",
     );
   });
 
@@ -77,7 +85,7 @@ describe("hotfix admin_set_user_role contract", () => {
 
   it("has no app.get_my_role authorization fallback", async () => {
     migration = migration || await readSql(MIGRATION_PATH);
-    const code = stripSqlComments(migration);
+    const code = normalizeSql(migration);
     assertEquals(
       code.includes("app.get_my_role()"),
       false,
@@ -85,13 +93,33 @@ describe("hotfix admin_set_user_role contract", () => {
     );
   });
 
-  it("has no NULL-unsafe <> admin guard", async () => {
+  it("rejects NULL-unsafe app.get_my_role() <> 'admin' guard", async () => {
     migration = migration || await readSql(MIGRATION_PATH);
-    const code = stripSqlComments(migration);
+    const code = normalizeSql(migration);
     assertEquals(
-      /is distinct from 'admin'::app\.app_role/.test(code),
+      /app\.get_my_role\(\)\s*(<>|!=)\s*'admin'/i.test(code),
       false,
-      "NULL-unsafe `<> admin` guard must be removed",
+      "NULL-unsafe app.get_my_role() <> 'admin' guard must be absent",
+    );
+  });
+
+  it("rejects NULL-unsafe (auth.jwt() ->> 'role') <> 'service_role'", async () => {
+    migration = migration || await readSql(MIGRATION_PATH);
+    const code = normalizeSql(migration);
+    assertEquals(
+      /\(auth\.jwt\(\)\s*->>\s*'role'\)\s*(<>|!=)\s*'service_role'/i.test(code),
+      false,
+      "NULL-unsafe (auth.jwt() ->> 'role') <> 'service_role' must be absent",
+    );
+  });
+
+  it("rejects NULL-unsafe auth.jwt() ->> 'role' != 'service_role'", async () => {
+    migration = migration || await readSql(MIGRATION_PATH);
+    const code = normalizeSql(migration);
+    assertEquals(
+      /auth\.jwt\(\)\s*->>\s*'role'\s*!=\s*'service_role'/i.test(code),
+      false,
+      "NULL-unsafe auth.jwt() ->> 'role' != 'service_role' must be absent",
     );
   });
 
@@ -188,10 +216,11 @@ describe("hotfix admin_set_user_role contract", () => {
     );
   });
 
-  it("rollback does NOT recreate the vulnerable authenticated-admin body", async () => {
+  it("rollback does NOT recreate the vulnerable fail-open or authenticated-admin body", async () => {
     rollback = rollback || await readSql(ROLLBACK_PATH);
+    const rbCode = normalizeSql(rollback);
     assertEquals(
-      rollback.includes("app.get_my_role()"),
+      rbCode.includes("app.get_my_role()"),
       false,
       "rollback must not restore the vulnerable authenticated-admin fallback body",
     );

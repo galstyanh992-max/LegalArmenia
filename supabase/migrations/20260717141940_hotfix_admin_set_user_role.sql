@@ -1,49 +1,73 @@
-﻿-- =============================================================================
+-- =============================================================================
 -- HOTFIX: admin_set_user_role service-role-only authorization (CRITICAL)
 -- =============================================================================
--- CVE-class: privilege escalation via authenticated-admin RPC fallback.
+-- CVE-class: privilege escalation via fail-open admin RPC guard.
 --
--- Prior state (20260712120006, local-only, NOT applied to production):
---   public.admin_set_user_role(uuid, app.app_role) was SECURITY DEFINER and
---   accepted TWO authorization paths:
---     1. auth.jwt() ->> 'role' = 'service_role'
---     2. app.get_my_role() is distinct from 'admin'  (authenticated-admin path)
---   EXECUTE was granted to `authenticated` and `service_role`.
+-- THREE DISTINCT STATES (do not conflate):
 --
--- Repository evidence found no direct frontend or authenticated-admin RPC
--- caller for this function. The authenticated-admin fallback is therefore an
--- unreachable path that widens the authorization surface for no benefit and
--- allows any caller holding an authenticated JWT (with a profile row reading
--- 'admin') to escalate / reassign user roles via a SECURITY DEFINER function
--- that bypasses RLS.
+--   A. ACTUAL PRODUCTION STATE (captured in baseline 20260712120002):
+--      * fail-open guard:  if app.get_my_role() <> 'admin' then raise 42501
+--        (NULL-unsafe: when app.get_my_role() returns NULL, `NULL <> 'admin'`
+--         evaluates to NULL, the guard is skipped, and the SECURITY DEFINER
+--         update proceeds -> privilege escalation).
+--      * no service_role path; no JWT-role check.
+--      * no audit_logs side effect.
+--      * search_path = 'public', 'app', 'auth', 'pg_temp'.
+--      * EXECUTE granted to PUBLIC, anon, authenticated, service_role.
+--      * production function-definition hash: 71d960885366c4d4b0a00a610a957664.
+--      THIS is the vulnerable production definition.
 --
--- This hotfix:
---   * preserves the signature, return type, SECURITY DEFINER, and owner;
---   * replaces the body with a minimal fail-closed service-role-only guard;
---   * removes the app.get_my_role() authenticated-admin fallback entirely;
---   * removes the NULL-unsafe `<> admin` guard;
---   * removes the audit_logs side-effect (out of scope for this hotfix and
---     not reachable from any authorized caller; audit can be re-added in a
---     later reviewed forward migration if a service-role audit path is needed);
---   * normalizes the ACL: revoke from PUBLIC, anon, authenticated, and
---     service_role, then GRANT EXECUTE only to service_role.
+--   B. LOCAL-ONLY MIGRATION 20260712120006 (NOT applied to production):
+--      * a separate repository hardening attempt with a NULL-safe
+--        service-role OR authenticated-admin authorization model;
+--      * adds an audit_logs insert, a self-demotion guard, SELECT FOR UPDATE,
+--        and an early-return when the role is unchanged;
+--      * search_path = ''.
+--      This migration is NOT the production vulnerability and must not be
+--      described as such. It is explicitly marked "local-only, do not apply
+--      to production without disposable role-matrix verification".
 --
--- Authorization is now strictly: (auth.jwt() ->> 'role') IS DISTINCT FROM
--- 'service_role' => raise 42501. This rejects anonymous, authenticated,
--- profile-less, inactive, admin-on-authenticated-JWT, missing JWT, and
--- malformed/unexpected role values. No user-provided metadata is trusted.
+--   C. THIS HOTFIX (20260717141940):
+--      * service-role-only, fail-closed:
+--          (auth.jwt() ->> 'role') IS DISTINCT FROM 'service_role' -> 42501
+--      * removes the fail-open `app.get_my_role() <> 'admin'` guard entirely;
+--      * removes the authenticated-admin fallback (no reachable caller in repo);
+--      * no dynamic SQL; all objects schema-qualified; search_path = ''.
+--
+-- This hotfix is designed to repair BOTH:
+--   * the actual current production function when applied independently to a
+--     database at state A (CREATE OR REPLACE + ACL normalization); and
+--   * clean replay after 20260712120006 (state B) -> superseded to state C.
+--
+-- BEHAVIOR PARITY (non-authorization) vs production state A:
+--   * user_profiles update: identical (set app_role = p_role, updated_at).
+--   * updated_at: production uses now(); hotfix uses pg_catalog.now() for
+--     search_path='' safety (functionally identical: now() is pg_catalog.now).
+--   * not-found behavior: identical -> raise 'User not found: %' P0002.
+--   * audit_logs: production state A has NO audit insert; hotfix has NO audit
+--     insert -> production parity preserved. The audit insert existed only in
+--     the local-only 20260712120006 (state B); carrying it into the hotfix
+--     would ADD a side effect to production. The audit-trail decision for the
+--     clean-replay-after-20260712120006 path is flagged for explicit review
+--     (see PR description / AUDIT_LOG_BEHAVIOR_DECISION).
+--   * exception messages: authorization message changes from
+--     'Only admin can change roles' to 'Service role required' (expected,
+--     authorization-related); not-found message unchanged.
+--   * additional validation: production A has none; hotfix has none. The
+--     self-demotion guard / FOR UPDATE / early-return from state B are NOT
+--     carried forward (they were never production behavior).
+--   * search_path: hardened from 'public','app','auth','pg_temp' to ''
+--     (security hardening, prevents search_path injection).
 --
 -- Atomicity / exposure window:
---   This file is wrapped in an explicit transaction (begin..commit), matching
---   the pattern used by the original 20260712120006 migration. Even if the
---   migration runner did NOT wrap the file, no fail-open window exists:
---     - CREATE OR REPLACE swaps the function body atomically; the new body is
---       fail-closed from the instant of replacement, so any authenticated
---       caller that still holds EXECUTE during the brief pre-REVOKE window is
---       rejected by the body itself (42501).
---     - The subsequent REVOKE/GRANT only narrows the ACL to match the body.
---   There is no instant where the function is both PUBLIC/authenticated
---   executable AND fail-open.
+--   Wrapped in an explicit transaction (begin..commit), matching the pattern
+--   used by 20260712120006. Even without a runner transaction, no fail-open
+--   window exists: CREATE OR REPLACE swaps the body atomically to a
+--   fail-closed definition, so any authenticated caller that still holds
+--   EXECUTE during the brief pre-REVOKE window is rejected by the body itself
+--   (42501). The subsequent REVOKE/GRANT only narrows the ACL to match the
+--   already-fail-closed body. There is no instant where the function is both
+--   PUBLIC/authenticated-executable AND fail-open.
 -- =============================================================================
 
 begin;
@@ -81,7 +105,9 @@ $function$;
 
 -- 2. Normalize privileges: strip every API role first, then grant only
 --    service_role. Revoking from service_role before re-granting guarantees a
---    deterministic final ACL regardless of the incoming state.
+--    deterministic final ACL regardless of the incoming state (covers both
+--    state A's PUBLIC/anon/authenticated/service_role grants and state B's
+--    authenticated/service_role grants).
 revoke all on function public.admin_set_user_role(uuid, app.app_role)
   from public, anon, authenticated, service_role;
 
