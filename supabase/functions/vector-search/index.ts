@@ -3,7 +3,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { log, warn, err } from "../_shared/safe-logger.ts";
 import { handleCors, checkInternalAuth, callInternalFunction } from "../_shared/edge-security.ts";
 import { applyTemporalValidation, buildTemporalWarnings, normalizeEffectiveDate } from "../_shared/temporal-validity-engine.ts";
-import { runV3Shadow } from "../_shared/v3-shadow.ts";
 
 type SearchTables = "kb" | "practice" | "both";
 
@@ -20,17 +19,9 @@ interface CorpusRow {
   source: string | null;
   content_domain: "knowledge_base" | "practice" | "unknown";
   norm_status: string;
-  status_scope: "current" | "extended" | "historical";
-  status_eligible: boolean;
-  status_reason_code: string;
-  legal_status_warning: string | null;
   score: number;
-  vector_similarity: number | null;
-  ann_rank: number | null;
-  fts_score: number | null;
-  fts_rank: number | null;
-  identifier_match: boolean;
-  route_sources: string[];
+  vector_score: number;
+  fts_score: number;
   retrieval_model: string;
   retrieval_route: string;
   match_reason: string;
@@ -55,7 +46,6 @@ serve(async (req) => {
       limit = 10,
       threshold,
       reference_date,
-      status_scope = "current",
     } = await req.json();
 
     if (!rawQuery || typeof rawQuery !== "string") {
@@ -69,7 +59,6 @@ serve(async (req) => {
     const searchTables = normalizeTables(tables);
     const semanticThreshold = normalizeThreshold(threshold);
     const normalizedReferenceDate = normalizeEffectiveDate(reference_date);
-    const statusScope = normalizeStatusScope(status_scope);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -78,46 +67,35 @@ serve(async (req) => {
     );
 
     const metricEmbedding = await embedMetricQuery(query, requestId);
+    // Qwen is optional legacy fallback only. Primary semantic retrieval uses
+    // Metric-AI Armenian embeddings. If ECHR is re-embedded with the Metric model,
+    // the metric arm can serve it without a second query model.
+    const qwenEmbedding: number[] | null = null;
     const warnings: string[] = [];
     if (!metricEmbedding) warnings.push("METRIC_EMBEDDING_UNAVAILABLE");
-    const rpcLimit = Math.min(Math.max(safeLimit * 2, 20), 50);
+    const qwenWarning = qwenEmbedding ? undefined : "QWEN_OPTIONAL_FALLBACK_DISABLED";
 
-    const { data, error } = await supabase.rpc("search_legal_corpus_metric", {
+    const { data, error } = await supabase.rpc("search_legal_corpus_dual", {
       p_query_text: query,
       p_metric_embedding: vectorArg(metricEmbedding),
+      p_qwen_embedding: vectorArg(qwenEmbedding),
       p_content_domain: contentDomainFor(searchTables),
-      p_status_scope: statusScope,
+      p_norm_status: "active",
+      p_limit: Math.max(safeLimit * 2, 20),
+      p_metric_limit: metricEmbedding ? Math.max(safeLimit * 3, 30) : 0,
+      p_qwen_limit: qwenEmbedding ? Math.max(safeLimit * 3, 30) : 0,
+      p_bm25_limit: Math.max(safeLimit * 3, 30),
       p_effective_at: normalizedReferenceDate,
-      p_limit: rpcLimit,
-      p_ann_limit: Math.min(Math.max(safeLimit * 4, 100), 200),
-      p_fts_limit: Math.min(Math.max(safeLimit * 3, 50), 100),
     });
 
     if (error) throw new Error(error.message);
 
     const rows = (Array.isArray(data) ? data as CorpusRow[] : [])
       .filter((row) => passesSemanticThreshold(row, semanticThreshold));
-    // V3 shadow (Stage B) — OFF by default, failure-isolated, never alters the primary response.
-    await runV3Shadow({
-      supabaseUrl: Deno.env.get("SUPABASE_URL")!,
-      serviceRoleKey: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-      requestId,
-      query,
-      embedding: metricEmbedding,
-      contentDomain: contentDomainFor(searchTables),
-      statusScope,
-      effectiveAt: normalizedReferenceDate,
-      limit: rpcLimit,
-      annLimit: Math.min(Math.max(safeLimit * 4, 100), 200),
-      ftsLimit: Math.min(Math.max(safeLimit * 3, 50), 100),
-      primaryChunkIds: rows.map((r) => r.chunk_id),
-      primaryRoute: "search_legal_corpus_metric",
-    });
     const hasSemanticRows = rows.some(isSemanticRow);
     const hasKeywordRows = rows.some(isKeywordRow);
     const retrievalMode = resolveRetrievalMode(hasSemanticRows, hasKeywordRows);
     const semanticOk = Boolean(metricEmbedding);
-    const routeSources = ["identifier", ...(semanticOk ? ["metric_hy"] : []), "fts"];
     const kbRaw = rows
       .filter((row) => row.content_domain === "knowledge_base" && searchTables !== "practice")
       .map(mapKb)
@@ -137,7 +115,6 @@ serve(async (req) => {
       practice_results: practice.length,
       embedding: metricEmbedding ? "metric" : "none",
       retrieval_mode: retrievalMode,
-      status_scope: statusScope,
     });
 
     return json({
@@ -146,25 +123,12 @@ serve(async (req) => {
       retrieval_mode: retrievalMode,
       semantic_ok: semanticOk,
       semantic_error: warnings.length ? warnings.join("; ") : undefined,
-      metric_semantic_ok: semanticOk,
-      metric_semantic_error: warnings.length ? warnings.join("; ") : undefined,
-      embedding_model: "armenian-text-embeddings-2-large",
-      embedding_dimension: 1024,
-      identifier_ok: true,
-      metric_ann_ok: semanticOk,
-      fts_ok: true,
-      fusion_ok: true,
-      reranker_ok: false,
-      legacy_qwen_used: false,
-      degraded: !semanticOk,
-      degraded_reason: semanticOk ? null : "METRIC_EMBEDDING_UNAVAILABLE",
-      retrieval_route: routeSources.join("+"),
+      qwen_semantic_ok: Boolean(qwenEmbedding),
+      qwen_semantic_error: qwenWarning,
       threshold_applied: semanticOk,
       threshold_value: semanticThreshold,
-      reranker_applied: false,
-      rerank_ok: false,
-      rerank_error: "RERANKER_NOT_CONFIGURED",
-      status_scope: statusScope,
+      rerank_ok: semanticOk,
+      rerank_error: warnings.length ? warnings.join("; ") : undefined,
       temporal_warnings: temporalWarnings,
       request_id: requestId,
     }, 200, corsHeaders);
@@ -178,23 +142,11 @@ serve(async (req) => {
       retrieval_mode: "rpc_fallback",
       semantic_ok: false,
       semantic_error: message,
-      metric_semantic_ok: false,
-      metric_semantic_error: message,
-      embedding_model: "armenian-text-embeddings-2-large",
-      embedding_dimension: 1024,
-      identifier_ok: false,
-      metric_ann_ok: false,
-      fts_ok: false,
-      fusion_ok: false,
-      reranker_ok: false,
-      legacy_qwen_used: false,
-      degraded: true,
-      degraded_reason: message,
-      retrieval_route: "none",
+      qwen_semantic_ok: false,
+      qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_NOT_RUN",
       threshold_applied: false,
-      reranker_applied: false,
       rerank_ok: false,
-      rerank_error: "RERANKER_NOT_CONFIGURED",
+      rerank_error: message,
       request_id: requestId,
     }, 500, corsHeaders);
   }
@@ -210,10 +162,6 @@ function contentDomainFor(tables: SearchTables) {
   return null;
 }
 
-function normalizeStatusScope(value: unknown): "current" | "extended" | "historical" {
-  return value === "extended" || value === "historical" ? value : "current";
-}
-
 function vectorArg(vector: number[] | null) {
   return Array.isArray(vector) && vector.length === 1024 ? `[${vector.join(",")}]` : null;
 }
@@ -225,16 +173,16 @@ function normalizeThreshold(value: unknown): number {
 }
 
 function isSemanticRow(row: CorpusRow) {
-  return row.ann_rank != null || row.route_sources?.includes("metric_ann") || Number(row.vector_similarity) > 0;
+  return row.retrieval_route === "metric_hy" || Number(row.vector_score) > 0;
 }
 
 function isKeywordRow(row: CorpusRow) {
   const route = String(row.retrieval_route || "");
-  return route.includes("identifier") || route.includes("fts") || row.identifier_match || Number(row.fts_score) > 0;
+  return route.includes("bm25") || route.includes("fts") || row.match_reason === "fts" || Number(row.fts_score) > 0;
 }
 
 function passesSemanticThreshold(row: CorpusRow, threshold: number) {
-  return !isSemanticRow(row) || Number(row.vector_similarity) >= threshold;
+  return !isSemanticRow(row) || Number(row.vector_score) >= threshold;
 }
 
 function resolveRetrievalMode(hasSemanticRows: boolean, hasKeywordRows: boolean): RetrievalMode {
@@ -283,12 +231,9 @@ function mapKb(row: CorpusRow) {
     version_date: null,
     citation_anchor: row.citation_anchor,
     norm_status: row.norm_status,
-    status_scope: row.status_scope,
-    status_reason_code: row.status_reason_code,
-    legal_status_warning: row.legal_status_warning,
     match_reason: row.match_reason,
     similarity: row.score,
-    vector_score: row.vector_similarity,
+    vector_score: row.vector_score,
     fts_score: row.fts_score,
     retrieval_model: row.retrieval_model,
     retrieval_route: row.retrieval_route,
@@ -314,12 +259,9 @@ function mapPractice(row: CorpusRow) {
     court_name: row.source || undefined,
     citation_anchor: row.citation_anchor || undefined,
     norm_status: row.norm_status,
-    status_scope: row.status_scope,
-    status_reason_code: row.status_reason_code,
-    legal_status_warning: row.legal_status_warning,
     match_reason: row.match_reason,
     similarity: row.score,
-    vector_score: row.vector_similarity,
+    vector_score: row.vector_score,
     fts_score: row.fts_score,
     retrieval_model: row.retrieval_model,
     retrieval_route: row.retrieval_route,

@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { log, err } from "../_shared/safe-logger.ts";
-import { runV3Shadow } from "../_shared/v3-shadow.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -52,47 +51,27 @@ serve(async (req) => {
 
     const body = await req.json();
     const rawQuery = body.query;
-    const statusScope = normalizeStatusScope(body.statusScope);
     if (!rawQuery || typeof rawQuery !== "string") return jsonRes({ error: "Query is required" }, 400);
 
     const query = normalizeQuery(rawQuery);
     if (query.length < 2) return jsonRes({ error: "Query too short" }, 400);
 
-    const serviceClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-    const rpcLimit = Math.min(MAX_KB_CHUNKS + MAX_PRACTICE_CHUNKS, 50);
-    const { data, error } = await serviceClient.rpc("search_legal_corpus_metric", {
+    const { data, error } = await sb.rpc("search_legal_corpus_dual", {
       p_query_text: query,
       p_metric_embedding: null,
+      p_qwen_embedding: null,
       p_content_domain: null,
-      p_status_scope: statusScope,
-      p_limit: rpcLimit,
-      p_ann_limit: Math.max(rpcLimit, 100),
-      p_fts_limit: Math.min(Math.max(rpcLimit, 50), 100),
+      p_norm_status: "active",
+      p_limit: MAX_KB_CHUNKS + MAX_PRACTICE_CHUNKS,
+      p_metric_limit: 0,
+      p_qwen_limit: 0,
+      p_bm25_limit: MAX_KB_CHUNKS + MAX_PRACTICE_CHUNKS,
       p_effective_at: null,
     });
 
     if (error) throw new Error(error.message);
 
     const rows = (Array.isArray(data) ? data : []) as CorpusRow[];
-    // V3 shadow (Stage B) — OFF by default, failure-isolated, never alters the primary response.
-    await runV3Shadow({
-      supabaseUrl: Deno.env.get("SUPABASE_URL")!,
-      serviceRoleKey: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-      requestId,
-      query,
-      embedding: null,
-      contentDomain: null,
-      statusScope,
-      effectiveAt: null,
-      limit: rpcLimit,
-      annLimit: Math.max(rpcLimit, 100),
-      ftsLimit: Math.min(Math.max(rpcLimit, 50), 100),
-      primaryChunkIds: rows.map((r) => r.chunk_id),
-      primaryRoute: "search_legal_corpus_metric",
-    });
     const kbRows = rows.filter((row) => row.content_domain === "knowledge_base").slice(0, MAX_KB_CHUNKS);
     const practiceRows = rows.filter((row) => row.content_domain === "practice").slice(0, MAX_PRACTICE_CHUNKS);
 
@@ -133,24 +112,9 @@ serve(async (req) => {
       retrieval_mode: "keyword_only",
       semantic_ok: false,
       semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
-      metric_semantic_ok: false,
-      metric_semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
-      embedding_model: "armenian-text-embeddings-2-large",
-      embedding_dimension: 1024,
-      identifier_ok: true,
-      metric_ann_ok: false,
-      fts_ok: true,
-      fusion_ok: true,
-      reranker_ok: false,
-      legacy_qwen_used: false,
-      degraded: false,
-      degraded_reason: null,
-      retrieval_route: "identifier+fts",
+      qwen_semantic_ok: false,
+      qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_DISABLED",
       threshold_applied: false,
-      reranker_applied: false,
-      rerank_ok: false,
-      rerank_error: "RERANKER_NOT_CONFIGURED",
-      status_scope: statusScope,
     }, 200);
   } catch (error) {
     err("kb-unified-search", "Search failed", error, { requestId });
@@ -258,10 +222,6 @@ function normalizeQuery(raw: string): string {
     .replace(/\s+/g, " ")
     .trim()
     .substring(0, MAX_QUERY_LENGTH);
-}
-
-function normalizeStatusScope(value: unknown): "current" | "extended" | "historical" {
-  return value === "current" || value === "historical" ? value : "extended";
 }
 
 function jsonRes(body: Record<string, unknown>, status: number): Response {

@@ -23,14 +23,21 @@ Deno.test("metric-only contract: RPC is additive, static, scoped, and service-on
   assert(!sql.includes("drop function public.search_legal_corpus_dual"));
 });
 
+// Genuinely metric-primary Edge callers remain protected by the metric-only contract.
+// kb-unified-search and vector-search were reverted to the dual RPC (the approved
+// production invariant) and are covered by the DUAL_PRIMARY_CALLERS suite below.
+const METRIC_PRIMARY_CALLERS = [
+  "supabase/functions/kb-search/index.ts",
+  "supabase/functions/kb-search-assistant/index.ts",
+];
+
+const DUAL_PRIMARY_CALLERS = [
+  "supabase/functions/kb-unified-search/index.ts",
+  "supabase/functions/vector-search/index.ts",
+];
+
 Deno.test("metric-only contract: active Edge callers use new RPC and truthful telemetry", async () => {
-  const files = [
-    "supabase/functions/vector-search/index.ts",
-    "supabase/functions/kb-search/index.ts",
-    "supabase/functions/kb-search-assistant/index.ts",
-    "supabase/functions/kb-unified-search/index.ts",
-  ];
-  for (const file of files) {
+  for (const file of METRIC_PRIMARY_CALLERS) {
     const source = await read(file);
     assert(source.includes('"search_legal_corpus_metric"'), `${file} must use Metric RPC`);
     assert(!source.includes("search_legal_corpus_dual"), `${file} must not use dual RPC`);
@@ -43,14 +50,35 @@ Deno.test("metric-only contract: active Edge callers use new RPC and truthful te
   }
 });
 
+Deno.test("dual-primary contract: reverted Edge callers use the dual RPC and no metric/V3 primary", async () => {
+  const rpcCall = (name: string) => new RegExp(`\\.rpc\\(\\s*["']${name}["']`);
+  for (const file of DUAL_PRIMARY_CALLERS) {
+    const source = await read(file);
+    // Positive: must invoke the dual RPC via an actual .rpc(...) call.
+    assert(rpcCall("search_legal_corpus_dual").test(source), `${file} must call the dual RPC as primary`);
+    // Negative: must not invoke the metric or metric_v3 RPC.
+    assert(!rpcCall("search_legal_corpus_metric").test(source), `${file} must not call the metric RPC`);
+    assert(!rpcCall("search_legal_corpus_metric_v3").test(source), `${file} must not call the metric_v3 RPC`);
+    // Route metadata, if present, must not declare metric/metric_v3 as primary.
+    assert(
+      !/primaryRoute\s*:\s*["']search_legal_corpus_metric(_v3)?["']/.test(source),
+      `${file} primaryRoute must not declare metric/V3`,
+    );
+    // V3 shadow must be absent from the restored files.
+    assert(!source.includes("runV3Shadow"), `${file} must not invoke runV3Shadow`);
+    assert(!/v3-shadow/.test(source), `${file} must not import the v3-shadow module`);
+  }
+});
+
 Deno.test("metric-only contract: consumer defaults and browser privilege boundary", async () => {
   const rag = await read("supabase/functions/_shared/rag-search.ts");
   assert(rag.includes('status_scope: "current"'), "legal RAG must request current scope");
 
+  // kb-unified-search is now dual-primary (see DUAL_PRIMARY_CALLERS) and is no longer
+  // subject to the metric research-scope default.
   for (const file of [
     "supabase/functions/kb-search/index.ts",
     "supabase/functions/kb-search-assistant/index.ts",
-    "supabase/functions/kb-unified-search/index.ts",
   ]) {
     const source = await read(file);
     assert(source.includes('"extended"'), `${file} research default must be extended`);
