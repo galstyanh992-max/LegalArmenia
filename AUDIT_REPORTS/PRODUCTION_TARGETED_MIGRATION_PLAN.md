@@ -75,3 +75,47 @@ Production runtime continues to use `search_legal_corpus_metric`. V3 is invoked 
 - 00100 fails: do NOT run 00200. Rollback 00100 only if incident confirmed.
 - 00200 fails: rollback 00200 only if confirmed; 00100 may stay (additive, no runtime impact).
 - Feature-flag rollback always available, no migration: `LEGAL_SEARCH_*=false/0`.
+
+## Addendum 2026-07-17 — grant hardening (corrective migration 20260716000300)
+
+**Finding.** Immediately after `20260716000100` executed on production, the 8 new
+metadata tables carried full table-level privileges for `anon`, `authenticated`
+and `service_role` (SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES,
+TRIGGER, MAINTAIN).
+
+**Root cause.** Project-wide `ALTER DEFAULT PRIVILEGES` (owners `postgres` and
+`supabase_admin`, evidence in `pg_default_acl`) grant ALL on newly created
+public tables to anon/authenticated/service_role. This is identical on every
+existing table (`documents`, `search_chunks`, `embeddings`, `document_versions`,
+…). The migration text itself grants only `service_role`.
+
+**Exposure.** None at the row level: RLS is enabled on all 8 tables with **zero
+policies**, so anon/authenticated receive no rows and no writes. However, the
+broad table-level ACLs still **violated least privilege** and were corrected.
+
+**Remediation applied (production).** A targeted REVOKE was executed against
+`avmgtsonawtzebvazgcr` for exactly the 8 tables:
+- `PUBLIC`, `anon`, `authenticated` privileges = NONE
+- `service_role` normalized to exactly SELECT, INSERT, UPDATE
+- RLS unchanged (enabled, 0 policies); default privileges unchanged.
+
+**Codification.** Corrective migration **`20260716000300_harden_legal_metadata_table_grants.sql`**
+makes this reproducible and auditable. Idempotent; no sequences (none owned by
+these tables); does not alter default privileges, RLS, policies, or other tables.
+
+**Delta vs 00100 (explicit, not silent):** `service_role` UPDATE is now granted
+on `legal_metadata_failures` and `legal_metadata_review_actions` (00100 granted
+INSERT-only). This matches the current production state (default privileges had
+already added UPDATE) and the hardening target of uniform SELECT/INSERT/UPDATE.
+Extra default-privilege grants (DELETE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN) are
+removed from `service_role`.
+
+**Ledger math.** Three additive versions now await reconciliation
+(`20260716000100`, `20260716000200`, `20260716000300`). Expected ledger count
+after reconciliation is **47** (was 44), not 46. Reconciliation remains a
+separate, gated step and has NOT been performed.
+
+**Residual risk.** The project-wide default-privilege behavior is unchanged and
+affects all future tables. Tracked separately as
+`DEFAULT_PRIVILEGES_LEAST_PRIVILEGE_DEBT` — only the 8 current tables are
+remediated. Do not classify the global issue as resolved.
