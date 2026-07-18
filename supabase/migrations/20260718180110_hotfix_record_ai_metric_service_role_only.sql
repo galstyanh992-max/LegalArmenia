@@ -2,7 +2,7 @@
 -- HOTFIX: record_ai_metric service-role-only containment (CRITICAL)
 -- Forward migration version: 20260718180110
 -- =============================================================================
--- CVE-class: unauthenticated unbounded write to internal.ai_metrics.
+-- P1 SECURITY FINDING: unauthenticated unbounded write to internal.ai_metrics.
 --
 -- PROBLEM (production baseline, def_md5 a77d65c5466a893c8e5db16aff026902):
 --   public.record_ai_metric is SECURITY DEFINER with EXECUTE granted to
@@ -20,9 +20,10 @@
 --
 -- CONFIRMED LEGITIMATE CALLERS (repository evidence):
 --   Every runtime caller is a Supabase Edge Function that builds its client
---   with SUPABASE_SERVICE_ROLE_KEY and derives p_user_id server-side from the
---   verified user JWT (user.id). No browser/frontend caller exists (generated
---   types.ts alone is not runtime evidence).
+--   with SUPABASE_SERVICE_ROLE_KEY. Where p_user_id is supplied, it is derived
+--   from trusted server-side context (verified user JWT, user.id);
+--   kb-search-assistant intentionally omits p_user_id. No browser/frontend
+--   runtime caller exists (generated types.ts alone is not runtime evidence).
 --     - supabase/functions/_shared/ai-metrics.ts           (RPC wrapper)
 --     - supabase/functions/ai-analyze/index.ts              (service_role)
 --     - supabase/functions/multi-agent-analyze/index.ts    (service_role)
@@ -49,8 +50,8 @@
 --   * Null-handling preserved: p_input_tokens/p_output_tokens/p_cost_usd
 --     coalesce to 0; p_status coerced to 'success' when not in
 --     ('success','failed'); p_user_id coalesces to auth.uid() (which is NULL
---     for the service_role caller, so legitimate Edge Functions always pass a
---     server-derived p_user_id).
+--     for the service_role caller; Edge Functions pass a server-derived
+--     p_user_id where applicable, and kb-search-assistant omits it).
 --   * No dynamic SQL. No app.get_my_role fallback. No authenticated-admin
 --     fallback. No user-metadata authorization. No trust in p_user_id as
 --     authorization evidence (p_user_id is treated as data only).

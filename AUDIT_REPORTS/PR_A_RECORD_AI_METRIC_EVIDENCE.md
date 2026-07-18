@@ -36,10 +36,11 @@ Signature, parameter names/defaults, return type (void), and insert behavior pre
 
 ## Real repository call-site evidence
 
-Every runtime caller is an Edge Function building its Supabase client with
-`SUPABASE_SERVICE_ROLE_KEY` and deriving `p_user_id` server-side from the verified user JWT
-(`user.id`). No browser/frontend runtime caller exists (generated `types.ts` is not runtime
-evidence).
+Every runtime caller is a Supabase Edge Function building its client with
+`SUPABASE_SERVICE_ROLE_KEY`. Where `p_user_id` is supplied, it is derived from trusted
+server-side context (the verified user JWT, `user.id`); `kb-search-assistant` intentionally
+omits `p_user_id`. No browser/frontend runtime caller exists (generated `types.ts` is not
+runtime evidence).
 
 | caller | line | client construction | p_user_id source |
 |--------|------|---------------------|------------------|
