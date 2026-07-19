@@ -1,7 +1,7 @@
 import { assertEquals, assertMatch } from "https://deno.land/std@0.192.0/testing/asserts.ts";
 
 const MIGRATION_FILE = "supabase/migrations/20260719000000_hotfix_trigger_function_execute_grants.sql";
-const ROLLBACK_FILE = "supabase/migrations/20260719000000_hotfix_trigger_function_execute_grants.rollback.sql";
+const ROLLBACK_FILE = "supabase/rollback/20260719000000_hotfix_trigger_function_execute_grants_rollback.sql";
 
 Deno.test("Migration timestamp is unique and later than baseline", () => {
   const match = MIGRATION_FILE.match(/(\d{14})/);
