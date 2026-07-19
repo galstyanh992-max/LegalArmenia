@@ -10,26 +10,44 @@ Deno.test("Migration timestamp is unique and later than baseline", () => {
   assertEquals(timestamp > 20260718230128, true);
 });
 
-Deno.test("Forward migration starts with BEGIN and ends with COMMIT", () => {
-  const sql = Deno.readTextFileSync(MIGRATION_FILE).trim();
-  assertEquals(sql.startsWith("BEGIN;"), true);
-  assertEquals(sql.endsWith("COMMIT;"), true);
+Deno.test("Exactly one migration file under supabase/migrations starts with 20260719000000 and no rollback inside", async () => {
+  let matchCount = 0;
+  for await (const dirEntry of Deno.readDir("supabase/migrations")) {
+    if (dirEntry.name.startsWith("20260719000000")) {
+      matchCount++;
+      assertEquals(dirEntry.name.includes("rollback"), false, "Rollback file should not be in migrations folder");
+    }
+  }
+  assertEquals(matchCount, 1);
 });
 
-Deno.test("Rollback migration starts with BEGIN and ends with COMMIT", () => {
-  const sql = Deno.readTextFileSync(ROLLBACK_FILE).trim();
-  assertEquals(sql.startsWith("BEGIN;"), true);
-  assertEquals(sql.endsWith("COMMIT;"), true);
+Deno.test("Forward migration starts with BEGIN, ends with COMMIT, and ends with LF", () => {
+  const fileBytes = Deno.readFileSync(MIGRATION_FILE);
+  const sql = new TextDecoder().decode(fileBytes);
+  assertEquals(fileBytes[fileBytes.length - 1], 10, "File must end with LF (10)");
+  assertEquals(sql.trim().startsWith("BEGIN;"), true);
+  assertEquals(sql.trim().endsWith("COMMIT;"), true);
+});
+
+Deno.test("Rollback migration starts with BEGIN, ends with COMMIT, and ends with LF", () => {
+  const fileBytes = Deno.readFileSync(ROLLBACK_FILE);
+  const sql = new TextDecoder().decode(fileBytes);
+  assertEquals(fileBytes[fileBytes.length - 1], 10, "File must end with LF (10)");
+  assertEquals(sql.trim().startsWith("BEGIN;"), true);
+  assertEquals(sql.trim().endsWith("COMMIT;"), true);
 });
 
 Deno.test("Forward migration revokes EXACTLY PUBLIC, anon, authenticated from EXACTLY two target functions", () => {
   const sql = Deno.readTextFileSync(MIGRATION_FILE);
   
   // Contains only exactly two target functions
-  assertMatch(sql, /public\.cases_compat_insert\(\)/i);
-  assertMatch(sql, /public\.handle_new_user\(\)/i);
+  const fnMatch = sql.match(/public\.[a-zA-Z0-9_]+\(\)/gi);
+  const uniqueFns = [...new Set(fnMatch)];
+  assertEquals(uniqueFns.length, 2);
+  assertEquals(uniqueFns.some(f => /cases_compat_insert/i.test(f)), true);
+  assertEquals(uniqueFns.some(f => /handle_new_user/i.test(f)), true);
   
-  // Revokes from the 3 roles
+  // Exactly two REVOKE statements
   const revokeRegex = /REVOKE\s+EXECUTE\s+ON\s+FUNCTION\s+public\.(cases_compat_insert|handle_new_user)\(\)\s+FROM\s+PUBLIC,\s*anon,\s*authenticated/gi;
   const revokes = sql.match(revokeRegex);
   assertEquals(revokes?.length, 2);
@@ -38,7 +56,7 @@ Deno.test("Forward migration revokes EXACTLY PUBLIC, anon, authenticated from EX
   assertEquals(/service_role/i.test(sql), false);
 });
 
-Deno.test("Rollback restores the exact three grants", () => {
+Deno.test("Rollback restores exactly the two target grants", () => {
   const sql = Deno.readTextFileSync(ROLLBACK_FILE);
   const grantRegex = /GRANT\s+EXECUTE\s+ON\s+FUNCTION\s+public\.(cases_compat_insert|handle_new_user)\(\)\s+TO\s+PUBLIC,\s*anon,\s*authenticated/gi;
   const grants = sql.match(grantRegex);
@@ -47,12 +65,14 @@ Deno.test("Rollback restores the exact three grants", () => {
 
 Deno.test("Forward migration does NOT contain any DDL outside of REVOKE", () => {
   const sql = Deno.readTextFileSync(MIGRATION_FILE).toUpperCase();
-  assertEquals(sql.includes("CREATE OR REPLACE FUNCTION"), false);
+  assertEquals(sql.includes("CREATE OR REPLACE"), false);
   assertEquals(sql.includes("CREATE FUNCTION"), false);
   assertEquals(sql.includes("DROP FUNCTION"), false);
   assertEquals(sql.includes("CREATE TRIGGER"), false);
   assertEquals(sql.includes("DROP TRIGGER"), false);
   assertEquals(sql.includes("ALTER TABLE"), false);
+  assertEquals(sql.includes("ALTER VIEW"), false);
+  assertEquals(sql.includes("CREATE VIEW"), false);
   assertEquals(sql.includes("CREATE POLICY"), false);
   assertEquals(sql.includes("DROP POLICY"), false);
   assertEquals(sql.includes("INSERT INTO"), false);
