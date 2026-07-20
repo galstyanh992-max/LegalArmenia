@@ -44,6 +44,8 @@ export interface KBSearchResult {
   retrieval_model?: string;
   retrieval_route?: string;
   rank?: number;
+  /** Composite reranker score (semantic + keyword + authority + temporal + identifier + language) */
+  rerank_score?: number;
   score?: number;
 }
 
@@ -81,6 +83,8 @@ export interface PracticeSearchResult {
   rank?: number;
   relevance_rank?: number;
   relevance_score?: number;
+  /** Composite reranker score (semantic + keyword + authority + temporal + identifier + language) */
+  rerank_score?: number;
   score?: number;
 }
 
@@ -139,8 +143,10 @@ export interface VectorSearchResponse {
   /** Whether a semantic threshold was applied to vector branches */
   threshold_applied?: boolean;
   threshold_value?: number;
-  /** Always false until a separately evaluated reranker is configured */
+  /** Whether the legal reranker ran on the retrieved candidates */
   rerank_ok?: boolean;
+  /** Reranker mode: deterministic feature scorer, or cross-encoder if configured */
+  rerank_mode?: "cross_encoder" | "deterministic_legal_v1";
   /** Reranker status */
   rerank_error?: string;
   reranker_applied?: boolean;
@@ -148,6 +154,8 @@ export interface VectorSearchResponse {
   reranker_revision?: string;
   reranked_count?: number;
   returned_count?: number;
+  /** Opaque per-bucket rerank metadata (weights, latency, diversification) */
+  rerank_metadata?: unknown;
   status_scope?: StatusScope;
   /** Request tracing ID */
   request_id?: string;

@@ -81,9 +81,15 @@ export interface RAGResult<T> {
   semantic_ok?: boolean;
   /** Semantic/vector availability error */
   semantic_error?: string;
-  /** Always false until a separately evaluated reranker is configured */
+  /** Whether the legal reranker ran on the retrieved candidates */
   rerank_ok?: boolean;
-  /** Reranker status */
+  /** Reranker mode: deterministic feature scorer, or cross-encoder if configured */
+  rerank_mode?: "cross_encoder" | "deterministic_legal_v1";
+  /** Reranker model id (deterministic-legal-v1 or the cross-encoder model) */
+  reranker_model?: string | null;
+  /** Opaque rerank metadata (weights, latency, diversification) for telemetry */
+  rerank_metadata?: unknown;
+  /** Reranker error, if the optional cross-encoder endpoint failed */
   rerank_error?: string;
   source_hierarchy?: SourceHierarchyContext;
   court_practice?: CourtPracticeContext;
@@ -199,16 +205,19 @@ async function callVectorSearch(
       metric_ann_ok: data.metric_ann_ok === true,
       fts_ok: data.fts_ok === true,
       fusion_ok: data.fusion_ok === true,
-      reranker_ok: false,
+      reranker_ok: data.rerank_ok === true,
       legacy_qwen_used: false,
       degraded: data.degraded === true,
       degraded_reason: data.degraded_reason,
       retrieval_route: data.retrieval_route,
       threshold_applied: data.threshold_applied === true,
       threshold_value: data.threshold_value,
-      reranker_applied: false,
-      rerank_ok: false,
-      rerank_error: data.rerank_error || "RERANKER_NOT_CONFIGURED",
+      reranker_applied: data.rerank_ok === true,
+      rerank_ok: data.rerank_ok === true,
+      rerank_mode: data.rerank_mode,
+      reranker_model: data.reranker_model,
+      rerank_metadata: data.rerank_metadata,
+      rerank_error: data.rerank_error,
       status_scope: data.status_scope || "current",
       request_id: data.request_id,
       _failed: false,
@@ -314,9 +323,13 @@ export async function searchKB(opts: RAGKBOptions): Promise<RAGResult<KBSearchRe
   // Merge: vector first (semantic), then keyword
   const merged = dedup(vectorItems, scoredKeyword);
 
-  // Sort by score descending, trim
+  // Preserve rerank order from vector-search; tiebreak by rerank_score, then
+  // legacy score/rank. We deliberately do NOT re-sort by authority here — the
+  // reranker already folds authority into the composite score, and a pure
+  // authority sort would bury semantically-relevant low-authority passages.
   const sorted = merged
-    .sort((a, b) => (b.score ?? b.rank ?? 0) - (a.score ?? a.rank ?? 0))
+    .sort((a, b) =>
+      (b.rerank_score ?? b.score ?? b.rank ?? 0) - (a.rerank_score ?? a.score ?? a.rank ?? 0))
     .slice(0, limit);
 
   // Trim content and apply deterministic temporal validation after retrieval.
@@ -324,7 +337,7 @@ export async function searchKB(opts: RAGKBOptions): Promise<RAGResult<KBSearchRe
     ...r,
     content_text: (r.content_text || "").substring(0, snippetLen),
   })), referenceDate);
-  const trimmed = rankLegalSources(temporalChecked) as unknown as KBSearchResult[];
+  const trimmed = temporalChecked as unknown as KBSearchResult[];
 
   const sources = trimmed.map((r) => ({
     title: r.title,
@@ -348,8 +361,11 @@ export async function searchKB(opts: RAGKBOptions): Promise<RAGResult<KBSearchRe
     retrieval_mode: retrievalMode,
     semantic_ok: semanticOk,
     semantic_error: vectorResults._error || vectorResults.semantic_error,
-    rerank_ok: false,
-    rerank_error: "RERANKER_NOT_CONFIGURED",
+    rerank_ok: !vectorResults._failed && vectorResults.rerank_ok === true,
+    rerank_mode: vectorResults.rerank_mode,
+    reranker_model: vectorResults.reranker_model,
+    rerank_metadata: vectorResults.rerank_metadata,
+    rerank_error: vectorResults.rerank_error,
     source_hierarchy: buildSourceHierarchyContext(trimmed, { temporal_context: { effective_at: referenceDate || null } }),
     temporal_warnings: buildTemporalWarnings(trimmed, referenceDate),
   };
@@ -410,11 +426,16 @@ export async function searchPractice(opts: RAGPracticeOptions): Promise<RAGResul
   // Case number results go first (highest priority)
   const merged = dedup(caseNumberResults, vectorItems, scoredKeyword);
 
-  // Sort, trim, and apply deterministic temporal validation after retrieval.
+  // Preserve rerank order from vector-search; tiebreak by rerank_score, then
+  // legacy score/rank/relevance_rank. We do NOT re-sort by authority here — the
+  // reranker already folds authority into the composite score, and a pure
+  // authority sort would bury semantically-relevant lower-authority passages.
   const temporalChecked = applyTemporalValidation(merged
-    .sort((a, b) => (b.score ?? b.rank ?? b.relevance_rank ?? 0) - (a.score ?? a.rank ?? a.relevance_rank ?? 0))
+    .sort((a, b) =>
+      (b.rerank_score ?? b.score ?? b.rank ?? b.relevance_rank ?? 0) -
+      (a.rerank_score ?? a.score ?? a.rank ?? a.relevance_rank ?? 0))
     .slice(0, limit), opts.referenceDate);
-  const sorted = rankLegalSources(temporalChecked) as unknown as PracticeSearchResult[];
+  const sorted = temporalChecked as unknown as PracticeSearchResult[];
 
   const sources = sorted.map((r) => ({
     title: r.title,
@@ -436,8 +457,11 @@ export async function searchPractice(opts: RAGPracticeOptions): Promise<RAGResul
     retrieval_mode: retrievalMode,
     semantic_ok: semanticOk,
     semantic_error: vectorResults._error || vectorResults.semantic_error,
-    rerank_ok: false,
-    rerank_error: "RERANKER_NOT_CONFIGURED",
+    rerank_ok: !vectorResults._failed && vectorResults.rerank_ok === true,
+    rerank_mode: vectorResults.rerank_mode,
+    reranker_model: vectorResults.reranker_model,
+    rerank_metadata: vectorResults.rerank_metadata,
+    rerank_error: vectorResults.rerank_error,
     source_hierarchy: buildSourceHierarchyContext(sorted, { temporal_context: { effective_at: opts.referenceDate || null } }),
     temporal_warnings: buildTemporalWarnings(sorted, opts.referenceDate),
   };
@@ -658,9 +682,15 @@ export interface DualRAGResult {
   semantic_ok: boolean;
   /** Aggregated semantic/vector errors if any */
   semantic_error?: string;
-  /** Always false until a separately evaluated reranker is configured */
+  /** Whether the legal reranker ran on the retrieved candidates */
   rerank_ok: boolean;
-  /** Reranker status */
+  /** Reranker mode: deterministic feature scorer, or cross-encoder if configured */
+  rerank_mode?: "cross_encoder" | "deterministic_legal_v1";
+  /** Reranker model id (deterministic-legal-v1 or the cross-encoder model) */
+  reranker_model?: string | null;
+  /** Opaque rerank metadata (weights, latency, diversification) for telemetry */
+  rerank_metadata?: unknown;
+  /** Reranker error, if the optional cross-encoder endpoint failed */
   rerank_error?: string;
   source_hierarchy?: SourceHierarchyContext;
   court_practice?: CourtPracticeContext;
@@ -700,7 +730,12 @@ export async function dualSearch(opts: RAGSearchOptions & {
 
   // Aggregate telemetry
   const semanticOk = (kb.semantic_ok === true) && (practice.semantic_ok === true);
+  const rerankOk = (kb.rerank_ok === true) && (practice.rerank_ok === true);
+  const rerankMode = kb.rerank_mode === "cross_encoder" || practice.rerank_mode === "cross_encoder"
+    ? "cross_encoder"
+    : "deterministic_legal_v1";
   const errors = [kb.semantic_error, practice.semantic_error].filter(Boolean).join("; ");
+  const rerankErrors = [kb.rerank_error, practice.rerank_error].filter(Boolean).join("; ");
   const retrievalMode = aggregateRetrievalMode(kb.retrieval_mode, practice.retrieval_mode);
 
   if (!semanticOk) {
@@ -733,8 +768,11 @@ export async function dualSearch(opts: RAGSearchOptions & {
     retrieval_mode: retrievalMode,
     semantic_ok: semanticOk,
     semantic_error: errors || undefined,
-    rerank_ok: false,
-    rerank_error: "RERANKER_NOT_CONFIGURED",
+    rerank_ok: rerankOk,
+    rerank_mode: rerankMode,
+    reranker_model: kb.reranker_model ?? practice.reranker_model ?? null,
+    rerank_metadata: { kb: kb.rerank_metadata, practice: practice.rerank_metadata },
+    rerank_error: rerankErrors || undefined,
     source_hierarchy: buildSourceHierarchyContext([...kb.results, ...practice.results], { temporal_context: { effective_at: opts.referenceDate || null } }),
     court_practice: buildCourtPracticeContext(practice.results, { effective_at: opts.referenceDate || null }),
     temporal_warnings: buildTemporalWarnings([...kb.results, ...practice.results], opts.referenceDate),
