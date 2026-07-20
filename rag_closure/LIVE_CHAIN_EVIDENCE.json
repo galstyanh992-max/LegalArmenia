@@ -1,0 +1,33 @@
+{
+  "artifact": "LIVE_CHAIN_EVIDENCE",
+  "generated_at_utc": "2026-07-20T15:52:00Z",
+  "status": "NOT_EXECUTED",
+  "reason": "BLOCKED — live Metric embedding endpoint and live retrieval RPC not reachable from this execution environment",
+  "required_chain": [
+    "user legal query",
+    "query embedding",
+    "retrieval RPC",
+    "candidate normalization",
+    "reranker",
+    "citation injection",
+    "answer generation",
+    "citation validation",
+    "final rendered answer"
+  ],
+  "executed_steps": [],
+  "citation_anchors_to_verify": [
+    "document identity",
+    "article/provision identity",
+    "source title",
+    "source URL or internal source reference where allowed",
+    "chunk identity",
+    "effective date or validity metadata",
+    "court/case metadata where applicable"
+  ],
+  "proof_required": "citations are generated from retrieved corpus records, not invented by the model",
+  "unblock_prerequisites": [
+    "VPS embedding-endpoint access (Packet F)",
+    "authenticated retrieval-RPC caller credential"
+  ],
+  "sanitization": "no secret values"
+}

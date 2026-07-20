@@ -1,0 +1,35 @@
+{
+  "artifact": "RETRIEVAL_EVALUATION",
+  "generated_at_utc": "2026-07-20T15:52:00Z",
+  "status": "NOT_EXECUTED",
+  "reason": "BLOCKED — requires live embedding endpoint and retrieval RPC",
+  "metrics_required": [
+    "Recall@5",
+    "Recall@10",
+    "MRR",
+    "nDCG",
+    "citation precision",
+    "citation recall",
+    "unsupported-claim rate",
+    "no-answer precision",
+    "identifier-query performance",
+    "Armenian semantic-query performance",
+    "adversarial-query performance",
+    "latency percentiles",
+    "timeout rate"
+  ],
+  "data_separation_required": [
+    "engineering gold",
+    "legally reviewed gold",
+    "blind evaluation",
+    "training data",
+    "development data"
+  ],
+  "leakage_prevention": "gold set must not be modified after seeing evaluation results without documenting the reason",
+  "unblock_prerequisites": [
+    "live Metric embedding endpoint",
+    "authenticated retrieval-RPC caller",
+    "validated Armenian legal evaluation assets"
+  ],
+  "sanitization": "no secret values"
+}

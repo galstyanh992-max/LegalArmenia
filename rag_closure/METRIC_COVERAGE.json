@@ -1,0 +1,23 @@
+{
+  "artifact": "METRIC_COVERAGE",
+  "generated_at_utc": "2026-07-20T15:52:00Z",
+  "status": "NOT_EXECUTED",
+  "reason": "BLOCKED — requires read-only production DB access to compute exact coverage",
+  "CURRENT_TRUE_METRIC_MISSING_COUNT": "UNKNOWN",
+  "METRIC_VECTOR_DIMENSION": "UNKNOWN (to be verified from a live authorized embedding request)",
+  "COVERAGE_PERCENTAGE": "UNKNOWN",
+  "prior_observed_metric_gap": 162209,
+  "prior_gap_reuse_policy": "NOT reused as current truth. The prior figure is historical and must be recomputed from a fresh read-only snapshot.",
+  "computation_required": [
+    "total eligible active chunks",
+    "chunks with valid Metric embeddings",
+    "chunks missing embeddings",
+    "malformed vectors",
+    "incorrect dimensions",
+    "duplicate vector records",
+    "inactive or invalid records excluded from denominator",
+    "exact snapshot timestamp"
+  ],
+  "unblock_prerequisite": "read-only production DB access (or an authorized coverage-computing RPC)",
+  "sanitization": "no secret values"
+}
