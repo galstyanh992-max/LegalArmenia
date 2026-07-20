@@ -482,33 +482,60 @@ serve(async (req) => {
     let cachedRagResult: unknown = null;
 
     const deps: LegalPipelineDeps = {
-      runRAG: async (query: string, opts: { referenceDate?: string | null }) => {
-        const ragResult: { kbResults: KBSearchResult[]; practiceResults: PracticeSearchResult[]; semantic_ok: boolean } = {
+      runRAG: async (query: string, opts: unknown) => {
+        const refDate = (opts as { referenceDate?: string | null } | null)?.referenceDate ?? null;
+        // Track the REAL retrieval/rerank status. Previously semantic_ok was
+        // hardcoded true and only flipped on throw, so a dead embedding endpoint
+        // (silent FTS fallback) reported "semantic retrieval OK".
+        const ragResult: {
+          kbResults: KBSearchResult[];
+          practiceResults: PracticeSearchResult[];
+          semantic_ok: boolean;
+          rerank_ok: boolean;
+          rerank_mode?: "cross_encoder" | "deterministic_legal_v1";
+          retrieval_mode?: string;
+          semantic_error?: string;
+        } = {
           kbResults: [],
           practiceResults: [],
-          semantic_ok: true,
+          semantic_ok: false,
+          rerank_ok: false,
         };
+        let kbOk = false;
+        let kbErr: string | undefined;
+        let kbRerank: { ok: boolean; mode?: string; metadata?: unknown } = { ok: false };
+        let practiceOk = false;
+        let practiceErr: string | undefined;
+        let practiceRerank: { ok: boolean; mode?: string; metadata?: unknown } = { ok: false };
         try {
           const kbResult = await searchKB({
             supabase,
             supabaseUrl,
             supabaseKey: supabaseServiceKey,
             query,
-            referenceDate: opts.referenceDate,
+            referenceDate: refDate,
             limit: 8,
             snippetLength: 4000,
           });
+          kbOk = kbResult.semantic_ok === true;
+          kbErr = kbResult.semantic_error;
+          kbRerank = { ok: kbResult.rerank_ok === true, mode: kbResult.rerank_mode, metadata: kbResult.rerank_metadata };
           if (kbResult.results.length > 0) {
-            log(FN, "KB context ready", { docs: kbResult.results.length });
+            log(FN, "KB context ready", {
+              docs: kbResult.results.length,
+              semantic_ok: kbOk,
+              rerank_ok: kbRerank.ok,
+              rerank_mode: kbRerank.mode,
+            });
             ragResult.kbResults = kbResult.results;
             kbContext = formatKBContext(kbResult.results, 4000);
-            kbContext += temporalDisclaimer(opts.referenceDate, dateAssumed);
+            kbContext += temporalDisclaimer(refDate, dateAssumed);
           } else {
-            log(FN, "No KB results found");
+            log(FN, "No KB results found", { semantic_ok: kbOk });
           }
         } catch (searchErr) {
           err(FN, "KB search failed", searchErr);
-          ragResult.semantic_ok = false;
+          kbErr = searchErr instanceof Error ? searchErr.message : String(searchErr);
         }
 
         try {
@@ -519,18 +546,38 @@ serve(async (req) => {
             query,
             limit: 5,
           });
+          practiceOk = practiceResult.semantic_ok === true;
+          practiceErr = practiceResult.semantic_error;
+          practiceRerank = { ok: practiceResult.rerank_ok === true, mode: practiceResult.rerank_mode, metadata: practiceResult.rerank_metadata };
           if (practiceResult.results.length > 0) {
             log(FN, "Practice results", {
               count: practiceResult.results.length,
+              semantic_ok: practiceOk,
+              rerank_ok: practiceRerank.ok,
+              rerank_mode: practiceRerank.mode,
             });
             ragResult.practiceResults = practiceResult.results;
             practiceContext = formatPracticeCtx(practiceResult.results, true);
           } else {
-            log(FN, "No practice results found");
+            log(FN, "No practice results found", { semantic_ok: practiceOk });
           }
-        } catch (practiceErr) {
-          err(FN, "Practice search failed", practiceErr);
-          ragResult.semantic_ok = false;
+        } catch (practiceErrCaught) {
+          err(FN, "Practice search failed", practiceErrCaught);
+          practiceErr = practiceErrCaught instanceof Error ? practiceErrCaught.message : String(practiceErrCaught);
+        }
+
+        // Semantic retrieval is "ok" only if BOTH buckets reported it. If either
+        // silently degraded to FTS (embedding endpoint down), this is false.
+        ragResult.semantic_ok = kbOk && practiceOk;
+        ragResult.rerank_ok = kbRerank.ok && practiceRerank.ok;
+        ragResult.rerank_mode = kbRerank.mode === "cross_encoder" || practiceRerank.mode === "cross_encoder"
+          ? "cross_encoder"
+          : "deterministic_legal_v1";
+        ragResult.retrieval_mode = kbOk || practiceOk ? "hybrid" : "keyword_only";
+        const errs = [kbErr, practiceErr].filter(Boolean).join("; ");
+        if (errs) ragResult.semantic_error = errs;
+        if (!ragResult.semantic_ok) {
+          warn(FN, "RAG semantic degradation", { semantic_ok: ragResult.semantic_ok, rerank_ok: ragResult.rerank_ok, error: errs || undefined });
         }
         cachedRagResult = ragResult;
         return ragResult;

@@ -160,6 +160,17 @@ serve(async (req) => {
       });
     }
 
+    // Zero-norm vectors (e.g. from degenerate/empty input) yield meaningless
+    // cosine similarity in pgvector — reject them so they never reach the index.
+    let normSq = 0;
+    for (let i = 0; i < vector.length; i++) normSq += vector[i] * vector[i];
+    if (!(normSq > 1e-12)) {
+      return new Response(JSON.stringify({ error: "embedding_zero_norm" }), {
+        status: 502,
+        headers,
+      });
+    }
+
     return new Response(
       JSON.stringify({
         vector,
