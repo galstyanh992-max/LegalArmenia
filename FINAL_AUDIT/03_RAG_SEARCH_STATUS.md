@@ -18,7 +18,15 @@ V3 service-role-only; V3 primary + shadow flags OFF; no cutover authorized.
 - CITATION_INJECTION_GATE = INCOMPLETE (adversarial harness not run; not assertable from code).
 - LEGAL_REVIEW_GATE = BLOCKED_EXTERNAL_LEGAL_REVIEW (external; not substituted by model review).
 
+## Phase 3 status
+- CITATION_INJECTION_GATE = INCOMPLETE.
+- RETRIEVAL_EVALUATION = INCOMPLETE.
+- LEGAL_REVIEW_GATE = BLOCKED_EXTERNAL_LEGAL_REVIEW.
+- METRIC_ONLY_COVERAGE_GAP = 162209.
+- SEARCH_CUTOVER = DISABLED (V3 primary + shadow OFF; not authorized).
+
 ## Cutover readiness
-SEARCH_CUTOVER_BLOCKED_BY_LEGAL_REVIEW (also: citation gate INCOMPLETE; metric-coverage gap;
-evaluation unexecuted). Do NOT enable production search cutover. Do NOT re-embed without
+SEARCH_CUTOVER = DISABLED. Independent blockers: LEGAL_REVIEW_GATE = BLOCKED_EXTERNAL_LEGAL_REVIEW,
+CITATION_INJECTION_GATE = INCOMPLETE, RETRIEVAL_EVALUATION = INCOMPLETE,
+METRIC_ONLY_COVERAGE_GAP = 162209. Do NOT enable production search cutover. Do NOT re-embed without
 explicit authorization.

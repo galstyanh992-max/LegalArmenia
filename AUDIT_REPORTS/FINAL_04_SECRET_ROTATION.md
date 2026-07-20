@@ -49,7 +49,13 @@ requires:
 - redeploying Edge Functions and Vercel with the new values;
 - these are credentialed, interactive operations not available in this non-interactive session.
 
-**PHASE VERDICT: BLOCKED_EXTERNAL_CREDENTIAL_REQUIRED.**
+## Phase 4 status
+- SECRET_INVENTORY = COMPLETE (names only; no values handled).
+- STATIC_SECRET_SCAN = PASS (only `.env.example` tracked; no hardcoded secret in tracked `src/`/`supabase/functions/`).
+- SECRET_ROTATION_EXECUTION = NOT_PERFORMED (requires operator/provider console access + redeploys).
+- OLD_SECRET_REVOCATION_VERIFIED = NO (no rotation executed; old keys not verified revoked).
+- FINAL_SECRET_ROTATION_STATUS = BLOCKED_EXTERNAL_CREDENTIAL_REQUIRED.
+
 No rotation performed. No value handled. The inventory + classification + ordered plan above is
 the deliverable; execution is the exact-next-action once an operator with provider access runs it
 interactively (secrets entered into provider consoles / CI secret stores, never into chat).

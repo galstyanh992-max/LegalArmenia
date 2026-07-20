@@ -70,13 +70,12 @@ Automated role matrix: the committed contract tests
 - NOT executed in this non-interactive session. Rendering across 320/360/390/430/tablet/desktop
   viewports, overflow/clipping, Armenian text rendering, keyboard nav, focus, ARIA and contrast
   require an interactive browser session with authenticated users.
-- Status: **REQUIRES_INTERACTIVE_VERIFICATION** (not asserted PASS; not a proven blocker).
+- Status: **NOT_EXECUTED** (mandatory interactive acceptance; not asserted PASS; not a non-blocking risk).
 
 ## Phase 2 verdict
-- Blocking defects found: **none** (build green, auth/role isolation green in CI + live security
-  advisors show zero ERROR; core case flow verified live).
-- Not fully verifiable here (no fabrication): live HTTP role-matrix replay, storage negative
-  tests, live provider-failure matrix, and UI/mobile/accessibility acceptance.
-- **PHASE VERDICT: PHASE_PASS_WITH_NON_BLOCKING_RISKS** (loop count: 1) for the automated and
-  live-security scope; UI/mobile/accessibility and live HTTP matrices remain
-  REQUIRES_INTERACTIVE_VERIFICATION and are carried as non-blocking open items in FINAL_AUDIT/05.
+- AUTOMATED_CI_STATUS = PASS — Edge Function (Deno), Frontend/Utility (Vitest), and Vercel production build all green on the merged head.
+- LIVE_SECURITY_CATALOG_STATUS = PASS — production security advisors show zero ERROR / P0 / P1; role isolation via caller-scoped RLS plus green contract tests.
+- INTERACTIVE_E2E_STATUS = NOT_EXECUTED — live HTTP role-matrix replay, storage negative HTTP tests, and live provider-failure matrix were not run in this non-interactive session.
+- MOBILE_ACCESSIBILITY_STATUS = NOT_EXECUTED — UI/mobile layout across 320/360/390/430/tablet/desktop/large plus accessibility (keyboard nav, focus, ARIA, contrast) were not run.
+- Mandatory interactive acceptance (live HTTP matrices, storage negative tests, provider-failure matrix, UI/mobile/accessibility) is **not** classified as PASS and is **not** carried as a non-blocking risk; it is mandatory evidence that was not executed.
+- **PHASE_2_STATUS = BLOCKED_INCOMPLETE_EVIDENCE** (loop count: 1). Automated CI and the live security catalog PASS, but mandatory interactive acceptance is NOT_EXECUTED, so Phase 2 cannot be closed.

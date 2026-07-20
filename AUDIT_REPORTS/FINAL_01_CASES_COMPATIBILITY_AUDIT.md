@@ -61,12 +61,16 @@ Conclusion: the auto-updatable-view path produces correctly attributed, correctl
 - Not a security finding: production ACL is service-role-only (direct API EXECUTE revoked); PR-D already classified this P3-closed.
 
 ## Phase 1 decision
-**C. COMPATIBILITY_FUNCTION_REQUIRED_BUT_TRIGGER_NOT_REQUIRED**
+**PHASE_1_STATUS = PHASE_PASS** (loop count: 1). No production or staging write performed.
 
-- The `public.cases` compatibility view is required and actively used.
-- Production correctly relies on auto-updatable-view semantics; the INSTEAD OF trigger is NOT required in production.
-- `cases_compat_insert` is dormant/harmless in production (no trigger bound; ACL service-role-only).
-- No production change is authorized or required.
-- Disposition unchanged: TRIGGER_DRIFT / EXTERNAL_COMPATIBILITY_REVIEW_REQUIRED (documentation-level; environment parity between staging and production is the only open, non-blocking item).
+State (catalog- and repo-verified):
+- `public.cases` is **required** (CASES_VIEW_REQUIRED = YES): it is actively used for all case CRUD by the frontend (`supabase.from('cases')`) and by edge functions (SELECT).
+- `public.cases` is **auto-updatable in production** (`is_insertable_into = YES`, `is_updatable = YES`, no INSTEAD OF trigger): INSERT/UPDATE/DELETE rewrite directly to the base table `app.cases`.
+- The application currently creates cases **without `cases_compat_insert`**: production has no trigger bound to the function, and case creation routes through the auto-updatable-view rewrite path (real, well-formed production case row present).
+- `cases_compat_insert` has **no proven runtime caller** in production (trigger count executing it = 0; no direct by-name caller in the repository).
+- The function is **not proven safe to drop** because external consumers are unknown (staging still binds it via `cases_insert_tg`; production ACL is service-role-only but external/legacy consumers cannot be ruled out from the repository alone).
+- **Do not restore the INSTEAD OF trigger** in production (PRODUCTION_TRIGGER_REQUIRED = NO).
+- **Do not drop `cases_compat_insert`** (CASES_COMPAT_INSERT_FUNCTION_STATUS = DORMANT_NOT_PROVEN_REQUIRED).
+- **No production change is authorized or required** (PRODUCTION_CHANGE_REQUIRED = NO).
 
-**PHASE VERDICT: PHASE_PASS** (loop count: 1). No production or staging write performed.
+Residual (non-blocking, environment-parity only): staging vs production function-body/ACL drift; staging trigger present. Disposition: TRIGGER_DRIFT / EXTERNAL_COMPATIBILITY_REVIEW_REQUIRED (documentation-level only).

@@ -1,11 +1,12 @@
 # 04 — Secret Rotation Status
 
-- Static hygiene: only `.env.example` tracked; `.gitignore` excludes real env files; no hardcoded
-  secrets found in tracked `src/`/`supabase/functions/` (scan). No secret value handled here.
-- Inventory (names only) + classification: see AUDIT_REPORTS/FINAL_04_SECRET_ROTATION.md.
-- Rotation execution: NOT performed. Requires operator/provider console access and redeploys.
+- SECRET_INVENTORY = COMPLETE (names only; no values handled).
+- STATIC_SECRET_SCAN = PASS (only `.env.example` tracked; `.gitignore` excludes real env files; no hardcoded secrets found in tracked `src/`/`supabase/functions/`).
+- SECRET_ROTATION_EXECUTION = NOT_PERFORMED. Requires operator/provider console access and redeploys.
+- OLD_SECRET_REVOCATION_VERIFIED = NO (no rotation executed; old keys not verified revoked).
+- FINAL_SECRET_ROTATION_STATUS = BLOCKED_EXTERNAL_CREDENTIAL_REQUIRED.
 
-STATUS: BLOCKED_EXTERNAL_CREDENTIAL_REQUIRED.
+Inventory (names only) + classification: see AUDIT_REPORTS/FINAL_04_SECRET_ROTATION.md.
 
 Exact next action (operator, interactive): for each ACTIVE_ROTATION_REQUIRED key —
 create new → add to consumer secret store (Supabase/Vercel/GitHub) → redeploy → verify new →

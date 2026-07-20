@@ -3,6 +3,9 @@
 Source: production catalog (avmgtsonawtzebvazgcr), read-only, 2026-07-20.
 
 ## Severity
+**CURRENT_PRODUCTION_SECURITY_STATUS = NO_OPEN_P0_OR_P1_FOUND.** (Open P0 = 0 · Open P1 = 0.
+This describes the security posture of the currently deployed scope only; it is not a release
+authorization and does not override the blocked program verdict in 00.)
 - P0 = 0 · P1 = 0 · Actionable P2 = 0 · P3 ACL findings = 0.
 
 ## Confirmed hardening applied to production (ledger 52)

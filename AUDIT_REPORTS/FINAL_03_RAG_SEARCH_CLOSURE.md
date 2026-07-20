@@ -61,8 +61,9 @@ Legal-expert evaluation of retrieval/citations is external and not available in 
 - Baseline: V3 primary + shadow OFF; no cutover authorized.
 - Blockers: legal review (external), citation-injection gate (incomplete), metric-coverage gap
   (162,209 chunks without a metric embedding), and unexecuted retrieval evaluation.
-**SEARCH_CUTOVER = SEARCH_CUTOVER_BLOCKED_BY_LEGAL_REVIEW** (with citation gate INCOMPLETE and a
-metric-coverage gap as additional independent blockers). Do not enable production cutover.
+**SEARCH_CUTOVER = DISABLED** (V3 primary + shadow OFF; not authorized). Independent blockers:
+LEGAL_REVIEW_GATE = BLOCKED_EXTERNAL_LEGAL_REVIEW, CITATION_INJECTION_GATE = INCOMPLETE,
+RETRIEVAL_EVALUATION = INCOMPLETE, METRIC_ONLY_COVERAGE_GAP = 162209. Do not enable production cutover.
 
 ## Phase 3 verdict
 Real read-only evidence establishes architecture + corpus integrity (healthy, 1024-dim,
