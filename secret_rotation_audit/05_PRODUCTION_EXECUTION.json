@@ -1,8 +1,8 @@
 {
   "artifact": "05_PRODUCTION_EXECUTION",
-  "generated_at_utc": "2026-07-20T16:58:00Z",
-  "production_rotation_status": "NOT_EXECUTED",
-  "reason": "BLOCKED_PROVIDER_ACCESS, compounded by an incomplete dependency map. Section 10 of the loop specification permits production rotation only when the dependency map is complete, staging validation has passed, and rollback is defined. None of those preconditions is satisfied.",
+  "generated_at_utc": "2026-07-20T17:31:00Z",
+  "production_rotation_status": "PARTIAL_ROTATION_P0_CLOSED",
+  "summary": "Exactly one production credential was rotated by the operator: SECRET_002 (the production Postgres role password component of DATABASE_URL), which was the subject of finding P0-001. The rotation was performed by the operator through the Supabase Dashboard, outside this audit execution environment, and the verified evidence is recorded in 10_DATABASE_PASSWORD_ROTATION_EVIDENCE.json. Every other production credential remains NOT_EXECUTED/BLOCKED_PROVIDER_ACCESS for the reasons in 09_DEFERRED_OR_EXCLUDED_ITEMS.json.",
   "production_project": {
     "provider": "Supabase",
     "ref": "avmgtsonawtzebvazgcr",
@@ -12,10 +12,36 @@
     "edge_functions_active": 50,
     "observation_method": "Management API project and edge-function listing, read-only"
   },
-  "credentials_created": 0,
-  "consumers_updated": 0,
-  "validations_executed": 0,
-  "old_credentials_revoked": 0,
+  "rotated_credentials": [
+    {
+      "secret_id": "SECRET_002",
+      "logical_name": "DATABASE_URL (Postgres role password component)",
+      "finding_addressed": "P0-001",
+      "executed_by": "operator (project owner)",
+      "method": "Supabase Dashboard -> Settings -> Database -> Reset database password",
+      "local_database_url_update": {
+        "connection_type": "Session pooler",
+        "host_class": "*.pooler.supabase.com",
+        "port": 5432,
+        "database_url_format_validation": "PASS",
+        "local_database_url_normalization": "PASS"
+      },
+      "old_credential_negative_test": { "status": "PASS", "postgresql_error_code": "28P01" },
+      "new_credential_revalidation": { "status": "PASS", "statement_executed": "select 1 as ok" },
+      "active_credential_risk": "CLOSED",
+      "historical_exposure": "PRESENT_BUT_REVOKED",
+      "evidence_artifact": "secret_rotation_audit/10_DATABASE_PASSWORD_ROTATION_EVIDENCE.json",
+      "note": "No password or complete DATABASE_URL is recorded here or in the referenced artifact."
+    }
+  ],
+  "not_executed_credentials": "All production credentials other than SECRET_002 remain NOT_EXECUTED. The execution environment still has no authenticated write path to any credential provider: no service-role reset, no Supabase PAT issuance, no edge-secret read/write, no Vercel project scope, no GitHub API session, no AI-provider session, no Telegram BotFather session, and no VPS embedding host session. See 09_DEFERRED_OR_EXCLUDED_ITEMS.json and 02_DEPENDENCY_MAP.json (completeness PARTIAL, nine unknown consumers).",
+  "credentials_created": 1,
+  "credentials_created_scope": "SECRET_002 replacement only, operator-side via Supabase Dashboard",
+  "consumers_updated": "Operator updated the local active DATABASE_URL to the Session pooler form. Other direct-Postgres consumers were not enumerated or updated from this environment; provider-side consumer reconciliation remains blocked.",
+  "validations_executed": 2,
+  "validations_executed_detail": "OLD_DATABASE_PASSWORD_NEGATIVE_TEST (PASS, 28P01) and NEW_DATABASE_PASSWORD_REVALIDATION (PASS, select 1 as ok).",
+  "old_credentials_revoked": 1,
+  "old_credentials_revoked_scope": "SECRET_002 old password, rejected with PostgreSQL error 28P01",
   "guarantees": {
     "database_schema_change_status": "NO_CHANGES",
     "production_data_change_status": "NO_USER_DATA_CHANGES",
@@ -23,5 +49,7 @@
     "rag_flag_change_status": "NO_CHANGES",
     "edge_function_deploy_status": "NO_DEPLOYS",
     "edge_secret_write_status": "NO_WRITES"
-  }
+  },
+  "overall_secret_rotation": "PARTIAL_ROTATION_P0_CLOSED",
+  "final_verdict": "BLOCKED_PROVIDER_ACCESS"
 }

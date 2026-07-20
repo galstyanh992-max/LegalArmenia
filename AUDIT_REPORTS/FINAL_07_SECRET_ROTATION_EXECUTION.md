@@ -12,7 +12,13 @@
 
 **FINAL_VERDICT: `BLOCKED_PROVIDER_ACCESS`**
 
-No credential was rotated. This is not a partial result that can be rounded up — it is a hard stop taken deliberately at the capability probe, before any provider was touched.
+**OVERALL_SECRET_ROTATION: `PARTIAL_ROTATION_P0_CLOSED`**
+
+**P0-001 active credential risk: CLOSED.** The operator reset the production Postgres password (SECRET_002) through the Supabase Dashboard for project `avmgtsonawtzebvazgcr`, updated the local active `DATABASE_URL` to the Session pooler (`*.pooler.supabase.com`, port 5432), and verified the rotation: the old password was rejected with PostgreSQL error `28P01`, and the new password revalidated by executing `select 1 as ok` successfully. Sanitized evidence is recorded in `secret_rotation_audit/10_DATABASE_PASSWORD_ROTATION_EVIDENCE.json`. This closes the active-credential half of P0-001 only.
+
+**Historical repository exposure: STILL PRESENT (revoked).** The plaintext credential remains recoverable from reachable Git history (commit `09023b0`) but is now a revoked, inactive credential. The history scrub is a separate, operator-approved force-push and was not performed.
+
+**No credential other than SECRET_002 was rotated.** The remainder of this loop is not a partial result that can be rounded up — it is a hard stop taken deliberately at the capability probe, before any provider was touched.
 
 The execution environment has no authenticated write path to any credential provider in this system. The Supabase session is read-only metadata (projects, edge functions, migrations, advisors, logs) and offers no service-role reset, no database password reset, no personal-access-token issuance and no edge-secret read or write. The Vercel session is read-only and its authorized team exposes zero projects, so the deployment scope that owns `vercel.json` is not even identifiable from here. There is no GitHub API session, no provider CLI of any kind, and no session to the VPS embedding host or its Cloudflare tunnel.
 
@@ -109,7 +115,9 @@ The dependency-safe order is recorded in `secret_rotation_audit/03_ROTATION_PLAN
 
 ## 9. Production execution
 
-**NOT_EXECUTED.** See `05_PRODUCTION_EXECUTION.json`.
+**PARTIAL_ROTATION_P0_CLOSED.** Exactly one production credential was rotated: SECRET_002 (the production Postgres role password component of `DATABASE_URL`), which was the subject of finding P0-001. The rotation was performed by the operator through the Supabase Dashboard, outside this audit execution environment. The old password was rejected with PostgreSQL error `28P01`, and the new password revalidated with `select 1 as ok`. The local active `DATABASE_URL` was updated to the Session pooler (`*.pooler.supabase.com`, port 5432). See `05_PRODUCTION_EXECUTION.json` and `10_DATABASE_PASSWORD_ROTATION_EVIDENCE.json`.
+
+Every other production credential remains NOT_EXECUTED for the reasons in section 1 and in `09_DEFERRED_OR_EXCLUDED_ITEMS.json`.
 
 Guarantees for this loop: no schema change, no user-data change, no RLS change, no RAG flag change, no edge function deploy, no edge secret write.
 
@@ -117,19 +125,19 @@ Guarantees for this loop: no schema change, no user-data change, no RLS change, 
 
 ## 10. Old credential revocation evidence
 
-None. Zero credentials revoked — nothing was replaced, and section 0 forbids revoking before a replacement is validated.
+One credential revoked: SECRET_002 (the production Postgres role password). The operator reset it via the Supabase Dashboard and the old password was rejected with PostgreSQL error `28P01` (see `06_OLD_CREDENTIAL_NEGATIVE_TESTS.json`). No other credential was revoked — nothing was replaced, and section 0 forbids revoking before a replacement is validated.
 
 ---
 
 ## 11. Old credential negative-test evidence
 
-None, and none attempted. With nothing revoked there is no old credential to prove dead, and firing an authentication attempt at a still-current production credential would generate noise with no security value. See `06_OLD_CREDENTIAL_NEGATIVE_TESTS.json`.
+For SECRET_002: `OLD_DATABASE_PASSWORD_NEGATIVE_TEST = PASS` (PostgreSQL error `28P01`, the old password was rejected). No other credential has been revoked, so no other negative test exists; firing an authentication attempt at a still-current production credential would generate noise with no security value. See `06_OLD_CREDENTIAL_NEGATIVE_TESTS.json`.
 
 ---
 
 ## 12. New credential revalidation
 
-Not applicable. No replacement credential exists.
+For SECRET_002: `NEW_DATABASE_PASSWORD_REVALIDATION = PASS`. The replacement credential established a connection through the Session pooler on port 5432 and executed `select 1 as ok` successfully. Temporary test environment variables and the temporary test script were removed after testing. No replacement exists for any other credential.
 
 ---
 
@@ -155,7 +163,7 @@ Twelve detectors across the working tree. Eleven clean at zero matches. The twel
 **Temporary secret store `D:\1V\_secrets\legalarmenia-rotation.env`: absent — never created.**
 **Process-scoped secret variables set by this loop: 0. Credential-bearing shell commands: 0.**
 
-The history finding (P0-001) is recorded in `07_SECRET_RESIDUE_SCAN.json`. No history rewrite and no force-push were performed; that action requires separate written authorization.
+The history finding (P0-001) is recorded in `07_SECRET_RESIDUE_SCAN.json`. **Active credential risk for P0-001 is now CLOSED** (password rotated, old rejected with `28P01`); the revoked plaintext still remains in reachable history (commit `09023b0`) and the history scrub still requires separate written operator authorization. No history rewrite and no force-push were performed.
 
 ---
 
@@ -183,9 +191,11 @@ No rollback was required or performed, because no production, staging, provider 
 
 ## 18. Final verdict
 
-**`BLOCKED_PROVIDER_ACCESS`**
+**`BLOCKED_PROVIDER_ACCESS`** — `OVERALL_SECRET_ROTATION = PARTIAL_ROTATION_P0_CLOSED`.
 
-Secondary open gates: `BLOCKED_SECRET_HISTORY_REWRITE_APPROVAL` (P0-001), `BLOCKED_OPERATOR_CONFIRMATION` (Supabase JWT signing secret), `BLOCKED_DEPENDENCY_MAP` (nine unknown consumers, itself a consequence of the provider-access gate).
+The active production database credential (SECRET_002 / P0-001) is CLOSED. The complete secret-rotation program is NOT PASS: the historical plaintext remains in Git history, the history rewrite is pending operator approval, and every other provider credential remains blocked or unverified.
+
+Secondary open gates: `BLOCKED_SECRET_HISTORY_REWRITE_APPROVAL` (P0-001 historical exposure, now revoked but not scrubbed), `BLOCKED_OPERATOR_CONFIRMATION` (Supabase JWT signing secret — do NOT rotate automatically), `BLOCKED_DEPENDENCY_MAP` (nine unknown consumers, itself a consequence of the provider-access gate).
 
 ---
 
@@ -193,7 +203,7 @@ Secondary open gates: `BLOCKED_SECRET_HISTORY_REWRITE_APPROVAL` (P0-001), `BLOCK
 
 Rotation must be performed by an operator holding provider credentials, in an environment with authenticated provider CLIs. In priority order:
 
-1. **Rotate the production database password now.** Supabase Dashboard, project `avmgtsonawtzebvazgcr`, Settings, Database, Reset database password. Then update `DATABASE_URL` in the local `.env` and in every direct-Postgres consumer. Prove the old password fails by attempting a session-pooler connection with it. This closes the live half of P0-001 and does not depend on any other decision.
+1. **~~Rotate the production database password now.~~ DONE — 2026-07-20.** The operator reset the production Postgres password via the Supabase Dashboard for project `avmgtsonawtzebvazgcr`, updated the local `DATABASE_URL` to the Session pooler, and verified the rotation (old rejected `28P01`, new revalidated with `select 1 as ok`). The active-credential half of P0-001 is CLOSED. Remaining direct-Postgres consumers beyond the local `.env` should still be reconciled by the operator when provider access is available.
 2. **Decide on the history scrub.** The value stays recoverable from `origin/main` until commit `09023b0` is rewritten with `git filter-repo` or BFG and every clone holder is coordinated. That is a force-push and requires explicit written authorization. Rotation in step 1 is what actually defuses the credential; the scrub removes the artifact.
 3. **Install and authenticate the provider CLIs** — `supabase login`, `vercel login`, `gh auth login` — then re-run this loop, which will proceed past the capability probe.
 4. **Close the nine unknown consumers before touching the coupled secrets.** Identify the Vercel scope that owns the production deployment, enumerate the current Supabase Edge Function Secrets, and identify the scheduled invoker for the `verify_jwt=false` pipeline functions.

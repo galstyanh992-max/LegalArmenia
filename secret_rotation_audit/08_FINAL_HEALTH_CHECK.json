@@ -11,7 +11,8 @@
     { "check": "git diff --check (whitespace/conflict markers)", "result": "TESTED", "status": "PASS", "evidence": "No output." },
     { "check": "Tracked .env variant scan", "result": "TESTED", "status": "PASS", "evidence": "Zero tracked .env files; .gitignore covers .env and .env.* with an *.example allowlist." },
     { "check": "Working-tree secret residue scan", "result": "TESTED", "status": "PASS", "evidence": "Zero real credential values; see 07_SECRET_RESIDUE_SCAN.json." },
-    { "check": "Git history secret scan (origin/main reachable)", "result": "TESTED", "status": "FAIL", "evidence": "P0-001: production Postgres password present in commit 09023b0." },
+    { "check": "Git history secret scan (origin/main reachable)", "result": "TESTED", "status": "PASS_ACTIVE_CLOSED_HISTORY_RESIDUE_REMAINS", "evidence": "P0-001 active credential risk CLOSED: production Postgres password rotated by operator, old password rejected with PostgreSQL error 28P01 (see 10_DATABASE_PASSWORD_ROTATION_EVIDENCE.json). Historical plaintext still present in commit 09023b0 but is now a revoked, inactive credential. History rewrite pending explicit operator approval; no history rewrite and no force-push were performed." },
+    { "check": "Production database password rotation (SECRET_002 / P0-001)", "result": "TESTED", "status": "PASS", "evidence": "Operator reset the production Postgres password via the Supabase Dashboard for project avmgtsonawtzebvazgcr. OLD_DATABASE_PASSWORD_NEGATIVE_TEST = PASS (PostgreSQL error 28P01). NEW_DATABASE_PASSWORD_REVALIDATION = PASS (select 1 as ok succeeded). Local DATABASE_URL updated to Session pooler (*.pooler.supabase.com, port 5432). See 10_DATABASE_PASSWORD_ROTATION_EVIDENCE.json." },
     { "check": "Targeted unit tests", "result": "NOT_EXECUTED", "reason": "No source or configuration change was made, so there is no change to regression-test. Running the suite would produce evidence unrelated to this loop." },
     { "check": "Typecheck", "result": "NOT_EXECUTED", "reason": "No source change." },
     { "check": "Production build", "result": "NOT_EXECUTED", "reason": "No source change." },
@@ -23,6 +24,8 @@
     { "check": "Edge function authenticated invocation", "result": "BLOCKED", "reason": "No authorized caller credential available." },
     { "check": "Deployment configuration validation", "result": "BLOCKED", "reason": "Vercel project scope not reachable." }
   ],
-  "production_health_status": "NOT_VALIDATED",
-  "summary": { "tested": 9, "passed": 7, "failed": 2, "not_executed": 7, "blocked": 3 }
+  "production_health_status": "PARTIAL_VALIDATED_P0_CLOSED",
+  "database_password_rotation_status": "PASS",
+  "active_database_credential_p0": "CLOSED",
+  "summary": { "tested": 10, "passed": 8, "failed": 1, "not_executed": 7, "blocked": 3 }
 }
