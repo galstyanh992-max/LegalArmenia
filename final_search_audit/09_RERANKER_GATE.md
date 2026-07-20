@@ -8,9 +8,9 @@ Base: ad20a27. Date: 2026-07-20.
 - legal-chat -> _shared/rag-search.ts applies applyTemporalValidation + rankLegalSources
   (source-hierarchy-engine) after retrieval.
 - Deterministic scorers v3/v4 (_shared/deterministic-search-v3.ts, -v4.ts) provide identifier/
-  article/title priority, duplicate suppression, effective-date filtering, low-confidence rejection,
-  and no-answer decision. These are the production reranking logic (no external ML reranker is
-  wired; rerank_ok=false / RERANKER_NOT_CONFIGURED in the active path).
+  article/title priority, duplicate suppression, effective-date filtering, low-confidence
+  rejection, and no-answer decision. These are the production reranking logic (no external ML
+  reranker is wired; rerank_ok=false / RERANKER_NOT_CONFIGURED in the active path).
 - V3 structured-metadata path (_shared/metric-search-v3.ts) adds provision lane + authority
   metadata joins, but is shadow-only (flags OFF).
 
@@ -33,7 +33,8 @@ These require the live retrieval run (see 07) and the citation-injection live-ch
 
 ## 4. Gate status
 
-RERANKER_GATE = PASS_COMPONENT_LEVEL (structural/contract invariants hold: 24/24 tests pass).
-RERANKER_GATE_LIVE = INCOMPLETE (requires live run + credentials).
+COMPONENT_RERANKER_TEST_STATUS = PASS (structural/contract invariants hold: 24/24 tests pass).
+LIVE_CHAIN_RERANKER_GATE = INCOMPLETE (requires live run + credentials).
+RERANKER_GATE = INCOMPLETE (overall; component PASS is descriptive only).
 No production reranker is enabled (rerank_ok=false); no experimental reranker is called in the
 production runtime; the legacy enabled flag cannot reactivate it. Do not deploy or cut over.

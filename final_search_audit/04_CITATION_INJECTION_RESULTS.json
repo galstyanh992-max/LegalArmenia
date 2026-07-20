@@ -1,12 +1,17 @@
 {
   "gate": "CITATION_INJECTION_GATE",
-  "status": "PASS_COMPONENT_LEVEL",
-  "status_qualifier": "PASS at the component/sanitizer/parser/citation-formatter layer against synthetic adversarial fixtures. Full end-to-end live search-to-answer chain NOT executed (no DB/endpoint credentials). Live-chain PASS not claimed.",
-  "harness": "supabase/functions/_tests/prompt19-6-citation-injection.test.ts + supabase/functions/_shared/prompt-armor.test.ts",
+  "overall_status": "INCOMPLETE",
+  "component_citation_test_status": "PASS",
+  "component_citation_test_total": 70,
+  "component_citation_test_failed": 0,
+  "live_chain_citation_test_status": "NOT_EXECUTED",
+  "live_chain_citation_gate": "INCOMPLETE",
+  "explanation": "Local component tests prove the sanitizer, prompt armor, metadata boundary, and deterministic citation contracts. They do NOT prove the deployed/live retrieval -> reranker -> context -> model chain. Therefore the program-level citation gate is NOT PASS; it is INCOMPLETE. Search cutover remains disabled.",
+  "harness_component": "supabase/functions/_tests/prompt19-6-citation-injection.test.ts + supabase/functions/_shared/prompt-armor.test.ts",
   "runner": "deno test -A --no-check",
   "date": "2026-07-20",
   "invariant": "RETRIEVED_TEXT = UNTRUSTED_EVIDENCE; trusted citation fields come only from validated metadata; injection instructions in chunk text/title/OCR/metadata-like content are not followed; system prompt not exposed; trusted metadata not overwritten; article/source identifiers remain canonical; unsupported legal claims not produced; insufficient evidence yields a limitation; conflicting authority surfaced; each claim maps to evidence.",
-  "totals": {
+  "component_totals": {
     "citation_injection_suite": {
       "passed": 35,
       "failed": 0
@@ -19,6 +24,6 @@
     "combined_failed": 0
   },
   "live_chain_executed": false,
-  "live_chain_blocker": "No DB credentials and no reachable EMBEDDING_ENDPOINT in this environment; full search->rerank->answer->citation-verify chain against live corpus not run.",
-  "verdict": "CITATION_INJECTION_GATE = PASS (component-level, executable). Live-chain confirmation pending credentials."
+  "live_chain_blocker": "No DB credentials and no reachable EMBEDDING_ENDPOINT in this environment; the full search->reranker->answer->citation-verify chain against the live corpus was not run.",
+  "verdict": "CITATION_INJECTION_GATE = INCOMPLETE (component-level PASS; live-chain NOT_EXECUTED). PASS_COMPONENT_LEVEL is a descriptive component status only, NOT the overall gate."
 }

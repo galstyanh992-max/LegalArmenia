@@ -14,8 +14,8 @@ codex/rag-citation-retrieval-closure
 ## C. LOOP_COUNT
 1 (OBSERVE -> FORM HYPOTHESES -> DEFINE GATES -> IMPLEMENT/EXECUTE LOCAL HARNESS -> RUN TESTS ->
 ADVERSARIAL ATTACK via citation-injection suite -> ANALYZE -> DECIDE). No repair required at the
-component layer (all RAG-relevant suites pass). Live-run gates remain blocked on credentials, not on
-defects, so additional loops cannot close them without external inputs.
+component layer (all RAG-relevant suites pass). Live-run gates remain blocked on credentials / legal
+review, not on defects, so additional loops cannot close them without external inputs.
 
 ## D. ACTIVE_SEARCH_RPC
 - search_legal_corpus_dual (plpgsql, SECURITY DEFINER, public/anon/authenticated/service_role;
@@ -35,44 +35,56 @@ Dead/legacy: search_legal_corpus (DEAD), match_search_chunks (DEAD). v2 present 
 - Browser: src/hooks/useKnowledgeBase.ts -> supabase.functions.invoke(kb-unified-search)
 
 ## F. METRIC_TOTAL
-Not re-verified live this session (no DB credentials). Prior live capture (FINAL_03, not re-asserted
-as PASS): Metric-model (armenian-text-embeddings-2-large, dim 1024) success embeddings = 1,327,574.
+Not re-verified live this session (no DB credentials). Prior live capture (FINAL_03, NOT re-asserted
+as current PASS): Metric-model (armenian-text-embeddings-2-large, dim 1024) success embeddings =
+1,327,574. CURRENT_METRIC_TOTAL = UNKNOWN.
 
 ## G. QWEN_LEGACY_TOTAL
 Legacy qwen3-embedding-0.6b rows present in embeddings table (Qwen runtime removed from the query
-path; rows retained). Exact count not re-verified live this session.
+path; rows retained). Exact count not re-verified live this session. CURRENT_QWEN_LEGACY_TOTAL =
+UNKNOWN.
 
-## H. TRUE_METRIC_MISSING_COUNT
-162,209 per prior live capture (FINAL_03) = chunks with no successful
-armenian-text-embeddings-2-large embedding (~10.9% of 1,489,780 chunks). Live re-verification
-requires READ_ONLY DB access (not available). See 02_METRIC_COVERAGE_RECONCILIATION.md.
+## H. METRIC COVERAGE TERMINOLOGY
+PRIOR_OBSERVED_METRIC_GAP = 162209 (came from a prior live capture; it was NOT re-counted in this
+loop; structurally it represents chunks without a successful Metric embedding row; those chunks
+remain reachable through FTS; this is a potential Metric-only ANN coverage gap; the actual
+REEMBED_REQUIRED subset is unknown until read-only classification queries are executed; full
+re-embedding is not authorized).
+CURRENT_TRUE_METRIC_MISSING_COUNT = UNKNOWN.
+METRIC_COVERAGE_LIVE_REVERIFICATION = BLOCKED_DATABASE_ACCESS.
+No current unverified count is labeled TRUE. See 02_METRIC_COVERAGE_RECONCILIATION.md.
 
 ## I. METRIC_COVERAGE_CLASSIFICATION
-Meaning RECONCILED structurally: 162,209 = chunks the Metric-only ANN lane cannot reach; reachable
-via the always-on BM25/FTS lane today; a coverage gap for the Metric-only cutover lane, NOT missing
-legal content. Per-class decomposition (A REEMBED_REQUIRED / B DOCUMENT_COVERED_BY_METRIC_SIBLING /
-C DUPLICATE_LEGACY_ROW / D NOT_SEARCH_ELIGIBLE / E REQUIRES_METADATA_RECONSTRUCTION / F UNKNOWN)
-requires the READ_ONLY classification queries in 02; expected REEMBED_REQUIRED is small (bounded by
-the ~3 not-success rows plus any class E/F). Live re-count = BLOCKED_DATABASE_ACCESS.
-No re-embedding started or authorized.
+Structural meaning (prior-observed): 162209 = chunks the Metric-only ANN lane cannot reach; reachable
+via the always-on BM25/FTS lane today; a potential coverage gap for the Metric-only cutover lane, NOT
+missing legal content. Per-class decomposition (A REEMBED_REQUIRED / B DOCUMENT_COVERED_BY_METRIC_
+SIBLING / C DUPLICATE_LEGACY_ROW / D NOT_SEARCH_ELIGIBLE / E REQUIRES_METADATA_RECONSTRUCTION /
+F UNKNOWN) requires the READ_ONLY classification queries in 02. The actual REEMBED_REQUIRED subset is
+UNKNOWN. Live re-count = BLOCKED_DATABASE_ACCESS. No re-embedding started or authorized.
 
 ## J. CITATION_INJECTION_GATE
-PASS_COMPONENT_LEVEL (70/70 executable tests pass: prompt19-6-citation-injection 35/35 +
-prompt-armor 35/35). Live-chain confirmation PENDING credentials. See 04/05.
+CITATION_INJECTION_GATE = INCOMPLETE (overall).
+- COMPONENT_CITATION_TEST_STATUS = PASS (descriptive component status only)
+- COMPONENT_CITATION_TEST_TOTAL = 70
+- COMPONENT_CITATION_TEST_FAILED = 0
+- LIVE_CHAIN_CITATION_TEST_STATUS = NOT_EXECUTED
+- LIVE_CHAIN_CITATION_GATE = INCOMPLETE
+Local component tests prove the sanitizer, prompt armor, metadata boundary, and deterministic
+citation contracts. They do NOT prove the deployed/live retrieval -> reranker -> context -> model
+chain. Therefore the program-level citation gate is NOT PASS; it is INCOMPLETE. Search cutover
+remains disabled. See 04/05.
 
-## K. CITATION_TEST_TOTAL
-70 (35 citation-injection + 35 prompt-armor). Plus reranker/V3 contract suites (see L/M) = 52
-RAG-search contract tests + 37 prompt-armor/deterministic-v4 = broader 121+ passing; only 2
-unrelated migration-formatting contract tests fail on CRLF (Windows checkout artifact, not RAG).
+## K. COMPONENT_CITATION_TEST_TOTAL
+70 (35 citation-injection + 35 prompt-armor).
 
-## L. CITATION_TEST_FAILED
-0 (of the 70 citation-injection + prompt-armor tests).
+## L. COMPONENT_CITATION_TEST_FAILED
+0 (of the 70 component citation/armor tests).
 
 ## M. RETRIEVAL_EVALUATION_STATUS
 INCOMPLETE (BLOCKED on credentials). Live metrics not computed. See 06/07.
 
 ## N. RECALL_AT_10
-NOT_MEASURED (requires live run).
+NOT_MEASURED.
 
 ## O. MRR_AT_10
 NOT_MEASURED.
@@ -81,12 +93,12 @@ NOT_MEASURED.
 NOT_MEASURED.
 
 ## Q. INACTIVE_LAW_LEAKAGE
-NOT_MEASURED live. Component-level guard proven (V3 hard status guard excludes unknown from current;
-deterministic-search-v4 filters ineligible status; reranker status guard applied) = 0 leakage at the
-component layer. Live-chain leakage measurement requires a live run.
+NOT_MEASURED_LIVE. Component-level guard proven (V3 hard status guard excludes unknown from current;
+deterministic-search-v4 filters ineligible status; reranker status guard applied) = 0 leakage at
+the component layer. Live-chain leakage measurement requires a live run.
 
 ## R. NO_ANSWER_PRECISION
-NOT_MEASURED live. Component-level no-answer logic verified (decideNoAnswerV4; calibrated no-answer).
+NOT_MEASURED_LIVE. Component-level no-answer logic verified (decideNoAnswerV4; calibrated no-answer).
 
 ## S. P50_LATENCY
 NOT_MEASURED (requires live run). Budgets: dual 60s; vector-search 8s; embed-query 20s.
@@ -104,40 +116,57 @@ BLOCKED_EXTERNAL_LEGAL_REVIEW (reviewer_a_completed=0, reviewer_b_completed=0, a
 legal_approval_claimed=false). AI does not fill reviewer fields.
 
 ## W. SEARCH_CUTOVER_STATUS
-DISABLED / NOT_AUTHORIZED. V3 primary flag = OFF; V3 shadow flag = OFF. No cutover.
+DISABLED_NOT_AUTHORIZED. V3 primary flag = OFF; V3 shadow flag = OFF. No cutover.
 
 ## X. DATABASE_CHANGE_STATUS
-NONE. PRODUCTION_MODE = READ_ONLY. No UPDATE/INSERT/DELETE/ALTER/CREATE/DROP/migration apply/Edge
-deploy/secret/flag change performed. Staging untouched. No production writes.
+NO_CHANGES. PRODUCTION_MODE = READ_ONLY. No UPDATE/INSERT/DELETE/ALTER/CREATE/DROP/migration apply/
+Edge deploy/secret/flag change performed. Staging untouched. No production writes.
 
 ## Y. PRODUCTION_FLAG_CHANGE_STATUS
 NONE. V3 primary = OFF; V3 shadow = OFF; LEGAL_SEARCH_PRIMARY unchanged. No flag changes.
 
 ## Z. FINAL_VERDICT
-BLOCKED_RAG_CITATION_GATE (with coupled blockers):
-  - RETRIEVAL_EVALUATION = INCOMPLETE (BLOCKED on DB/endpoint credentials)
-  - LEGAL_REVIEW_GATE = BLOCKED_EXTERNAL_LEGAL_REVIEW
-  - METRIC coverage live re-verification = BLOCKED_DATABASE_ACCESS (figure reconciled structurally)
-  - CITATION_INJECTION live-chain confirmation = PENDING credentials (component-level PASS)
-  - RERANKER live behavioral proof = PENDING credentials (component-level PASS)
-Not SEARCH_CUTOVER_READY. Search cutover remains OFF.
-Allowed-verdict match: this is BLOCKED_RAG_CITATION_GATE (primary), with coupled
-BLOCKED_EXTERNAL_LEGAL_REVIEW and BLOCKED on credentials for live retrieval/coverage/reranker.
+FINAL_VERDICT = BLOCKED_RAG_CITATION_GATE.
+Co-blockers:
+  - BLOCKED_DATABASE_ACCESS (live Metric coverage re-count; live retrieval run; live citation/reranker chain)
+  - BLOCKED_RETRIEVAL_EVALUATION (retrieval metrics INCOMPLETE)
+  - BLOCKED_EXTERNAL_LEGAL_REVIEW (legal review gate)
+Not SEARCH_CUTOVER_READY. No cutover-ready claim exists. Search cutover remains OFF.
 RAG_TECHNICAL_GATE_PASS_LEGAL_REVIEW_PENDING is NOT granted because the citation/retrieval/reranker
 live-chain gates are not PASS (only component-level), and Metric coverage is not live-reverified.
 
-## AA. EXACT_NEXT_ACTION
+## AA. COMPLETE_REPOSITORY_TEST_STATUS (test-failure disclosure)
+- RAG/citation-specific suites PASS locally: prompt19-6-citation-injection (35/35), prompt-armor
+  (35/35), legal-reranker-contract (9/9), v3-shadow (9/9), metric-rpc-v3 (5), metric-only-retrieval
+  (5), deterministic-search-v4 (6). Transcript: final_search_audit/TEST_RUN_TRANSCRIPT.txt.
+- Two UNRELATED migration-format tests fail LOCALLY on this Windows checkout:
+  hotfix-admin-set-user-role.contract.test.ts (3 steps) and
+  hotfix-default-privileges.contract.test.ts (1 step). Root cause: core.autocrlf=true on Windows
+  converts LF to CRLF in the working tree; these contract tests assert LF endings / exact substring
+  matches. The committed blobs are LF (verified: admin 121 LF/0 CR; priv 18 LF/0 CR). The underlying
+  security content (revoke + grant execute to service_role) IS present in the migrations.
+- These failures were NOT repaired in the RAG branch. Migrations were NOT changed to silence a
+  Windows-local formatting artifact.
+- The complete repository test suite is NOT claimed green locally. The 2 failures are environmental
+  (CRLF on Windows), not RAG/search/security defects.
+- GitHub Actions / Linux: the CI workflow (.github/workflows/tests.yml) runs the same
+  deno test -A --no-check supabase/functions/_tests/ on ubuntu-latest. On Linux, actions/checkout
+  preserves LF endings in the working tree, so the two migration-format tests PASS there. The
+  RAG/citation suites are platform-independent and PASS on both.
+
+## AB. EXACT_NEXT_ACTION
 1. Provide READ_ONLY credentials for production Supabase (avmgtsonawtzebvazgcr) and a reachable
    EMBEDDING_ENDPOINT (no localhost/private IP).
-2. Run the READ_ONLY Metric-coverage classification queries in 02_METRIC_COVERAGE_RECONCILIATION.md to
-   isolate the true REEMBED_REQUIRED subset. Do NOT re-embed the full corpus; re-embed only the
-   verified REEMBED_REQUIRED subset and only with explicit authorization.
+2. Run the READ_ONLY Metric-coverage classification queries in 02_METRIC_COVERAGE_RECONCILIATION.md
+   to convert CURRENT_TRUE_METRIC_MISSING_COUNT from UNKNOWN and isolate the true REEMBED_REQUIRED
+   subset. Do NOT re-embed the full corpus; re-embed only the verified REEMBED_REQUIRED subset and
+   only with explicit authorization.
 3. Run scripts/run_rag_eval.ts against prompt19_2_gold_dev.jsonl (train/dev) with --allow-production
    read-only; then run the frozen test set ONCE. Split results by language/query-type/status-scope/
    domain/exact-vs-semantic/engineering-vs-legal. Record metrics in 06_RETRIEVAL_METRICS.json.
 4. Run the citation-injection + reranker harness against the LIVE chain (embed-query -> dual/metric
-   RPC -> reranker -> answer -> citation-verifier) to upgrade CITATION_INJECTION_GATE and
-   RERANKER_GATE from component-level PASS to live-chain PASS.
+   RPC -> reranker -> answer -> citation-verifier) to upgrade LIVE_CHAIN_CITATION_GATE and
+   LIVE_CHAIN_RERANKER_GATE from INCOMPLETE to live-chain PASS.
 5. Deliver 10_LEGAL_REVIEW_PACKAGE.csv + review batches to a qualified Armenian-licensed lawyer;
    collect reviewer A/B judgments; adjudicate disagreements. Do NOT use AI to fill reviewer fields.
 6. Only after citation gate = live PASS, retrieval thresholds pass, inactive-law leakage = 0 live,
