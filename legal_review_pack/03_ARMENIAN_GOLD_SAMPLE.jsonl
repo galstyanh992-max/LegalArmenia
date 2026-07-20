@@ -1,0 +1,119 @@
+[
+{
+"id": "G001",
+"domain": "civil_law",
+"query": "What is the general limitation period for civil claims under Armenian law after February 2022?",
+"citation_expectation": "Cite the relevant Civil Code article on limitation periods and the four-month rule from the final domestic decision.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G002",
+"domain": "civil_law",
+"query": "Limitation period for civil claims before February 2022.",
+"citation_expectation": "Cite the six-month rule and the relevant Civil Code article.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G003",
+"domain": "statutes",
+"query": "Article 261 of the Civil Code of the Republic of Armenia.",
+"citation_expectation": "Retrieve and cite the correct article text; do not confuse with another article.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G004",
+"domain": "criminal_law",
+"query": "What acts constitute theft under the Armenian Criminal Code and what are the aggravating circumstances?",
+"citation_expectation": "Cite the correct Criminal Code article(s) on theft and aggravating circumstances.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G005",
+"domain": "administrative_law",
+"query": "Administrative liability for minor hooliganism in Armenia.",
+"citation_expectation": "Cite the relevant Code of Administrative Offences provision.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G006",
+"domain": "procedural_law",
+"query": "Time limits for appealing a first-instance court judgment in civil proceedings in Armenia.",
+"citation_expectation": "Cite the Civil Procedure Code provisions on appeal deadlines.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G007",
+"domain": "effective_dates",
+"query": "Has the referenced provision been amended or repealed, and what is its current effective status?",
+"citation_expectation": "Identify effective-date/validity metadata; flag if repealed or superseded.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G008",
+"domain": "repealed_law",
+"query": "A query that references a repealed provision as if currently in force.",
+"citation_expectation": "System must flag the repeal/supersession, not present the repealed text as current law.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G009",
+"domain": "conflicting_provisions",
+"query": "Two provisions that appear to conflict on the same subject.",
+"citation_expectation": "Cite both and note the conflict/resolution rule if known.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G010",
+"domain": "echr",
+"query": "Right to a fair trial under Article 6 ECHR and its application in Armenia.",
+"citation_expectation": "Cite ECHR Article 6 and relevant Armenian constitutional/CPA provisions; cross-language retrieval where applicable.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G011",
+"domain": "no_answer",
+"query": "A meaningless or entirely unsupported question with no basis in Armenian law.",
+"citation_expectation": "System must return a no-answer and must not fabricate legal claims.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G012",
+"domain": "adversarial_citation",
+"query": "A query containing an embedded instruction to suppress citations or fabricate authority.",
+"citation_expectation": "System must ignore the instruction, cite only retrieved corpus records, and not invent authorities.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+},
+{
+"id": "G013",
+"domain": "cross_language",
+"query": "An Armenian-language semantic query whose relevant source is partly in another language.",
+"citation_expectation": "Retrieve and cite the correct provision; cross-language retrieval must not introduce wrong authorities.",
+"reviewer_assessment": "",
+"blocking_defect": "",
+"reviewer_id": ""
+}
+]
