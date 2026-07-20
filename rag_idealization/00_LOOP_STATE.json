@@ -1,0 +1,71 @@
+{
+  "loop_iteration": 1,
+  "date": "2026-07-21",
+  "worktree": "D:\\1V\\LegalArmenia-rag-ideal",
+  "branch": "codex/rag-ideal-repair",
+  "base_sha": "ad20a27bc32ba40c364fbe39d969285d4d17171b",
+  "head_after": "8c3707f",
+  "remote_head": "ad20a27bc32ba40c364fbe39d969285d4d17171b",
+  "local_remote_match": false,
+  "worktree_clean": true,
+  "commits_created": [
+    "bc30c33 — reranker: add deterministic armenian legal reranking pipeline",
+    "4969c65 — fix: validate metric embeddings and expose semantic degradation",
+    "8c3707f — security: restrict raw retrieval rpc to service_role"
+  ],
+  "files_changed": [
+    "supabase/functions/_shared/legal-reranker.ts",
+    "supabase/functions/_shared/legal-reranker.test.ts",
+    "supabase/functions/_shared/semantic-status.ts",
+    "supabase/functions/_shared/semantic-status.test.ts",
+    "supabase/functions/_shared/rag-search.ts",
+    "supabase/functions/_shared/rag-types.ts",
+    "supabase/functions/embed-query/index.ts",
+    "supabase/functions/vector-search/index.ts",
+    "supabase/functions/legal-chat/index.ts",
+    "supabase/migrations/20260720000001_revoke_search_legal_corpus_dual_public.sql"
+  ],
+  "tests": {
+    "deno_check": "PASS",
+    "deno_test_focused": "43/43 PASS",
+    "secret_scan": "CLEAN"
+  },
+  "phase_status": {
+    "phase_0_preserve": "PASS",
+    "phase_1_verify_claims": "PASS",
+    "phase_2_classification": "PASS",
+    "phase_3_live_access_intake": "BLOCKED_OPERATOR_ACTION",
+    "phase_4_live_embedding_endpoint": "BLOCKED_OPERATOR_ACTION",
+    "phase_5_db_coverage": "BLOCKED_OPERATOR_ACTION",
+    "phase_6_migration_replay": "BLOCKED_OPERATOR_ACTION",
+    "phase_7_hybrid_retrieval_live": "BLOCKED_OPERATOR_ACTION",
+    "phase_8_deploy_cross_encoder": "BLOCKED_OPERATOR_ACTION",
+    "phase_9_reranker_ab_eval": "BLOCKED_OPERATOR_ACTION",
+    "phase_10_live_citation_chain": "BLOCKED_OPERATOR_ACTION",
+    "phase_11_frontend_e2e": "BLOCKED_OPERATOR_ACTION",
+    "phase_12_backfill_plan": "BLOCKED_OPERATOR_ACTION"
+  },
+  "root_cause": "Local code work is complete and verified; live end-to-end validation cannot proceed without production/staging access credentials.",
+  "deterministic_reranker_status": "ACTIVE",
+  "cross_encoder_reranker_status": "NOT_DEPLOYED",
+  "raw_rpc_security_migration": "PREPARED_NOT_APPLIED (blocked: kb-unified-search authenticated caller)",
+  "migrations_applied": 0,
+  "backfill_executed": false,
+  "deployments_performed": false,
+  "search_cutover_state": "OFF",
+  "p0_open": 0,
+  "p1_open": 0,
+  "operator_action_required": {
+    "blocker_id": "LIVE_ACCESS_001",
+    "provider": "Supabase (production or staging project avmgtsonawtzebvazgcr)",
+    "variable_name": "VITE_SUPABASE_URL / SUPABASE_URL + a read-only DB connection string (service_role or read-only role)",
+    "where_to_configure": "Local environment for this worktree (D:\\1V\\LegalArmenia-rag-ideal\\.env or shell env); read-only DB DSN for Phase 5; not in chat",
+    "minimum_permission": "read-only database access (BEGIN READ ONLY) + anon/authenticated key for Edge function calls; service_role only for the RPC retrieval validation in Phase 6/7",
+    "safe_validation_command": "psql '<read-only DSN>' -c \"BEGIN READ ONLY; SET LOCAL statement_timeout='30s'; SELECT count(*) FROM public.chunks; COMMIT;\"",
+    "secrets_to_share_in_chat": "NONE",
+    "checkpoint_commit": "8c3707f",
+    "resume_phase": "PHASE_5_READ_ONLY_DATABASE_COVERAGE"
+  },
+  "overall_verdict": "OPERATOR_ACTION_REQUIRED",
+  "final_result": "OPERATOR_ACTION_REQUIRED: provide read-only Supabase DB access (DSN, not in chat) to resume Phase 5 live database coverage."
+}
