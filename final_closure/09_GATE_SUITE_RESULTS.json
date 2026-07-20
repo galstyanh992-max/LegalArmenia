@@ -1,0 +1,121 @@
+{
+  "artifact": "09_GATE_SUITE_RESULTS",
+  "generated_at_utc": "2026-07-20T15:51:00Z",
+  "base": "origin/main @ ad20a27bc32ba40c364fbe39d969285d4d17171b",
+  "execution_environment": "D:\\1V\\LegalArmenia-final-verdict (codex/final-verdict-convergence); node v24.18.0, npm 11.16.0, deno 2.7.12",
+  "gates": [
+    {
+      "gate": "clean_install",
+      "command": "npm ci --no-audit --no-fund",
+      "result": "PASS",
+      "evidence": "added 999 packages"
+    },
+    {
+      "gate": "vitest_unit_tests",
+      "command": "npx vitest run",
+      "result": "PASS",
+      "evidence": "21 test files, 125 tests passed (0 failed), duration 4.97s"
+    },
+    {
+      "gate": "deno_edge_component_tests",
+      "command": "deno test -A --no-check supabase/functions/_tests/",
+      "result": "PASS_WITH_NOTE",
+      "evidence": "110 passed, 2 failed. The 2 failures (hotfix-default-privileges, hotfix-admin-set-user-role) are Windows CRLF artifacts: repo stores LF (git ls-files --eol shows i/lf w/crlf) but core.autocrlf=true checked out CRLF; the tests assert LF endings. Re-run with LF-converted files: 4 passed, 22 steps, 0 failed. On CI/Linux (autocrlf=false) these pass. No code regression.",
+      "citation_subset": "all citation-injection and retrieval contract tests passed"
+    },
+    {
+      "gate": "production_build",
+      "command": "VITE_SUPABASE_URL=https://avmgtsonawtzebvazgcr.supabase.co npx vite build",
+      "result": "PASS",
+      "evidence": "built in 3.20s; PWA generateSW; 83 precache entries; dist/ produced. VITE_SUPABASE_URL is a public project URL, not a secret; no .env written or committed."
+    },
+    {
+      "gate": "typecheck",
+      "command": "npx tsc --noEmit -p tsconfig.app.json",
+      "result": "FAIL_PRE_EXISTING",
+      "evidence": "Type errors in src/pages/CaseDetail.tsx, Dashboard.tsx, MyDocuments.tsx (nullable DB columns vs non-null component props; Database type missing 'cases' table). Pre-existing on origin/main; not introduced by this orchestrator. Build unaffected (swc strips types). Repair requires deciding source-of-truth between generated DB types and component prop contracts; not attempted to avoid unsanctioned production-source changes."
+    },
+    {
+      "gate": "lint",
+      "command": "npx eslint .",
+      "result": "NOT_EXECUTED",
+      "reason": "deferred; typecheck pre-existing failure documented; lint run not blocking for evidence-convergence documentation phase"
+    },
+    {
+      "gate": "working_tree_secret_scan",
+      "command": "sanitized regex scanner over working tree (excluding node_modules, dist, .git)",
+      "result": "PASS",
+      "evidence": "0 real credential matches. 7 detector hits all pre-classified NON_LEAK: 127.0.0.1:54322 local Supabase CLI defaults (fix_app_profiles.js, evaluate_metric_rpc.py), redacted placeholder in AUDIT_REPORTS/12_MAXIMUM_DEEP_DIVE_AUDIT.md, sk-proj-xxxx placeholder in scripts/setup-openai-key.mjs. Consistent with secret_rotation_audit/07 working_tree_real_credential_match_count=0."
+    },
+    {
+      "gate": "reachable_history_secret_scan",
+      "result": "FAIL_HISTORY_RESIDUE_ONLY",
+      "evidence": "P0-001 revoked plaintext credential present in commit 09023b0, confirmed ancestor of origin/main (git merge-base --is-ancestor 09023b0 origin/main = 0). Active credential risk CLOSED (password rotated, 28P01). Historical exposure PRESENT_BUT_REVOKED. History rewrite pending operator approval."
+    },
+    {
+      "gate": "interactive_e2e",
+      "result": "PASS_ON_BRANCH",
+      "evidence": "codex/interactive-e2e-closure @ 2f46e5a verified: ROLE_TESTS 20/20, IDOR 44/44, STORAGE 19/19, BROWSER 25/25, console errors 0, blocking a11y errors 0, orphan users 0, baseline restored, production mutations NONE, edge static gate PASS. Not re-run here (requires local Supabase + app stack); branch integrity verified."
+    },
+    {
+      "gate": "rag_component_citation_tests",
+      "result": "PASS",
+      "evidence": "citation-injection and retrieval contract deno tests passed in this run (subset of the 110 passed). Known checkpoint COMPONENT_CITATION_TESTS=PASS 70/70 on codex/rag-citation-retrieval-closure."
+    },
+    {
+      "gate": "rag_live_chain_citation",
+      "result": "NOT_EXECUTED",
+      "reason": "BLOCKED — requires live Metric embedding endpoint + live retrieval RPC access; VPS embedding host not reachable from this environment"
+    },
+    {
+      "gate": "rag_retrieval_evaluation",
+      "result": "NOT_EXECUTED",
+      "reason": "BLOCKED — requires live embedding endpoint and retrieval RPC; not runnable here"
+    },
+    {
+      "gate": "metric_coverage",
+      "result": "NOT_EXECUTED",
+      "reason": "BLOCKED — requires read-only production DB access to compute true missing-embedding count; prior 162209 figure is not reused as current truth"
+    },
+    {
+      "gate": "licensed_lawyer_review",
+      "result": "BLOCKED",
+      "reason": "external licensed lawyer review not performed; reviewer fields blank in legal_review_pack/"
+    },
+    {
+      "gate": "deployment_health",
+      "result": "BLOCKED",
+      "reason": "Vercel/Supabase write-plane/VPS/Cloudflare access unavailable"
+    },
+    {
+      "gate": "provider_secret_rotation",
+      "result": "BLOCKED",
+      "reason": "BLOCKED_PROVIDER_ACCESS for all providers except SECRET_002 (already rotated by operator)"
+    },
+    {
+      "gate": "jwt_rotation_decision",
+      "result": "PENDING",
+      "reason": "awaiting APPROVE_JWT_ROTATION or DEFER_JWT_ROTATION_WITH_ACCEPTED_RISK"
+    },
+    {
+      "gate": "history_rewrite_decision",
+      "result": "PENDING",
+      "reason": "awaiting APPROVE_HISTORY_REWRITE or DEFER_HISTORY_REWRITE_WITH_ACCEPTED_RISK"
+    },
+    {
+      "gate": "production_mutation_audit",
+      "result": "PASS",
+      "evidence": "no production writes, migrations, deploys, restarts, or secret changes performed by this orchestrator"
+    }
+  ],
+  "summary": {
+    "pass": 7,
+    "pass_with_note": 1,
+    "fail_pre_existing": 1,
+    "fail_history_residue_only": 1,
+    "not_executed": 3,
+    "blocked": 4,
+    "pending": 2
+  },
+  "sanitization": "No secret values recorded."
+}

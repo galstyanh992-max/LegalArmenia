@@ -1,0 +1,93 @@
+{
+  "artifact": "00_RUNTIME_STATE",
+  "generated_at_utc": "2026-07-20T15:51:00Z",
+  "orchestrator": "MASTER_FINAL_CLOSURE_ORCHESTRATOR",
+  "repository": {
+    "origin": "github.com/galstyanh992-max/LegalArmenia",
+    "primary_repo_path": "D:\\1V\\LegalArmenia-clean",
+    "final_convergence_worktree": "D:\\1V\\LegalArmenia-final-verdict",
+    "final_convergence_branch": "codex/final-verdict-convergence",
+    "base": "origin/main",
+    "origin_main_sha": "ad20a27bc32ba40c364fbe39d969285d4d17171b",
+    "repository_identity_verified": true,
+    "origin_remote_verified": true
+  },
+  "relevant_branches": [
+    {
+      "branch": "codex/final-verdict-convergence",
+      "role": "final convergence (this branch)",
+      "local_sha": "ad20a27bc32ba40c364fbe39d969285d4d17171b",
+      "remote_sha": null,
+      "new": true
+    },
+    {
+      "branch": "codex/final-secret-rotation-closure",
+      "role": "secret-rotation evidence",
+      "local_sha": "d8f8ce510e268bead35b508c495da9df83d24c2f",
+      "remote_sha": "d8f8ce510e268bead35b508c495da9df83d24c2f",
+      "local_remote_match": true
+    },
+    {
+      "branch": "codex/interactive-e2e-closure",
+      "role": "interactive E2E evidence",
+      "local_sha": "2f46e5a554133cf05fafa9cdf302e2c309be0f64",
+      "remote_sha": "2f46e5a554133cf05fafa9cdf302e2c309be0f64",
+      "local_remote_match": true
+    },
+    {
+      "branch": "codex/rag-citation-retrieval-closure",
+      "role": "RAG citation closure",
+      "local_sha": "a4bfe4da69fc23d1f3d5ca10e2c60634eb60d6d8",
+      "remote_sha": "a4bfe4da69fc23d1f3d5ca10e2c60634eb60d6d8",
+      "local_remote_match": true
+    },
+    {
+      "branch": "codex/final-closure-master-loop",
+      "role": "closure documentation",
+      "local_sha": "921ed3db600f71e0cdc098d09e37abef3a77b2e4",
+      "remote_sha": "921ed3db600f71e0cdc098d09e37abef3a77b2e4",
+      "local_remote_match": true
+    }
+  ],
+  "worktree_status": "clean (no unrelated uncommitted changes)",
+  "production_mutation_policy": "READ_ONLY_DEFAULT — no production writes, migrations, deploys, restarts, or secret changes performed by this orchestrator",
+  "provider_access_availability": [
+    {
+      "provider": "Supabase (write plane)",
+      "access": "BLOCKED — read-only metadata only; no service-role reset, no DB password reset from here (DB password was reset by operator via Dashboard already), no PAT issuance, no edge-secret read/write"
+    },
+    {
+      "provider": "Vercel",
+      "access": "BLOCKED — read-only; authorized team exposes zero projects"
+    },
+    {
+      "provider": "GitHub API",
+      "access": "BLOCKED — git transport only, no API session"
+    },
+    {
+      "provider": "OpenRouter/OpenAI/Ollama Cloud/Gemini",
+      "access": "BLOCKED — no authenticated session"
+    },
+    {
+      "provider": "Telegram (BotFather)",
+      "access": "BLOCKED — no session"
+    },
+    {
+      "provider": "Self-hosted VPS embedding service",
+      "access": "BLOCKED — no host session; live Metric endpoint not reachable from here"
+    },
+    {
+      "provider": "Cloudflare",
+      "access": "BLOCKED — no API token or tunnel config"
+    }
+  ],
+  "current_blockers": [
+    "BLOCKED_PROVIDER_ACCESS — provider credential rotations (other than SECRET_002) cannot be executed or validated",
+    "BLOCKED_RAG_CITATION_GATE — live citation chain and live Metric endpoint validation require embedding-endpoint access not available here",
+    "BLOCKED_EXTERNAL_LEGAL_REVIEW_REQUIRED — licensed lawyer review not yet performed; reviewer fields blank",
+    "BLOCKED_OPERATOR_ACTION_REQUIRED — JWT rotation decision pending operator approval",
+    "BLOCKED_OPERATOR_ACTION_REQUIRED — Git history rewrite decision pending operator approval (APPROVE_HISTORY_REWRITE or DEFER)"
+  ],
+  "next_executable_phase": "Phase 1 (inventory) and Phase 3/6 decision artifacts are automatable; Phase 2 provider rotation, Phase 4 live RAG, Phase 5 legal review, and Phase 7 deployment health are blocked on operator/external actions",
+  "sanitization": "No secret values, prefixes, suffixes, fragments, JWTs, connection-string passwords, or value-derived hashes are stored in this file."
+}

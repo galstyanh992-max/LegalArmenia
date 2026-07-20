@@ -1,0 +1,47 @@
+{
+  "artifact": "05_JWT_CONSUMER_INVENTORY",
+  "generated_at_utc": "2026-07-20T15:51:00Z",
+  "secret_id": "SECRET_006",
+  "completeness": "PARTIAL — provider-side env stores not enumerable from here (BLOCKED_PROVIDER_ACCESS)",
+  "consumers": [
+    {
+      "consumer": "Vercel frontend (browser bundle)",
+      "env": "VITE_SUPABASE_ANON_KEY / VITE_SUPABASE_PUBLISHABLE_KEY",
+      "update_mechanism": "Vercel project env (project scope UNIDENTIFIED)",
+      "propagation": "browser must load new build/env"
+    },
+    {
+      "consumer": "All signed-in users (client/lawyer/admin)",
+      "env": "active session JWTs",
+      "impact": "forcibly signed out",
+      "propagation": "re-login required"
+    },
+    {
+      "consumer": "50 Supabase Edge Functions",
+      "env": "auto-injected SUPABASE_* , verify_jwt gate",
+      "impact": "old tokens rejected until propagation",
+      "propagation": "automatic on platform key rotation"
+    },
+    {
+      "consumer": "Server-side JWT verification code",
+      "env": "any server verifier",
+      "impact": "must use new signing secret",
+      "propagation": "platform-managed"
+    },
+    {
+      "consumer": "Scheduled jobs / service-to-service long-lived tokens",
+      "env": "UNIDENTIFIED scheduled invoker",
+      "impact": "old tokens stop validating",
+      "propagation": "re-issue tokens under new secret"
+    },
+    {
+      "consumer": "Service-role key (SECRET_001)",
+      "env": "coupled on legacy JWT model",
+      "impact": "service-role JWT re-derived",
+      "propagation": "rotate SECRET_001 in same window or sequence per 03_ROTATION_PLAN step 16-17"
+    }
+  ],
+  "staging_rehearsal": "Rotate staging project vavjajwiqsdhlweggalw first; validate staging frontend + edge before production.",
+  "rollback": "NONE — previous signing secret not recoverable",
+  "sanitization": "Consumer names and mechanisms only. No key values."
+}
