@@ -1,0 +1,192 @@
+LEGALARMENIA — FINAL SECRET ROTATION CLOSURE LOOP
+SANITIZED EXECUTION TRANSCRIPT
+Date (UTC): 2026-07-20
+Branch: codex/final-secret-rotation-closure
+Base SHA: ad20a27bc32ba40c364fbe39d969285d4d17171b
+
+This transcript records commands and outcomes only. No credential value, prefix,
+suffix, fragment, header, cookie, connection string password or value-derived
+hash appears anywhere in this file.
+
+--------------------------------------------------------------------------
+LOOP 1 — OBSERVE
+--------------------------------------------------------------------------
+[OBS-01] Enumerate D:\1V
+         RESULT: The path named in the mission as REPOSITORY, D:\1V\LegalArmenia,
+         does not exist. Twenty sibling working copies exist. The canonical
+         clone hosting the .git directory and the worktree registry is
+         D:\1V\LegalArmenia-clean.
+         DEVIATION RECORDED: worktree host resolved to LegalArmenia-clean.
+         Justification: identical origin remote
+         (github.com/galstyanh992-max/LegalArmenia) and it owns the worktree list
+         that already contains every sibling audit branch.
+
+[OBS-02] git -C LegalArmenia-clean remote -v
+         RESULT: origin = https://github.com/galstyanh992-max/LegalArmenia.git
+
+[OBS-03] git worktree list
+         RESULT: 18 registered worktrees. codex/interactive-e2e-closure present
+         at 2f46e5a, matching the known-closed INTERACTIVE_E2E gate.
+         No worktree existed for codex/final-secret-rotation-closure.
+
+[OBS-04] git fetch origin --prune
+         RESULT: completed. Non-fatal warnings on the FUSE-mounted filesystem
+         regarding unlink of stale lock files. origin/main = ad20a27.
+
+--------------------------------------------------------------------------
+LOOP 1 — ISOLATED WORKTREE
+--------------------------------------------------------------------------
+[WT-01]  git worktree add D:\1V\LegalArmenia-secret-rotation
+                 -b codex/final-secret-rotation-closure origin/main
+         RESULT: branch and worktree metadata created; the initial checkout was
+         interrupted by the filesystem layer, leaving a stale index.lock.
+
+[WT-02]  Cleared the stale index.lock and re-ran the checkout.
+         RESULT: worktree fully populated at ad20a27.
+
+[WT-03]  git branch --show-current  -> codex/final-secret-rotation-closure
+         git rev-parse HEAD         -> ad20a27bc32ba40c364fbe39d969285d4d17171b
+         git rev-parse origin/main  -> ad20a27bc32ba40c364fbe39d969285d4d17171b
+         git diff --check           -> no output
+         git status --short         -> one artifact file
+         (AUDIT_REPORTS/artifacts/prompt19_3_training/training_pairs.jsonl)
+         reported modified due to a filesystem unlink failure during checkout.
+         This file is NOT staged and NOT committed by this loop.
+         SCOPE VERDICT: no unrelated uncommitted change is introduced.
+                        BLOCKED_SCOPE_DRIFT does not apply.
+
+--------------------------------------------------------------------------
+LOOP 2 — CAPABILITY PROBE (decides whether rotation is executable at all)
+--------------------------------------------------------------------------
+[CAP-01] which supabase vercel gh gitleaks
+         RESULT: none installed.
+[CAP-02] Supabase Management API session
+         RESULT: available, READ-ONLY metadata scope. It exposes projects, edge
+         functions, migrations, advisors and logs. It exposes no service-role
+         reset, no database password reset, no personal-access-token issuance,
+         and no edge-secret read or write.
+[CAP-03] Vercel API session
+         RESULT: available, read-only. list-teams returns one team. list-projects
+         for that team returns an empty array. No token issuance and no
+         environment-variable management are offered.
+[CAP-04] GitHub API session
+         RESULT: none. Git transport (fetch/push) works; the API does not.
+[CAP-05] OpenRouter, OpenAI, Ollama Cloud, Google AI Studio, Telegram, Cohere
+         RESULT: no authenticated session for any provider.
+[CAP-06] VPS embedding host / Cloudflare tunnel
+         RESULT: no session, no credential, no tunnel configuration in-repo.
+
+         CAPABILITY VERDICT: zero credentials in the inventory can be created,
+         validated, or revoked from this environment.
+         GATE RAISED: BLOCKED_PROVIDER_ACCESS.
+         Per sections 0 and 16, no rotation step was attempted, and no rotation
+         is reported as PASS.
+
+--------------------------------------------------------------------------
+LOOP 3 — REPOSITORY SECRET-NAME INVENTORY
+--------------------------------------------------------------------------
+[INV-01] Read .env.example (names only).
+[INV-02] Enumerated environment reads across TS/TSX/JS/CJS/MJS/PY/YML via
+         Deno.env.get, process.env and import.meta.env.
+         RESULT (occurrence counts, names only):
+           SUPABASE_URL 80, SUPABASE_SERVICE_ROLE_KEY 53, SUPABASE_ANON_KEY 34,
+           VITE_SUPABASE_URL 21, INTERNAL_INGEST_KEY 12, VITE_SUPABASE_ANON_KEY 7,
+           VITE_SUPABASE_PUBLISHABLE_KEY 4, OPENROUTER_API_KEY 4,
+           OPENAI_API_KEY 4, DATABASE_URL 4, TEST_USER_PASSWORD 3,
+           OLLAMA_CLOUD_API_KEY 3, TELEGRAM_BOT_TOKEN 2, EMBEDDING_ENDPOINT 2,
+           EMBEDDING_API_KEY 2, TELEGRAM_WEBHOOK_SECRET 1, CRON_WORKER_KEY 1,
+           COHERE_API_KEY 1, EVAL_CLIENT_JWT 1, plus non-secret configuration.
+[INV-03] .github/workflows/tests.yml
+         RESULT: zero secrets.* references.
+[INV-04] vercel.json
+         RESULT: build configuration only, no credential reference.
+[INV-05] D:\1V\_secrets
+         RESULT: variable names only were read.
+           legalarmenia-production-edge.env -> four LEGAL_SEARCH_* feature flags.
+           legalarmenia-staging.env.example -> six STAGING_*/OPENROUTER names.
+           legalarmenia-rotation.env        -> ABSENT.
+[INV-06] docs/SECURITY_SECRET_ROTATION.md
+         RESULT: a pre-existing rotation checklist exists and every item on it
+         is still unchecked. It states the on-disk .env held live values for the
+         service-role key, database password, Supabase PAT, Vercel token, two
+         GitHub PATs, the OpenRouter key and the Gemini key.
+[INV-07] AUDIT_REPORTS/89_LIVE_SECRET_CONFIGURATION.md
+         RESULT: explicitly records that JWT, anon, service-role and database
+         credentials were NOT rotated, and that INTERNAL_INGEST_KEY was
+         preserved because Supabase does not expose its current value.
+
+--------------------------------------------------------------------------
+LOOP 4 — PROVIDER-SIDE INVENTORY (metadata only)
+--------------------------------------------------------------------------
+[PRV-01] Supabase project list
+         RESULT: five projects under organization lyialkltplvdohweeuhf.
+           avmgtsonawtzebvazgcr  AilegalFinalVersion       ap-northeast-1  ACTIVE_HEALTHY  (production)
+           vavjajwiqsdhlweggalw  AI Legal Armenia Staging  ap-northeast-1  ACTIVE_HEALTHY  (staging)
+           three unrelated projects, out of scope.
+[PRV-02] Supabase edge function list for avmgtsonawtzebvazgcr
+         RESULT: 50 functions, all ACTIVE. 26 run with verify_jwt=false and
+         therefore depend on INTERNAL_INGEST_KEY / CRON_WORKER_KEY /
+         TELEGRAM_WEBHOOK_SECRET as their only authorization gate.
+         NOTE: no edge-secret value was requested or retrieved.
+[PRV-03] Vercel team list -> one team. Project list -> empty.
+         GATE: BLOCKED_PROVIDER_ACCESS for Vercel.
+
+--------------------------------------------------------------------------
+LOOP 5 — DEPENDENCY MAP
+--------------------------------------------------------------------------
+[DEP-01] Repository-side consumers fully enumerated (see 02_DEPENDENCY_MAP.json).
+[DEP-02] Provider-side consumer stores NOT enumerable:
+         Supabase Edge Function Secrets, Vercel project environment variables,
+         GitHub Actions repository secrets, VPS systemd unit environment,
+         Cloudflare tunnel configuration, and the identity of the scheduled
+         pipeline invoker. Nine consumers remain UNKNOWN.
+         Per section 5, no rotation may start while a critical consumer is
+         UNKNOWN. No rotation started.
+
+--------------------------------------------------------------------------
+LOOP 6 — RESIDUE SCAN
+--------------------------------------------------------------------------
+[RES-01] Sanitized regex scan of the working tree, twelve detectors,
+         excluding .git, node_modules and dist.
+         RESULT: eleven detectors clean at zero matches. The twelfth,
+         PG_URL_WITH_PASSWORD, produced four matches in three files. Each was
+         classified WITHOUT reproducing the value:
+           three point at 127.0.0.1:54322, the well-known non-secret local
+           Supabase CLI default, loopback only;
+           one appears inside prior-audit prose as a redacted placeholder token.
+         REAL CREDENTIAL VALUES IN WORKING TREE: 0.
+[RES-02] git ls-files for .env variants -> none tracked.
+         .gitignore ignores .env and .env.* and allowlists *.example.
+[RES-03] Git history path audit for db_passwords.cjs
+         RESULT: introduced in 09023b0, untracked in 17d9bfe and 624460d,
+         absent at HEAD, but REACHABLE from origin/main.
+         The prior audit records that this file contained a plaintext
+         production Postgres connection string.
+         FINDING P0-001 RAISED.
+         No history rewrite was performed. No force-push was performed.
+         GATE RAISED: BLOCKED_SECRET_HISTORY_REWRITE_APPROVAL.
+[RES-04] Temporary secret store D:\1V\_secrets\legalarmenia-rotation.env
+         RESULT: absent. It was never created because no credential intake was
+         required. TEMP_SECRET_FILE_EXISTS = false.
+[RES-05] Process-scoped secret variables set by this loop: 0.
+         Credential-bearing shell commands issued by this loop: 0.
+
+--------------------------------------------------------------------------
+LOOP 7 — DECIDE
+--------------------------------------------------------------------------
+STAGING ROTATION      : NOT_EXECUTED
+PRODUCTION ROTATION   : NOT_EXECUTED
+CREDENTIALS CREATED   : 0
+CONSUMERS UPDATED     : 0
+OLD CREDENTIALS REVOKED: 0
+NEGATIVE TESTS RUN    : 0
+SCHEMA CHANGES        : 0
+PRODUCTION DATA CHANGES: 0
+RAG FLAG CHANGES      : 0
+SECRET VALUES PRINTED, LOGGED, COMMITTED OR PASTED: 0
+
+FINAL VERDICT: BLOCKED_PROVIDER_ACCESS
+Secondary open gates: BLOCKED_SECRET_HISTORY_REWRITE_APPROVAL (P0-001),
+BLOCKED_OPERATOR_CONFIRMATION (SECRET_006), BLOCKED_DEPENDENCY_MAP.
+
+END OF SANITIZED TRANSCRIPT

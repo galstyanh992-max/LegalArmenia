@@ -1,0 +1,50 @@
+{
+  "artifact": "03_ROTATION_PLAN",
+  "generated_at_utc": "2026-07-20T16:55:00Z",
+  "status": "PLANNED_NOT_EXECUTED",
+  "execution_blocker": "BLOCKED_PROVIDER_ACCESS",
+  "execution_environment_capability_probe": {
+    "supabase_cli": "NOT_INSTALLED",
+    "vercel_cli": "NOT_INSTALLED",
+    "github_cli": "NOT_INSTALLED",
+    "gitleaks": "NOT_INSTALLED",
+    "supabase_management_api_via_mcp": "READ_ONLY — exposes project, edge function, migration, advisor and log metadata. Provides no service-role reset, no database password reset, no PAT issuance, and no edge-secret read or write.",
+    "vercel_api_via_mcp": "READ_ONLY — list teams, list projects, deployment logs, analytics. No token issuance, no environment variable management. The authorized team returns zero projects.",
+    "github_api": "NO_AUTHENTICATED_SESSION — git transport works for fetch/push only.",
+    "openrouter_openai_ollama_gemini_telegram_cohere": "NO_AUTHENTICATED_SESSION",
+    "vps_embedding_host": "NO_SESSION",
+    "conclusion": "No credential in this inventory can be created, updated, validated, or revoked from this environment. Executing any rotation step here would produce unverifiable results, and reporting one as PASS would violate section 16 of the loop specification."
+  },
+  "dependency_safe_order": [
+    { "step": 1, "secret_id": "SECRET_016", "action": "Rotate staging service-role key first; staging is the blast-radius rehearsal for SECRET_001." },
+    { "step": 2, "secret_id": "SECRET_017", "action": "Rotate staging database password; validates the DATABASE_URL update path used later in production." },
+    { "step": 3, "secret_id": "SECRET_003", "action": "Rotate SUPABASE_ACCESS_TOKEN. Overlap-capable, no downtime, and it is the credential every later step depends on for deployment authority." },
+    { "step": 4, "secret_id": "SECRET_004", "action": "Rotate VERCEL_TOKEN. Overlap-capable. Requires first identifying the Vercel scope that owns the production deployment." },
+    { "step": 5, "secret_id": "SECRET_005", "action": "Rotate all GitHub PATs. Overlap-capable." },
+    { "step": 6, "secret_id": "SECRET_007", "action": "Rotate OPENROUTER_API_KEY, update edge secrets, validate a models-list call, then revoke." },
+    { "step": 7, "secret_id": "SECRET_008", "action": "Rotate OPENAI_API_KEY, same pattern." },
+    { "step": 8, "secret_id": "SECRET_009", "action": "Rotate OLLAMA_CLOUD_API_KEY, same pattern." },
+    { "step": 9, "secret_id": "SECRET_010", "action": "Rotate GEMINI_API_KEY, same pattern." },
+    { "step": 10, "secret_id": "SECRET_015", "action": "Rotate EMBEDDING_API_KEY. Requires a coordinated VPS systemd environment update and service restart, then an edge-secret update. No overlap; schedule a short search-degradation window." },
+    { "step": 11, "secret_id": "SECRET_013", "action": "Rotate INTERNAL_INGEST_KEY. Caller and callee must change together; identify the scheduled invoker first." },
+    { "step": 12, "secret_id": "SECRET_014", "action": "Rotate CRON_WORKER_KEY, same constraint." },
+    { "step": 13, "secret_id": "SECRET_011", "action": "Rotate TELEGRAM_BOT_TOKEN via BotFather, update edge secrets, re-register the webhook." },
+    { "step": 14, "secret_id": "SECRET_012", "action": "Rotate TELEGRAM_WEBHOOK_SECRET and re-run setWebhook." },
+    { "step": 15, "secret_id": "SECRET_002", "action": "Rotate the production Postgres password. P0 — this credential is present in reachable Git history. Immediate and non-overlapping; all direct-Postgres consumers must be updated in the same window." },
+    { "step": 16, "secret_id": "SECRET_001", "action": "Rotate SUPABASE_SERVICE_ROLE_KEY last among the executable set, because on the legacy JWT model this is coupled to SECRET_006 and therefore to every live session." },
+    { "step": 17, "secret_id": "SECRET_006", "action": "OPERATOR-GATED. Resetting the JWT signing secret invalidates all anon keys, all service-role JWTs and every active user session at once. Requires an announced maintenance window and explicit written approval before execution." },
+    { "step": 18, "secret_id": "SECRET_018", "action": "Decommission COHERE_API_KEY rather than rotate: remove the variable and the dead Deno worker fallback path." }
+  ],
+  "rollback_definition": {
+    "overlap_capable": ["SECRET_003", "SECRET_004", "SECRET_005", "SECRET_007", "SECRET_008", "SECRET_009", "SECRET_010"],
+    "no_overlap_requires_window": ["SECRET_002", "SECRET_011", "SECRET_012", "SECRET_013", "SECRET_014", "SECRET_015", "SECRET_006"],
+    "rule": "For every no-overlap credential, capture the current consumer configuration before the change, and define the exact command that restores it. Do not revoke any old credential until the corresponding new-credential validation in section 9/10 has passed."
+  },
+  "explicitly_out_of_scope": [
+    "RAG V3 and search-cutover flags (LEGAL_SEARCH_*) — not read, not written, not changed.",
+    "Database schema and RLS policies — no migration authored or applied.",
+    "Search RPC behaviour, model selection, corpus data.",
+    "Git history rewrite — requires separate authorization (see 07_SECRET_RESIDUE_SCAN.json).",
+    "Pull request creation and merge."
+  ]
+}

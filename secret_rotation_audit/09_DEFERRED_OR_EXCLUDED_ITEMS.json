@@ -1,0 +1,31 @@
+{
+  "artifact": "09_DEFERRED_OR_EXCLUDED_ITEMS",
+  "generated_at_utc": "2026-07-20T17:07:00Z",
+  "deferred": [
+    { "secret_id": "SECRET_006", "logical_name": "Supabase JWT signing secret", "disposition": "BLOCKED_OPERATOR_CONFIRMATION", "impact": "Resetting it invalidates every anon key, every service-role JWT and every active user session at once.", "affected_consumers": "Vercel frontend, all 50 edge functions, every signed-in user.", "required_maintenance_window": "Announced downtime window; users will be forcibly signed out.", "rollback": "None — the previous signing secret is not recoverable.", "exact_operator_action": "Supabase Dashboard, project avmgtsonawtzebvazgcr, Settings, API, Rotate JWT secret. Immediately afterward, update VITE_SUPABASE_ANON_KEY in the Vercel project and any server-side ANON consumers." },
+    { "secret_id": "SECRET_018", "logical_name": "COHERE_API_KEY", "disposition": "DEFERRED_RECOMMEND_DECOMMISSION", "reason": "Marked legacy/unused in .env.example. Removing the variable and the dead Deno worker fallback is preferable to rotating a credential nothing depends on." },
+    { "secret_id": "SECRET_019", "logical_name": "TEST_USER_PASSWORD", "disposition": "OUT_OF_SCOPE", "reason": "Test-harness fixture account. Not high-risk, no production data authority." },
+    { "secret_id": "SECRET_020", "logical_name": "EVAL_CLIENT_JWT", "disposition": "BLOCKED_ROTATION_UNSUPPORTED", "reason": "Short-lived end-user JWT supplied per eval run; it expires on its own and has no rotation mechanism." }
+  ],
+  "excluded_public_values": "See 01_SECRET_NAME_INVENTORY.json, public_values_excluded_from_rotation (11 entries).",
+  "explicitly_not_touched": [
+    "RAG V3 and search-cutover flags (LEGAL_SEARCH_PRIMARY, LEGAL_SEARCH_V3_SHADOW, LEGAL_SEARCH_V3_PRIMARY, LEGAL_SEARCH_V3_TRAFFIC_PERCENT)",
+    "Database schema and migrations",
+    "RLS policies",
+    "Search RPC behaviour and model selection",
+    "Corpus data",
+    "Git history (no rewrite, no force-push)",
+    "Pull requests (none opened, none merged)",
+    "Related branches codex/interactive-e2e-closure, codex/rag-citation-retrieval-closure, codex/final-closure-master-loop"
+  ],
+  "providers_not_audited": [
+    { "provider": "Vercel", "reason": "Authorized team exposes no projects; the deployment scope owning vercel.json is unreachable.", "gate": "BLOCKED_PROVIDER_ACCESS" },
+    { "provider": "GitHub", "reason": "No authenticated API session; repository secrets and deploy keys could not be enumerated.", "gate": "BLOCKED_PROVIDER_ACCESS" },
+    { "provider": "OpenRouter / OpenAI / Ollama Cloud / Google AI Studio", "reason": "No authenticated session.", "gate": "BLOCKED_PROVIDER_ACCESS" },
+    { "provider": "Telegram", "reason": "No BotFather session.", "gate": "BLOCKED_PROVIDER_ACCESS" },
+    { "provider": "Cohere", "reason": "No authenticated session.", "gate": "BLOCKED_PROVIDER_ACCESS" },
+    { "provider": "Self-hosted VPS embedding service", "reason": "No shell session to the host.", "gate": "BLOCKED_PROVIDER_ACCESS" },
+    { "provider": "Cloudflare", "reason": "No API token or tunnel configuration present in this repository; tunnel logs exist only in a sibling working copy.", "gate": "BLOCKED_PROVIDER_ACCESS" },
+    { "provider": "Supabase (write plane)", "reason": "Only read-only metadata access is available. Service-role reset, database password reset, PAT issuance and edge-secret read/write are all unavailable.", "gate": "BLOCKED_PROVIDER_ACCESS" }
+  ]
+}

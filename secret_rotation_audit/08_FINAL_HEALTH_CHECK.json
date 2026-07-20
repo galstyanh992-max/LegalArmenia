@@ -1,0 +1,28 @@
+{
+  "artifact": "08_FINAL_HEALTH_CHECK",
+  "generated_at_utc": "2026-07-20T17:05:00Z",
+  "principle": "NOT_EXECUTED is never reported as PASS.",
+  "checks": [
+    { "check": "Supabase production project reachability", "result": "TESTED", "status": "PASS", "evidence": "Management API reports project avmgtsonawtzebvazgcr ACTIVE_HEALTHY, Postgres 17.6.1.127." },
+    { "check": "Supabase staging project reachability", "result": "TESTED", "status": "PASS", "evidence": "Management API reports project vavjajwiqsdhlweggalw ACTIVE_HEALTHY, Postgres 17.6.1.147." },
+    { "check": "Edge function fleet status", "result": "TESTED", "status": "PASS", "evidence": "50 edge functions enumerated, all status ACTIVE." },
+    { "check": "Vercel deployment target identification", "result": "TESTED", "status": "FAIL", "evidence": "Authorized team team_v9ncs7po7jn4biqceuz9 exposes zero projects; the production frontend deployment scope is not reachable from this environment." },
+    { "check": "Git worktree isolation and branch correctness", "result": "TESTED", "status": "PASS", "evidence": "Branch codex/final-secret-rotation-closure at ad20a27, forked from origin/main, no unrelated modifications staged." },
+    { "check": "git diff --check (whitespace/conflict markers)", "result": "TESTED", "status": "PASS", "evidence": "No output." },
+    { "check": "Tracked .env variant scan", "result": "TESTED", "status": "PASS", "evidence": "Zero tracked .env files; .gitignore covers .env and .env.* with an *.example allowlist." },
+    { "check": "Working-tree secret residue scan", "result": "TESTED", "status": "PASS", "evidence": "Zero real credential values; see 07_SECRET_RESIDUE_SCAN.json." },
+    { "check": "Git history secret scan (origin/main reachable)", "result": "TESTED", "status": "FAIL", "evidence": "P0-001: production Postgres password present in commit 09023b0." },
+    { "check": "Targeted unit tests", "result": "NOT_EXECUTED", "reason": "No source or configuration change was made, so there is no change to regression-test. Running the suite would produce evidence unrelated to this loop." },
+    { "check": "Typecheck", "result": "NOT_EXECUTED", "reason": "No source change." },
+    { "check": "Production build", "result": "NOT_EXECUTED", "reason": "No source change." },
+    { "check": "Security contract tests", "result": "NOT_EXECUTED", "reason": "No credential or policy change to validate." },
+    { "check": "RLS / IDOR contract tests", "result": "NOT_EXECUTED", "reason": "No RLS or schema change." },
+    { "check": "Application login path", "result": "NOT_EXECUTED", "reason": "Requires live credentials that are deliberately not held in this environment." },
+    { "check": "Client / lawyer / admin read paths", "result": "NOT_EXECUTED", "reason": "Same as above." },
+    { "check": "Embedding endpoint health", "result": "BLOCKED", "reason": "No session to the VPS embedding host or its Cloudflare tunnel." },
+    { "check": "Edge function authenticated invocation", "result": "BLOCKED", "reason": "No authorized caller credential available." },
+    { "check": "Deployment configuration validation", "result": "BLOCKED", "reason": "Vercel project scope not reachable." }
+  ],
+  "production_health_status": "NOT_VALIDATED",
+  "summary": { "tested": 9, "passed": 7, "failed": 2, "not_executed": 7, "blocked": 3 }
+}

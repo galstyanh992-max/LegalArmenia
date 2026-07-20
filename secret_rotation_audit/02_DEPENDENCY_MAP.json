@@ -1,0 +1,164 @@
+{
+  "artifact": "02_DEPENDENCY_MAP",
+  "generated_at_utc": "2026-07-20T16:50:00Z",
+  "sanitization": "Consumer names and update mechanisms only. No credential values.",
+  "completeness": "PARTIAL",
+  "completeness_reason": "Repository-side consumers are fully enumerated from source. Provider-side consumer state (Supabase Edge Function Secrets contents, Vercel project environment variables, GitHub Actions repository secrets, VPS systemd unit environment, Cloudflare tunnel configuration) could NOT be enumerated from this environment: no authenticated provider CLI or write-capable API session is reachable. Several consumers therefore remain UNKNOWN, which by section 5 of the loop specification forbids starting any rotation.",
+  "map": [
+    {
+      "secret_id": "SECRET_001",
+      "logical_name": "SUPABASE_SERVICE_ROLE_KEY",
+      "consumers": [
+        { "consumer": "Supabase Edge Functions runtime (50 ACTIVE functions)", "runtime": "Deno edge", "update_mechanism": "PLATFORM_AUTO_INJECTED", "restart_required": "NO", "note": "Supabase injects SUPABASE_URL/ANON/SERVICE_ROLE automatically; must NOT be set as an explicit edge secret." },
+        { "consumer": "supabase/functions/_shared/* (53 source references)", "runtime": "Deno edge", "update_mechanism": "PLATFORM_AUTO_INJECTED", "restart_required": "NO" },
+        { "consumer": "root ops scripts (reset_users*, update_passwords*, query_db.cjs, create_users_only.cjs, delete_db_users.js, check_*.cjs)", "runtime": "Node local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "tests/** and supabase/functions/_tests/**", "runtime": "Vitest / Deno test", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "GitHub Actions workflow tests.yml", "runtime": "CI", "update_mechanism": "UNKNOWN", "restart_required": "N/A", "status": "UNKNOWN — workflow declares no secrets.* references; whether repository secrets exist could not be verified without GitHub API access." }
+      ],
+      "health_endpoint": "Supabase REST /rest/v1/ with service-role authorization",
+      "positive_validation": "Authenticated read of a low-cardinality metadata table; confirm RLS bypass still functions.",
+      "negative_validation": "Old key must return 401 invalid API key on the same endpoint.",
+      "rollback": "Legacy JWT-based service-role keys cannot be un-rotated once the JWT secret is reset; if using the modern sb_secret_ model, re-enable the previous key in the dashboard.",
+      "expected_downtime": "Zero if the modern dual-key model is in use; total edge outage if the legacy JWT secret is reset without staged updates.",
+      "blocking_unknowns": ["GitHub Actions repository secret presence"]
+    },
+    {
+      "secret_id": "SECRET_002",
+      "logical_name": "DATABASE_URL (password component)",
+      "consumers": [
+        { "consumer": "supabase/migrations replay tooling", "runtime": "psql / Supabase CLI", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "scripts/evaluate_metric_rpc.py", "runtime": "Python local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "root ops scripts using direct Postgres connections", "runtime": "Node local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "any external analytics/BI or pooler client", "runtime": "UNKNOWN", "update_mechanism": "UNKNOWN", "restart_required": "UNKNOWN", "status": "UNKNOWN" }
+      ],
+      "health_endpoint": "Session pooler port 5432 (region ap-northeast-1)",
+      "positive_validation": "SELECT 1 over the session pooler with the new password.",
+      "negative_validation": "Connection attempt with the old password must be rejected with an authentication failure.",
+      "rollback": "Reset the password again in the Supabase dashboard; no overlap window exists — the change is immediate and global.",
+      "expected_downtime": "Momentary for every direct-Postgres consumer; edge functions are unaffected (they use PostgREST, not DATABASE_URL).",
+      "blocking_unknowns": ["Whether any unmanaged external client holds this credential"]
+    },
+    {
+      "secret_id": "SECRET_003",
+      "logical_name": "SUPABASE_ACCESS_TOKEN",
+      "consumers": [
+        { "consumer": "Supabase CLI on the operator workstation", "runtime": "Windows local", "update_mechanism": "LOCAL_DOTENV_OR_CLI_LOGIN", "restart_required": "N/A" },
+        { "consumer": "deployment scripts for edge functions", "runtime": "local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "CI deploy job", "runtime": "CI", "update_mechanism": "UNKNOWN", "status": "UNKNOWN" }
+      ],
+      "health_endpoint": "Supabase Management API GET /v1/projects",
+      "positive_validation": "List projects with the new token.",
+      "negative_validation": "Same call with the old token must return 401.",
+      "rollback": "Issue an additional token; PATs support overlap.",
+      "expected_downtime": "None (overlap supported).",
+      "blocking_unknowns": ["CI deploy job token storage"]
+    },
+    {
+      "secret_id": "SECRET_004",
+      "logical_name": "VERCEL_TOKEN",
+      "consumers": [
+        { "consumer": "Vercel CLI on the operator workstation", "runtime": "Windows local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "Vercel production project for the Vite frontend", "runtime": "Vercel", "update_mechanism": "UNKNOWN", "status": "UNKNOWN — the authorized Vercel team (team_v9ncs7po7jn4biqceuz9) exposes zero projects, so the deployment target for vercel.json is either under a different scope or a personal account not reachable from this environment." }
+      ],
+      "health_endpoint": "Vercel API GET /v2/user",
+      "positive_validation": "Authenticated user lookup with the new token.",
+      "negative_validation": "Same call with the old token must return 403.",
+      "rollback": "Issue an additional token; overlap supported.",
+      "expected_downtime": "None.",
+      "blocking_unknowns": ["Which Vercel scope owns the production deployment", "Vercel project environment variable inventory"]
+    },
+    {
+      "secret_id": "SECRET_005",
+      "logical_name": "GITHUB_PERSONAL_ACCESS_TOKEN",
+      "consumers": [
+        { "consumer": "operator workstation git credential helper", "runtime": "Windows local", "update_mechanism": "CREDENTIAL_MANAGER", "restart_required": "N/A" },
+        { "consumer": "local automation scripts", "runtime": "local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" }
+      ],
+      "health_endpoint": "GitHub API GET /user",
+      "positive_validation": "Authenticated user lookup with the new token.",
+      "negative_validation": "Same call with the old token must return 401.",
+      "rollback": "Issue an additional PAT; overlap supported.",
+      "expected_downtime": "None.",
+      "blocking_unknowns": ["Exact number of live PATs (prior audit recorded two)"]
+    },
+    {
+      "secret_id": "SECRET_007..SECRET_010",
+      "logical_name": "OPENROUTER_API_KEY, OPENAI_API_KEY, OLLAMA_CLOUD_API_KEY, GEMINI_API_KEY",
+      "consumers": [
+        { "consumer": "Supabase Edge Function Secrets (production)", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO — next invocation picks up the new value", "status": "UNKNOWN — current secret set could not be enumerated." },
+        { "consumer": "ai-analyze, multi-agent-analyze, legal-chat, generate-document, generate-complaint, extract-case-fields, admin-ai-chat, audio-transcribe, translate-to-armenian, kb-search-assistant, telegram-webhook, practice-ai-enrich-worker", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "local .env for script-driven inference", "runtime": "Node/Python local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" }
+      ],
+      "health_endpoint": "Provider models/health endpoint per provider",
+      "positive_validation": "Minimal authenticated models-list call (no token spend).",
+      "negative_validation": "Same call with the old key must return 401.",
+      "rollback": "Providers support multiple concurrent keys; keep the old key active until validation passes.",
+      "expected_downtime": "None.",
+      "blocking_unknowns": ["Current Supabase Edge Function Secrets inventory"]
+    },
+    {
+      "secret_id": "SECRET_011 / SECRET_012",
+      "logical_name": "TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET",
+      "consumers": [
+        { "consumer": "telegram-webhook (verify_jwt=false, ACTIVE)", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "send-telegram-notification (verify_jwt=false, ACTIVE)", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "process-reminder-notifications (verify_jwt=false, ACTIVE)", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "Telegram platform webhook registration", "runtime": "Telegram", "update_mechanism": "setWebhook API call", "restart_required": "N/A" }
+      ],
+      "health_endpoint": "Telegram getMe / getWebhookInfo",
+      "positive_validation": "getMe returns the expected bot identity; getWebhookInfo shows the correct URL and no pending error.",
+      "negative_validation": "getMe with the old token must return 401; a webhook request signed with the old secret must be rejected.",
+      "rollback": "BotFather token revocation is immediate and non-overlapping; rollback is re-registration only.",
+      "expected_downtime": "Seconds to minutes of notification delivery gap.",
+      "blocking_unknowns": ["Whether the bot is registered in production at all"]
+    },
+    {
+      "secret_id": "SECRET_013 / SECRET_014",
+      "logical_name": "INTERNAL_INGEST_KEY, CRON_WORKER_KEY",
+      "consumers": [
+        { "consumer": "supabase/functions/_shared/edge-security.ts (authorization gate)", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "embed-query, ingest-document, embeddings-generate, legal-chunker, legal-document-normalizer, norm-ref-extractor, practice-chunk-enqueue, practice-chunk-worker, practice-embed-worker, practice-ai-enrich-worker, practice-pipeline-orchestrator, pipeline-tick, rechunk-backfill, kb-unified-search, vector-search, data-sync-to-live, legal-practice-import, legal-practice-enrich, kb-table-screenshots, extract-case-form-fields, media-analyze (all verify_jwt=false)", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "scripts/run_arlis_bulk_import.mjs", "runtime": "Node local", "update_mechanism": "LOCAL_DOTENV", "restart_required": "N/A" },
+        { "consumer": "scheduled cron invoker", "runtime": "UNKNOWN", "update_mechanism": "UNKNOWN", "status": "UNKNOWN — the scheduler (pg_cron, external cron, or Supabase scheduled function) could not be identified from this environment." }
+      ],
+      "health_endpoint": "embed-query and pipeline-tick",
+      "positive_validation": "Authorized internal call returns 200 with the new shared secret.",
+      "negative_validation": "Same call with the old shared secret must return 401/403.",
+      "rollback": "Re-set the previous shared secret in edge secrets; caller and callee must be updated together — no overlap.",
+      "expected_downtime": "Ingestion/pipeline gap for the duration of the caller/callee update skew.",
+      "blocking_unknowns": ["Identity of the scheduled invoker", "AUDIT_REPORTS/89 records that INTERNAL_INGEST_KEY was preserved because Supabase does not expose its current value, so the caller side cannot be reconciled without operator input"]
+    },
+    {
+      "secret_id": "SECRET_015",
+      "logical_name": "EMBEDDING_API_KEY",
+      "consumers": [
+        { "consumer": "scripts/embedding_server.py and scripts/dual_embedding_server.py on the VPS", "runtime": "systemd on VPS", "update_mechanism": "VPS_SYSTEMD_ENVIRONMENT", "restart_required": "YES", "status": "UNKNOWN — no session to the VPS is reachable from this environment." },
+        { "consumer": "supabase/functions/_shared/embeddings.ts", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "embed-query, embeddings-generate, practice-embed-worker", "runtime": "Deno edge", "update_mechanism": "SUPABASE_EDGE_SECRETS", "restart_required": "NO" },
+        { "consumer": "Cloudflare Tunnel fronting the embedding endpoint", "runtime": "cloudflared", "update_mechanism": "UNKNOWN", "status": "UNKNOWN — tunnel logs exist in a sibling working copy but no tunnel token or configuration is present in this repository." }
+      ],
+      "health_endpoint": "EMBEDDING_ENDPOINT /health",
+      "positive_validation": "Health probe plus a single query embedding with the new shared secret.",
+      "negative_validation": "Same probe with the old shared secret must return 401.",
+      "rollback": "Restore the previous value on the VPS unit and in edge secrets; both sides must change together.",
+      "expected_downtime": "Search-path degradation for the duration of the VPS restart.",
+      "blocking_unknowns": ["VPS access", "Cloudflare tunnel credential ownership"]
+    },
+    {
+      "secret_id": "SECRET_016 / SECRET_017",
+      "logical_name": "STAGING_SUPABASE_SERVICE_ROLE_KEY, STAGING_DATABASE_URL",
+      "consumers": [
+        { "consumer": "staging project vavjajwiqsdhlweggalw", "runtime": "Supabase", "update_mechanism": "SUPABASE_DASHBOARD", "restart_required": "NO" },
+        { "consumer": "D:\\1V\\_secrets\\legalarmenia-staging.env.example (template; variable names only, no values verified present)", "runtime": "operator workstation", "update_mechanism": "LOCAL_FILE", "restart_required": "N/A" }
+      ],
+      "health_endpoint": "Staging REST endpoint",
+      "positive_validation": "Authenticated staging read.",
+      "negative_validation": "Old staging key must return 401.",
+      "rollback": "Same as production equivalents.",
+      "expected_downtime": "None (non-production).",
+      "blocking_unknowns": ["Whether staging is actively wired to any deployed consumer"]
+    }
+  ],
+  "unknown_consumer_count": 9,
+  "gate": "BLOCKED_DEPENDENCY_MAP is superseded by BLOCKED_PROVIDER_ACCESS: the dependency map cannot be completed because no provider write/read session exists to enumerate the consumer stores."
+}
