@@ -1,4 +1,4 @@
-﻿# LegalArmenia — Interactive E2E Acceptance — FINAL_06 Report
+# LegalArmenia — Interactive E2E Acceptance — FINAL_06 Report
 
 - **BASE_SHA:** `ad20a27bc32ba40c364fbe39d969285d4d17171b` (origin/main)
 - **BRANCH:** `codex/interactive-e2e-closure`
@@ -107,46 +107,68 @@ Per the resume-loop safety rule, when the credential is unavailable the verdict 
 
 ## 8. Exact next action (chat-safe one-step resume)
 
-The credential must enter the approved secret store through a protected local input — never pasted into chat. Run this snippet in your OWN PowerShell (it reads the key as a masked secure string and writes only to the gitignored secret store, then prints nothing):
+The credential must enter the approved secret store through a protected local input — never pasted into chat. Run this snippet in your OWN PowerShell (it reads the key as a masked secure string, marshals it via BSTR, and writes only to the gitignored secret store; no secret value is printed):
 
 ```powershell
-$u = 'https://vavjajwiqsdhlweggalw.supabase.co'
-$anon = (Get-Content D:\1V\LegalArmenia-e2e-closure\.env.local | Select-String '^VITE_SUPABASE_ANON_KEY=(.+)
+$ErrorActionPreference = 'Stop'
 
-## 9. Final response fields
+$projectRef = 'vavjajwiqsdhlweggalw'
+$supabaseUrl = "https://$projectRef.supabase.co"
+$worktree = 'D:\1V\LegalArmenia-e2e-closure'
+$secretDir = 'D:\1V\_secrets'
+$secretFile = Join-Path $secretDir 'legalarmenia-staging.env'
+$localEnv = Join-Path $worktree '.env.local'
 
-- A. BASE_SHA: `ad20a27bc32ba40c364fbe39d969285d4d17171b`
-- B. BRANCH: `codex/interactive-e2e-closure`
-- C. LOOP_COUNT: 3
-- D. STAGING_PROJECT: `vavjajwiqsdhlweggalw`
-- E. TEST_USERS_CREATED: 7 (LOOP_1: clientA, clientB, lawyerA, lawyerB, admin, disabled, missingProfile) + 2 (LOOP_1 browser: lawyer, admin)
-- F. TEST_USERS_REMOVED: 8 of 9 (1 orphan remains — fixture cleanup blocked on staging service-role key)
-- G. ROLE_MATRIX_TOTAL: 20
-- H. ROLE_MATRIX_FAILED: 0
-- I. P0_FINDINGS: 0
-- J. P1_FINDINGS: 0
-- K. P2_FINDINGS: 0
-- L. P3_FINDINGS: 3 (all repaired in LOOP_2)
-- M. IDOR_STATUS: PASS (44/44, P0=0, P1=0)
-- N. STORAGE_STATUS: PASS (19/19, P0=0, P1=0)
-- O. EDGE_FUNCTION_STATUS: BLOCKED_EDGE_AUTHORIZATION (live) — 0 deployed on staging; static gating present on all 15 reviewed functions
-- P. MOBILE_STATUS: PASS (LOOP_1, 8 viewports, 0 overflow)
-- Q. ACCESSIBILITY_STATUS: PARTIAL — login re-verified clean (0 blocking); dashboard/caseDetail defects repaired statically, live re-verify blocked on staging creds
-- R. FIXTURE_CLEANUP_STATUS: INCOMPLETE — 1 orphan e2e user remains; `baselineRestored=false`
-- S. PRODUCTION_CHANGE_STATUS: none (production READ-ONLY; no production users/cases/fixtures touched; no paid provider calls)
-- T. STAGING_CHANGE_STATUS: ephemeral users/cases/members/comments/storage objects created in LOOP_1; 8/9 users + their cases/members removed; 1 orphan e2e user + minor count drift remain pending service-role-key re-provisioning. No schema, RLS, or edge-function changes on staging.
-- U. REPORT_PATH: `AUDIT_REPORTS/FINAL_06_INTERACTIVE_E2E_ACCEPTANCE.md`
-- V. FINAL_VERDICT: **BLOCKED_STAGING_CREDENTIALS**
-- W. EXACT_NEXT_ACTION: Re-provision the staging service-role key into `D:\1V\_secrets\legalarmenia-staging.env` (secure local prompt / protected env — never chat), then re-run `run-matrix.mjs`, `run-storage.mjs`, `run-browser.mjs`, then `force-cleanup.mjs`; re-issue this report as `INTERACTIVE_E2E_PASS` only after `blockingViolations=0` is live-verified on login/dashboard/caseDetail and `baselineRestored=true`.
-).Matches[0].Groups[1].Value
-$sr = (Read-Host "staging service_role key" -AsSecureString).ToString() | ConvertFrom-SecureString -AsPlainText
-Set-Content -Path D:\1V\_secrets\legalarmenia-staging.env -Encoding utf8 -Value @"
-STAGING_PROJECT_REF=vavjajwiqsdhlweggalw
-STAGING_SUPABASE_URL=$u
-STAGING_SUPABASE_ANON_KEY=$anon
-STAGING_SUPABASE_SERVICE_ROLE_KEY=$sr
+if (-not (Test-Path $localEnv)) {
+    throw "Missing local environment file: $localEnv"
+}
+
+$anonLine = Get-Content $localEnv |
+    Where-Object { $_ -match '^VITE_SUPABASE_ANON_KEY=' } |
+    Select-Object -First 1
+
+if (-not $anonLine) {
+    throw 'VITE_SUPABASE_ANON_KEY was not found in .env.local'
+}
+
+$anonKey = $anonLine.Substring('VITE_SUPABASE_ANON_KEY='.Length).Trim()
+
+if ([string]::IsNullOrWhiteSpace($anonKey)) {
+    throw 'The staging anon key is empty'
+}
+
+$secureKey = Read-Host 'Enter staging service_role key' -AsSecureString
+$bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
+
+try {
+    $serviceRoleKey =
+        [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
+} finally {
+    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+}
+
+if ([string]::IsNullOrWhiteSpace($serviceRoleKey)) {
+    throw 'The staging service-role key is empty'
+}
+
+New-Item -ItemType Directory -Force -Path $secretDir | Out-Null
+
+$content = @"
+STAGING_PROJECT_REF=$projectRef
+STAGING_SUPABASE_URL=$supabaseUrl
+STAGING_SUPABASE_ANON_KEY=$anonKey
+STAGING_SUPABASE_SERVICE_ROLE_KEY=$serviceRoleKey
 "@
-icacls D:\1V\_secrets\legalarmenia-staging.env /inheritance:r /grant:r "$env:USERNAME:F"
+
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[IO.File]::WriteAllText($secretFile, $content, $utf8NoBom)
+
+$identity = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+icacls $secretFile /inheritance:r /grant:r "${identity}:F" | Out-Null
+
+Remove-Variable serviceRoleKey, secureKey, content, anonKey -ErrorAction SilentlyContinue
+
+Write-Host 'Staging secret store created. No secret value was printed.'
 ```
 
 Then re-run the credential-gated verification and cleanup from the patched harness, and re-issue this report:
@@ -163,7 +185,7 @@ Then re-run the credential-gated verification and cleanup from the patched harne
 
 - A. BASE_SHA: `ad20a27bc32ba40c364fbe39d969285d4d17171b`
 - B. BRANCH: `codex/interactive-e2e-closure`
-- C. LOOP_COUNT: 2
+- C. LOOP_COUNT: 3
 - D. STAGING_PROJECT: `vavjajwiqsdhlweggalw`
 - E. TEST_USERS_CREATED: 7 (LOOP_1: clientA, clientB, lawyerA, lawyerB, admin, disabled, missingProfile) + 2 (LOOP_1 browser: lawyer, admin)
 - F. TEST_USERS_REMOVED: 8 of 9 (1 orphan remains — fixture cleanup blocked on staging service-role key)
