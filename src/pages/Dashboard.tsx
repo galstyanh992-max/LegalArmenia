@@ -376,8 +376,8 @@ const Dashboard = () => {
             <Pill icon={<IconCalendarPremium size={16} />} label={t('calendar:calendar', 'Calendar')} onClick={() => navigate('/calendar')} />
             <Pill icon={<IconMicPremium size={16} />} label={t('audio:audio', 'Audio')} onClick={() => navigate('/transcriptions')} />
             <Pill icon={<IconDocumentsPremium size={16} />} label={t('common:documents', 'Documents')} onClick={() => setDocGeneratorOpen(true)} />
-            <Pill icon={<IconArchivePremium size={16} />} label={t('common:my_documents')} onClick={() => navigate('/my-documents')} />
-            <Pill icon={<IconTargetPremium size={16} />} label={t('common:complaint')} onClick={() => setComplaintWizardOpen(true)} />
+            <Pill icon={<IconArchivePremium size={16} />} label={t('common:my_documents', 'My Docs')} onClick={() => navigate('/my-documents')} />
+            <Pill icon={<IconTargetPremium size={16} />} label={t('common:complaint', 'Complaint')} onClick={() => setComplaintWizardOpen(true)} />
             {/* Notes Editor */}
             <Sheet open={notesOpen} onOpenChange={setNotesOpen}>
               <Pill asChild icon={<IconNotePremium size={16} />} label={t('common:my_notes', 'Ф»Хґ ХЈЦЂХЎХјХёЦ‚ХґХ¶ХҐЦЂ')} />
@@ -453,7 +453,7 @@ const Dashboard = () => {
             )}
             {isAdmin && (
               <Sheet>
-              <Pill asChild icon={<IconChartPremium size={16} />} label={t('usage:usage')} />
+              <Pill asChild icon={<IconChartPremium size={16} />} label={t('usage:usage', 'Usage')} />
                 <SheetContent className="w-full sm:max-w-2xl overflow-y-auto surface-panel">
                   <SheetHeader>
                     <SheetTitle>{t('usage:usage_title')}</SheetTitle>

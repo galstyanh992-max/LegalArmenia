@@ -43,7 +43,7 @@ export function NotificationBell() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" aria-label={t('notifications', 'Notifications')}>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge
@@ -130,6 +130,7 @@ export function NotificationBell() {
                           variant="ghost"
                           size="icon"
                           className="h-6 w-6"
+                          aria-label={t('mark_as_read', 'Mark as read')}
                           onClick={() => markAsRead.mutate(notification.id)}
                         >
                           <Check className="h-3 w-3" />
@@ -139,6 +140,7 @@ export function NotificationBell() {
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                        aria-label={t('delete_notification', 'Delete notification')}
                         onClick={() => deleteNotification.mutate(notification.id)}
                       >
                         <X className="h-3 w-3" />

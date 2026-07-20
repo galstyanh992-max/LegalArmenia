@@ -1,0 +1,322 @@
+{
+  "generatedAt": "2026-07-20T04:41:30.218Z",
+  "loop": "LOOP_1",
+  "stagingProject": "vavjajwiqsdhlweggalw",
+  "liveInvocation": {
+    "status": "BLOCKED_NOT_DEPLOYED",
+    "note": "All target edge functions return HTTP 404 NOT_FOUND on the staging project; functions are not deployed. No paid tokens consumed (no function executed).",
+    "noAuth": [
+      {
+        "fn": "legal-chat",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "ai-analyze",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "multi-agent-analyze",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "generate-complaint",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "generate-document",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "ocr-process",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "audio-transcribe",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "extract-case-fields",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "analyze-files-for-complaint",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "kb-search-assistant",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-ai-chat",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-create-user",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-delete-user",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-reset-password",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "kb-search",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      }
+    ],
+    "invalidBearer": [
+      {
+        "fn": "legal-chat",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "ai-analyze",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "multi-agent-analyze",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "generate-complaint",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "generate-document",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "ocr-process",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "audio-transcribe",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "extract-case-fields",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "analyze-files-for-complaint",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "kb-search-assistant",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-ai-chat",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-create-user",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-delete-user",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "admin-reset-password",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      },
+      {
+        "fn": "kb-search",
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      }
+    ],
+    "clientRoleProbe": {
+      "fn": "legal-chat",
+      "clientRole": {
+        "status": 404,
+        "bodyHead": "{\"code\":\"NOT_FOUND\",\"message\":\"Requested function was not found\"}"
+      }
+    }
+  },
+  "staticAuthGating": {
+    "legal-chat": {
+      "sourcePresent": true,
+      "checksBearer": true,
+      "callsGetUser": false,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 952
+    },
+    "ai-analyze": {
+      "sourcePresent": true,
+      "checksBearer": true,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 1581
+    },
+    "multi-agent-analyze": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 1479
+    },
+    "generate-complaint": {
+      "sourcePresent": true,
+      "checksBearer": true,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 467
+    },
+    "generate-document": {
+      "sourcePresent": true,
+      "checksBearer": true,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 416
+    },
+    "ocr-process": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 553
+    },
+    "audio-transcribe": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 303
+    },
+    "extract-case-fields": {
+      "sourcePresent": true,
+      "checksBearer": true,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 478
+    },
+    "analyze-files-for-complaint": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 303
+    },
+    "kb-search-assistant": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 274
+    },
+    "admin-ai-chat": {
+      "sourcePresent": true,
+      "checksBearer": true,
+      "callsGetUser": false,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 124
+    },
+    "admin-create-user": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 171
+    },
+    "admin-delete-user": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 125
+    },
+    "admin-reset-password": {
+      "sourcePresent": true,
+      "checksBearer": false,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 93
+    },
+    "kb-search": {
+      "sourcePresent": true,
+      "checksBearer": true,
+      "callsGetUser": true,
+      "returns401": true,
+      "roleGuard": true,
+      "usesEdgeSecurity": true,
+      "lines": 402
+    }
+  },
+  "summary": {
+    "functionsReviewed": 15,
+    "functionsDeployed": 0,
+    "staticPassBearer": 7,
+    "staticPassGetUser": 13,
+    "staticPass401": 15,
+    "sourceMissing": []
+  },
+  "severity": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 0
+  },
+  "verdict": "No deployed edge-function attack surface exists on staging (all 404), so unauthenticated-invocation risk is not present. Source-level auth gating is present (Bearer + getUser + 401) across reviewed functions. Live edge-function acceptance is BLOCKED pending deployment to staging."
+}

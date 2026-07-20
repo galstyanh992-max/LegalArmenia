@@ -1,0 +1,229 @@
+{
+  "generatedAt": "2026-07-20T04:39:52.362Z",
+  "loop": "LOOP_1",
+  "stagingProject": "vavjajwiqsdhlweggalw",
+  "bucket": "case-files (private, MIME-allowlisted, 50MB)",
+  "results": [
+    {
+      "actor": "anon",
+      "op": "upload",
+      "path": "caseA/anon.pdf",
+      "expected": false,
+      "allowed": false,
+      "code": "new row violates row-level security policy",
+      "pass": true,
+      "vector": "anon upload",
+      "note": null
+    },
+    {
+      "actor": "anon",
+      "op": "download",
+      "path": "caseA/anon.pdf",
+      "expected": false,
+      "allowed": false,
+      "code": "Object not found",
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "anon",
+      "op": "list",
+      "path": "bucket root",
+      "expected": false,
+      "allowed": false,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "clientA",
+      "op": "upload",
+      "path": "own caseA",
+      "expected": true,
+      "allowed": true,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "clientA",
+      "op": "upload",
+      "path": "foreign caseB",
+      "expected": false,
+      "allowed": false,
+      "code": "new row violates row-level security policy",
+      "pass": true,
+      "vector": "cross-tenant case path",
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "own caseA",
+      "expected": true,
+      "allowed": true,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "foreign caseB",
+      "expected": false,
+      "allowed": false,
+      "code": "new row violates row-level security policy",
+      "pass": true,
+      "vector": "cross-tenant case path",
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "own user folder",
+      "expected": true,
+      "allowed": true,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "other user folder",
+      "expected": false,
+      "allowed": false,
+      "code": "new row violates row-level security policy",
+      "pass": true,
+      "vector": "other user temp prefix",
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "own folder bad subfolder",
+      "expected": false,
+      "allowed": false,
+      "code": "new row violates row-level security policy",
+      "pass": true,
+      "vector": "disallowed subfolder",
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "forbidden MIME",
+      "expected": false,
+      "allowed": false,
+      "code": "mime type application/x-msdownload is not supported",
+      "pass": true,
+      "vector": "MIME mismatch/exe",
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "html content-type",
+      "expected": false,
+      "allowed": false,
+      "code": "mime type text/html is not supported",
+      "pass": true,
+      "vector": "MIME mismatch",
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "allowed png",
+      "expected": true,
+      "allowed": true,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "zero-byte",
+      "expected": true,
+      "allowed": true,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "zero-byte accepted; not a security issue"
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "oversized 50MB+",
+      "expected": false,
+      "allowed": false,
+      "code": "The object exceeded the maximum allowed size",
+      "pass": true,
+      "vector": "oversized",
+      "note": null
+    },
+    {
+      "actor": "lawyerA",
+      "op": "upload",
+      "path": "path traversal",
+      "expected": false,
+      "allowed": false,
+      "code": null,
+      "pass": true,
+      "vector": "path traversal",
+      "note": "upload accepted but object confined to case prefix; no bucket-root escape"
+    },
+    {
+      "actor": "clientA",
+      "op": "download",
+      "path": "foreign caseB object",
+      "expected": false,
+      "allowed": false,
+      "code": "Object not found",
+      "pass": true,
+      "vector": "unauthorized read",
+      "note": null
+    },
+    {
+      "actor": "clientA",
+      "op": "createSignedUrl",
+      "path": "foreign caseB object",
+      "expected": false,
+      "allowed": false,
+      "code": "Object not found",
+      "pass": true,
+      "vector": "unauthorized signed URL",
+      "note": null
+    },
+    {
+      "actor": "clientA",
+      "op": "delete",
+      "path": "foreign caseB object",
+      "expected": false,
+      "allowed": false,
+      "code": null,
+      "pass": true,
+      "vector": "unauthorized delete",
+      "note": "remove() returns no error on RLS denial; object survival is the real signal (after=true)"
+    }
+  ],
+  "summary": {
+    "total": 19,
+    "failed": 0
+  },
+  "severity": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 0,
+    "P0Details": [],
+    "P1Details": []
+  }
+}

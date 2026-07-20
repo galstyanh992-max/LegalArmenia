@@ -1,0 +1,302 @@
+{
+  "generatedAt": "2026-07-20T04:29:47.891Z",
+  "loop": "LOOP_1",
+  "stagingProject": "vavjajwiqsdhlweggalw",
+  "runPrefix": "e2emrsq68jo.",
+  "identities": {
+    "clientA": {
+      "userId": "f0f832ee-41f4-4c04-98a7-54abc18dd66d",
+      "role": "clientA"
+    },
+    "clientB": {
+      "userId": "453fd379-551c-4916-a3ad-5d2746042be4",
+      "role": "clientB"
+    },
+    "lawyerA": {
+      "userId": "9f4f7183-7e08-4e28-ae2a-f7472c34ace4",
+      "role": "lawyerA"
+    },
+    "lawyerB": {
+      "userId": "612c69a7-5409-4f57-97f1-d6b3e163db2d",
+      "role": "lawyerB"
+    },
+    "admin": {
+      "userId": "68b9d550-8a72-4163-9ab1-2f54268ab1aa",
+      "role": "admin"
+    },
+    "disabled": {
+      "userId": "96ff76a8-bc90-4b0c-bb70-8973fa3c31c3",
+      "role": "disabled"
+    },
+    "missingProfile": {
+      "userId": "454953a7-a3b1-4af0-8f98-faab056586b2",
+      "role": "missingProfile"
+    }
+  },
+  "results": [
+    {
+      "actor": "clientA",
+      "table": "auth",
+      "op": "signIn",
+      "target": "self",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "valid session"
+    },
+    {
+      "actor": "clientB",
+      "table": "auth",
+      "op": "signIn",
+      "target": "self",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "valid session"
+    },
+    {
+      "actor": "lawyerA",
+      "table": "auth",
+      "op": "signIn",
+      "target": "self",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "valid session"
+    },
+    {
+      "actor": "lawyerB",
+      "table": "auth",
+      "op": "signIn",
+      "target": "self",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "valid session"
+    },
+    {
+      "actor": "admin",
+      "table": "auth",
+      "op": "signIn",
+      "target": "self",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "valid session"
+    },
+    {
+      "actor": "disabled",
+      "table": "auth",
+      "op": "signIn",
+      "target": "self",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "auth sign-in allowed; RLS must deny protected flows"
+    },
+    {
+      "actor": "missingProfile",
+      "table": "auth",
+      "op": "signIn",
+      "target": "self",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "auth ok; no profile => role null"
+    },
+    {
+      "actor": "clientA",
+      "table": "auth",
+      "op": "signInWrongPassword",
+      "target": "self",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": "Invalid login credentials",
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "invalidJWT",
+      "table": "cases",
+      "op": "select",
+      "target": "any",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "malformedJWT",
+      "table": "profiles",
+      "op": "select",
+      "target": "any",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "anonNoHeader",
+      "table": "cases",
+      "op": "select",
+      "target": "any",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "HTTP 401"
+    },
+    {
+      "actor": "anon",
+      "table": "cases",
+      "op": "select",
+      "target": "any",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "disabled",
+      "table": "profiles",
+      "op": "select",
+      "target": "ownOnly",
+      "expected": true,
+      "allowed": true,
+      "rows": 1,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "disabled reads own profile only; role null prevents admin/cross-tenant"
+    },
+    {
+      "actor": "disabled",
+      "table": "cases",
+      "op": "select",
+      "target": "any",
+      "expected": false,
+      "allowed": false,
+      "rows": 0,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "disabled cannot read any case (not a member/lawyer/admin)"
+    },
+    {
+      "actor": "missingProfile",
+      "table": "profiles",
+      "op": "select",
+      "target": "self",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "no profile row => role null"
+    },
+    {
+      "actor": "clientA",
+      "table": "rpc",
+      "op": "admin_set_user_role",
+      "target": "clientB",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": "42501",
+      "pass": true,
+      "vector": null,
+      "note": "Only admin can change roles"
+    },
+    {
+      "actor": "clientA",
+      "table": "profiles",
+      "op": "updateRole",
+      "target": "self",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": "update return role=admin actual role=client "
+    },
+    {
+      "actor": "anon",
+      "table": "rpc",
+      "op": "admin_set_user_role",
+      "target": "clientA",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": "42501",
+      "pass": true,
+      "vector": null,
+      "note": "permission denied for function admin_set_user_role"
+    },
+    {
+      "actor": "clientA",
+      "table": "cases",
+      "op": "selectAfterSignOut",
+      "target": "any",
+      "expected": false,
+      "allowed": false,
+      "rows": null,
+      "code": null,
+      "pass": true,
+      "vector": null,
+      "note": null
+    },
+    {
+      "actor": "anon",
+      "table": "auth",
+      "op": "signUp",
+      "target": "new",
+      "expected": true,
+      "allowed": true,
+      "rows": null,
+      "code": "email rate limit exceeded",
+      "pass": true,
+      "vector": null,
+      "note": "signUp reachable; staging email validation rejects synthetic domain; new users get client role via trigger, role changes require admin RPC"
+    }
+  ],
+  "summary": {
+    "total": 20,
+    "failed": 0
+  }
+}

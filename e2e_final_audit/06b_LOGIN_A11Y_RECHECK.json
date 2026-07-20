@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-07-20T05:24:42.055Z",
+  "loop": "LOOP_2_LOGIN_RECHECK",
+  "devServer": "http://localhost:8080",
+  "viewportMeta": "width=device-width, initial-scale=1.0",
+  "consoleErrors": [],
+  "axeResults": [
+    {
+      "label": "login",
+      "viewportMeta": "width=device-width, initial-scale=1.0",
+      "axe": {
+        "violationCount": 4,
+        "byImpact": {
+          "moderate": [
+            {
+              "id": "landmark-one-main",
+              "nodes": 1,
+              "help": "Document should have one main landmark",
+              "samples": [
+                {
+                  "html": "<html lang=\"en\" class=\"light\" style=\"color-scheme: light;\">",
+                  "target": [
+                    "html"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "page-has-heading-one",
+              "nodes": 1,
+              "help": "Page should contain a level-one heading",
+              "samples": [
+                {
+                  "html": "<html lang=\"en\" class=\"light\" style=\"color-scheme: light;\">",
+                  "target": [
+                    "html"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "region",
+              "nodes": 6,
+              "help": "All page content should be contained by landmarks",
+              "samples": [
+                {
+                  "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                  "target": [
+                    ".sr-only"
+                  ]
+                },
+                {
+                  "html": "<div class=\"flex flex-col space-y-1.5 p-6 sm:p-8 border-b border-white/5 text-center\">",
+                  "target": [
+                    ".space-y-1\\.5"
+                  ]
+                },
+                {
+                  "html": "<div class=\"space-y-2\">",
+                  "target": [
+                    ".space-y-2:nth-child(1)"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "skip-link",
+              "nodes": 1,
+              "help": "The skip-link target should exist and be focusable",
+              "samples": [
+                {
+                  "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                  "target": [
+                    ".sr-only"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "blockingViolations": []
+}

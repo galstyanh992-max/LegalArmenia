@@ -1,0 +1,205 @@
+{
+  "generatedAt": "2026-07-20T05:00:41.310Z",
+  "loop": "LOOP_1",
+  "stagingProject": "vavjajwiqsdhlweggalw",
+  "devServer": "http://localhost:8080",
+  "results": [
+    {
+      "flow": "login",
+      "actor": "lawyer",
+      "expected": true,
+      "allowed": true,
+      "url": "http://localhost:8080/dashboard"
+    },
+    {
+      "flow": "dashboard",
+      "actor": "lawyer",
+      "expected": true,
+      "allowed": true,
+      "note": "fixture case visible"
+    },
+    {
+      "flow": "caseDetail",
+      "actor": "lawyer",
+      "expected": true,
+      "allowed": true,
+      "note": "body len=760"
+    },
+    {
+      "flow": "fileUploadControl",
+      "actor": "lawyer",
+      "expected": true,
+      "allowed": false,
+      "note": "file input count=0"
+    },
+    {
+      "flow": "login",
+      "actor": "admin",
+      "expected": true,
+      "allowed": true,
+      "url": "http://localhost:8080/dashboard"
+    },
+    {
+      "flow": "adminPanel",
+      "actor": "admin",
+      "expected": true,
+      "allowed": true,
+      "note": "admin body len=393",
+      "url": "http://localhost:8080/admin"
+    },
+    {
+      "flow": "aiFlowErrorState",
+      "actor": "lawyer",
+      "expected": true,
+      "allowed": true,
+      "note": "undeployed fn 404; app error state shown=true"
+    },
+    {
+      "flow": "emptyState",
+      "actor": "lawyer",
+      "expected": true,
+      "allowed": true,
+      "note": "my-documents len=196"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m320",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=320 clientW=320"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m360",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=360 clientW=360"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m390",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=390 clientW=390"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m430",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=430 clientW=430"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "t768",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=768 clientW=768"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "l1024",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=1024 clientW=1024"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "d1440",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=1440 clientW=1440"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "w1920",
+      "page": "dashboard",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=1920 clientW=1920"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m320",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=320 clientW=320"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m360",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=360 clientW=360"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m390",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=390 clientW=390"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "m430",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=430 clientW=430"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "t768",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=768 clientW=768"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "l1024",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=1024 clientW=1024"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "d1440",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=1440 clientW=1440"
+    },
+    {
+      "flow": "viewportOverflow",
+      "viewport": "w1920",
+      "page": "login",
+      "expected": false,
+      "allowed": false,
+      "note": "scrollW=1920 clientW=1920"
+    },
+    {
+      "flow": "consoleErrors",
+      "expected": false,
+      "allowed": false,
+      "note": ""
+    }
+  ],
+  "summary": {
+    "total": 25,
+    "failed": 1,
+    "consoleErrors": 0
+  },
+  "fatal": null
+}

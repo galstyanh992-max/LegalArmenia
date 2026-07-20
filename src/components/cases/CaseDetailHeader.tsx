@@ -30,7 +30,7 @@ export function CaseDetailHeader({ userEmail, onSignOut }: CaseDetailHeaderProps
             </span>
             <NotificationBell />
             <LanguageSwitcher />
-            <Button variant="ghost" size="icon" onClick={onSignOut} className="h-11 w-11">
+            <Button variant="ghost" size="icon" onClick={onSignOut} className="h-11 w-11" aria-label={t('common:logout', 'Logout')}>
               <LogOut className="h-5 w-5" />
             </Button>
           </div>
