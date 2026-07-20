@@ -1,103 +1,168 @@
 {
-  "generatedAt": "2026-07-20T05:00:41.311Z",
+  "generatedAt": "2026-07-20T06:09:41.277Z",
   "method": "axe-core CDN injection + manual viewport/overflow checks",
   "results": [
     {
       "label": "login",
-      "violationCount": 5,
+      "violationCount": 4,
       "byImpact": {
         "moderate": [
           {
             "id": "landmark-one-main",
             "nodes": 1,
-            "help": "Document should have one main landmark"
+            "help": "Document should have one main landmark",
+            "samples": [
+              {
+                "html": "<html lang=\"en\" class=\"light\" style=\"color-scheme: light;\">",
+                "target": [
+                  "html"
+                ]
+              }
+            ]
           },
           {
             "id": "page-has-heading-one",
             "nodes": 1,
-            "help": "Page should contain a level-one heading"
+            "help": "Page should contain a level-one heading",
+            "samples": [
+              {
+                "html": "<html lang=\"en\" class=\"light\" style=\"color-scheme: light;\">",
+                "target": [
+                  "html"
+                ]
+              }
+            ]
           },
           {
             "id": "region",
             "nodes": 6,
-            "help": "All page content should be contained by landmarks"
+            "help": "All page content should be contained by landmarks",
+            "samples": [
+              {
+                "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                "target": [
+                  ".sr-only"
+                ]
+              },
+              {
+                "html": "<div class=\"flex flex-col space-y-1.5 p-6 sm:p-8 border-b border-white/5 text-center\">",
+                "target": [
+                  ".space-y-1\\.5"
+                ]
+              },
+              {
+                "html": "<div class=\"space-y-2\">",
+                "target": [
+                  ".space-y-2:nth-child(1)"
+                ]
+              }
+            ]
           },
           {
             "id": "skip-link",
             "nodes": 1,
-            "help": "The skip-link target should exist and be focusable"
-          }
-        ],
-        "critical": [
-          {
-            "id": "meta-viewport",
-            "nodes": 1,
-            "help": "Zooming and scaling must not be disabled"
+            "help": "The skip-link target should exist and be focusable",
+            "samples": [
+              {
+                "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                "target": [
+                  ".sr-only"
+                ]
+              }
+            ]
           }
         ]
       }
     },
     {
       "label": "dashboard",
-      "violationCount": 5,
+      "violationCount": 3,
       "byImpact": {
-        "critical": [
-          {
-            "id": "button-name",
-            "nodes": 3,
-            "help": "Buttons must have discernible text"
-          },
-          {
-            "id": "meta-viewport",
-            "nodes": 1,
-            "help": "Zooming and scaling must not be disabled"
-          }
-        ],
         "moderate": [
           {
             "id": "page-has-heading-one",
             "nodes": 1,
-            "help": "Page should contain a level-one heading"
+            "help": "Page should contain a level-one heading",
+            "samples": [
+              {
+                "html": "<html lang=\"en\" class=\"light\" style=\"color-scheme: light;\">",
+                "target": [
+                  "html"
+                ]
+              }
+            ]
           },
           {
             "id": "region",
             "nodes": 2,
-            "help": "All page content should be contained by landmarks"
+            "help": "All page content should be contained by landmarks",
+            "samples": [
+              {
+                "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                "target": [
+                  "a"
+                ]
+              },
+              {
+                "html": "<div class=\"bg-card border shadow-lg rounded-2xl rounded-br-sm px-4 py-2 text-sm font-medium text-foreground max-w-[200px] text-right animate-in fade-in slide-in-from-bottom-2 duration-500\">Ask Legal ",
+                "target": [
+                  ".bg-card"
+                ]
+              }
+            ]
           },
           {
             "id": "skip-link",
             "nodes": 1,
-            "help": "The skip-link target should exist and be focusable"
+            "help": "The skip-link target should exist and be focusable",
+            "samples": [
+              {
+                "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                "target": [
+                  "a"
+                ]
+              }
+            ]
           }
         ]
       }
     },
     {
       "label": "caseDetail",
-      "violationCount": 4,
+      "violationCount": 2,
       "byImpact": {
-        "critical": [
-          {
-            "id": "button-name",
-            "nodes": 2,
-            "help": "Buttons must have discernible text"
-          },
-          {
-            "id": "meta-viewport",
-            "nodes": 1,
-            "help": "Zooming and scaling must not be disabled"
-          }
-        ],
         "moderate": [
           {
             "id": "region",
             "nodes": 2,
-            "help": "All page content should be contained by landmarks"
+            "help": "All page content should be contained by landmarks",
+            "samples": [
+              {
+                "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                "target": [
+                  "a"
+                ]
+              },
+              {
+                "html": "<div class=\"bg-card border shadow-lg rounded-2xl rounded-br-sm px-4 py-2 text-sm font-medium text-foreground max-w-[200px] text-right animate-in fade-in slide-in-from-bottom-2 duration-500\">Ask Legal ",
+                "target": [
+                  ".bg-card"
+                ]
+              }
+            ]
           },
           {
             "id": "skip-link",
             "nodes": 1,
-            "help": "The skip-link target should exist and be focusable"
+            "help": "The skip-link target should exist and be focusable",
+            "samples": [
+              {
+                "html": "<a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded\">Skip to ",
+                "target": [
+                  "a"
+                ]
+              }
+            ]
           }
         ]
       }
@@ -105,33 +170,8 @@
   ],
   "summary": {
     "pages": 3,
-    "blockingViolations": 5
+    "blockingViolations": 0
   },
-  "blocking": [
-    {
-      "page": "login",
-      "id": "meta-viewport",
-      "nodes": 1
-    },
-    {
-      "page": "dashboard",
-      "id": "button-name",
-      "nodes": 3
-    },
-    {
-      "page": "dashboard",
-      "id": "meta-viewport",
-      "nodes": 1
-    },
-    {
-      "page": "caseDetail",
-      "id": "button-name",
-      "nodes": 2
-    },
-    {
-      "page": "caseDetail",
-      "id": "meta-viewport",
-      "nodes": 1
-    }
-  ]
+  "blocking": [],
+  "loop": "LOOP_4"
 }

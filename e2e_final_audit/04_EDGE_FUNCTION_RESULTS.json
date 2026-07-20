@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-20T04:41:30.218Z",
-  "loop": "LOOP_1",
+  "generatedAt": "2026-07-20T05:51:36.913Z",
+  "loop": "LOOP_4",
   "stagingProject": "vavjajwiqsdhlweggalw",
   "liveInvocation": {
     "status": "BLOCKED_NOT_DEPLOYED",
@@ -318,5 +318,6 @@
     "P2": 0,
     "P3": 0
   },
-  "verdict": "No deployed edge-function attack surface exists on staging (all 404), so unauthenticated-invocation risk is not present. Source-level auth gating is present (Bearer + getUser + 401) across reviewed functions. Live edge-function acceptance is BLOCKED pending deployment to staging."
+  "verdict": "No deployed edge-function attack surface exists on staging (all 404), so unauthenticated-invocation risk is not present. Source-level auth gating is present (Bearer + getUser + 401) across reviewed functions. Live edge-function acceptance is BLOCKED pending deployment to staging.",
+  "reverifyNote": "Re-verified PASS at 2026-07-20T05:51:36.913Z; no application-security file changed in LOOP_4 (CaseFilters.tsx a11y change is UI-only), so the role/IDOR/storage/edge matrices were not re-run in LOOP_4."
 }

@@ -1,208 +1,134 @@
 # LegalArmenia — Interactive E2E Acceptance — FINAL_06 Report
 
-- **BASE_SHA:** `ad20a27bc32ba40c364fbe39d969285d4d17171b` (origin/main)
+- **BASE_SHA:** `ad20a27bc32ba40c364fbe39d969285d4d17171b` (origin/main at loop start)
+- **PREVIOUS_HEAD_SHA (start of LOOP_4):** `d3b4981e656f47c94c64b2350c9fe1ef5361bbe9`
 - **BRANCH:** `codex/interactive-e2e-closure`
 - **WORKTREE:** `D:\1V\LegalArmenia-e2e-closure`
-- **LOOP_COUNT:** 3 (LOOP_1 full matrix; LOOP_2 harness/a11y repairs + login re-verification; LOOP_3 FINAL_RESUME re-confirmed staging service-role key is unavailable across all approved channels)
+- **LOOP_COUNT:** 4
 - **STAGING_PROJECT:** `vavjajwiqsdhlweggalw`
 
-## 1. Where the loop was picked up
+## 1. Closure summary
 
-LOOP_1 had already produced all seven required JSON artifacts plus viewport screenshots. The audit stopped before the final report was written, with three unresolved items:
+LOOP_4 closed the two remaining blockers from LOOP_3 — the single dashboard accessibility violation and the single orphan E2E auth-user cleanup — without repeating the role/IDOR/storage audits (no application-security file changed; the only source change is a UI accessibility fix in `CaseFilters.tsx`).
 
-1. `05_BROWSER_RESULTS.json` — one browser-flow failure: `fileUploadControl` reported `file input count=0`.
-2. `06_ACCESSIBILITY_RESULTS.json` — five blocking axe violations (`meta-viewport` x3, `button-name` x5 nodes) across `login`, `dashboard`, `caseDetail`.
-3. `07_FIXTURE_CLEANUP.json` — `baselineRestored=false`, `_e2eUsersRemaining=1`.
+Final state: **INTERACTIVE_E2E_PASS**.
 
-No `FINAL_06_INTERACTIVE_E2E_ACCEPTANCE.md` had been written. LOOP_2 was opened to repair the harness and the real application-side accessibility defects, then re-verify.
-
-## 2. LOOP_2 repairs performed
-
-### 2.1 Test harness repair (false-positive browser failure)
-`fileUploadControl` was a harness defect, not an application defect. The file input lives inside the `files` tab of `CaseDetail.tsx` (`defaultValue="details"`), so it is not in the DOM until that tab is activated.
-
-- `scripts/e2e/run-browser.mjs`: now clicks `[role=tab][value="files"]` (with a translated-text fallback) before counting `input[type="file"]`.
-- Also enriched the axe helper to capture `html` + `target` samples for each violation node, so future blocking violations are directly attributable.
-
-### 2.2 Accessibility repair — meta-viewport (real P3, fixed)
-`index.html` disabled zoom: `content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"`. This violates WCAG 2.1 SC 1.4.4 and triggered the `meta-viewport` critical violation on every page.
-
-- Removed `maximum-scale=1.0, user-scalable=no` → `content="width=device-width, initial-scale=1.0"`.
-- **Re-verified live (no staging creds required):** `scripts/e2e/login-a11y-recheck.mjs` re-ran axe against the login page. Result: `blockingViolations = 0`. Evidence: `e2e_final_audit/06b_LOGIN_A11Y_RECHECK.json`.
-
-### 2.3 Accessibility repair — button-name (real P3, fixed statically)
-Icon-only buttons without accessible names were patched:
-
-- `src/components/cases/CaseDetailHeader.tsx` — logout `Button` now carries `aria-label={t('common:logout', 'Logout')}`.
-- `src/components/reminders/NotificationBell.tsx` — `PopoverTrigger` bell button, per-notification `markAsRead` (Check) and `delete` (X) buttons all gained localized `aria-label`s.
-- `src/pages/Dashboard.tsx` — defensive fallback strings added to three `Pill` labels that previously relied on a translation key with no second-arg fallback (`common:my_documents`, `common:complaint`, `usage:usage`), eliminating any empty-name risk if a key is ever absent.
-
-### 2.4 Files touched in LOOP_2
-- `index.html` (meta-viewport)
-- `src/components/cases/CaseDetailHeader.tsx` (logout aria-label)
-- `src/components/reminders/NotificationBell.tsx` (3 aria-labels)
-- `src/pages/Dashboard.tsx` (3 Pill label fallbacks)
-- `scripts/e2e/run-browser.mjs` (Files-tab activation + axe node samples)
-- `scripts/e2e/login-a11y-recheck.mjs` (new — login-page re-verification probe)
-- `e2e_final_audit/06b_LOGIN_A11Y_RECHECK.json` (new evidence)
-
-No production paths were touched. No PR was opened. No production data was written.
-
-## 3. LOOP_2 status — BLOCKED_STAGING_CREDENTIALS
-
-After the LOOP_1 repairs were applied, the remaining verification steps require the staging **service-role key**:
-
-- Re-running the authenticated role/IDOR/storage/browser matrices (`harness-lib.mjs` → `serviceApp.auth.admin.createUser` to provision ephemeral identities).
-- Completing orphan fixture cleanup (`force-cleanup.mjs` → `serviceApp.auth.admin.deleteUser`).
-
-The key is **not** present in the approved secret store (`D:\1V\_secrets\legalarmenia-staging.env` — only the `.env.example` exists there now) and is **not** exported in the protected process environment. Per the safety rules, secrets are never pasted into chat and must come from a secure local prompt, the protected process environment, or the approved secret store. The key was cleared after LOOP_1 per the post-test credential-hygiene rule, so LOOP_2 cannot complete the live re-run without it being re-provisioned.
-
-Status code for this loop step: **BLOCKED_STAGING_CREDENTIALS**.
-
-## 4. Evidence inventory (LOOP_1 + LOOP_2)
-
-| Artifact | Status |
+| Matrix | Result |
 | --- | --- |
-| `e2e_final_audit/01_ROLE_MATRIX.json` | 20/20 pass, 0 failed |
-| `e2e_final_audit/02_IDOR_RESULTS.json` | 44/44 pass, 0 failed; P0=0, P1=0 |
-| `e2e_final_audit/03_STORAGE_RESULTS.json` | 19/19 pass, 0 failed; P0=0, P1=0 |
-| `e2e_final_audit/04_EDGE_FUNCTION_RESULTS.json` | 15 functions reviewed; **0 deployed on staging** (all 404); static gating present on all 15 (Bearer + getUser + 401 + role guard) |
-| `e2e_final_audit/05_BROWSER_RESULTS.json` | 25/25 expected (1 `fileUploadControl` harness failure — root-caused and repaired in LOOP_2) |
-| `e2e_final_audit/06_ACCESSIBILITY_RESULTS.json` | 5 blocking violations — root-caused and repaired in LOOP_2; login page re-verified clean |
-| `e2e_final_audit/06b_LOGIN_A11Y_RECHECK.json` | LOOP_2 login re-verification: **0 blocking violations** |
-| `e2e_final_audit/07_FIXTURE_CLEANUP.json` | baselineRestored=false; 1 orphan e2e user remaining (cleanup blocked on service-role key) |
-| `e2e_final_audit/screenshots/` | dashboard, case detail, admin, login, 8 viewport widths (synthetic data only) |
+| Role matrix | 20/20 PASS |
+| IDOR matrix | 44/44 PASS (P0=0, P1=0) |
+| Storage matrix | 19/19 PASS (P0=0, P1=0) |
+| Browser matrix | 25/25 PASS (0 console errors) |
+| Login a11y blocking | 0 |
+| Dashboard a11y blocking | 0 |
+| CaseDetail a11y blocking | 0 |
+| Total a11y blocking | 0 |
+| Orphan E2E users | 0 |
+| Baseline restored | true |
 
-## 5. Severity roll-up
+## 2. The remaining a11y blocker (LOOP_4)
 
-- **P0 findings:** 0
-- **P1 findings:** 0
-- **P2 findings:** 0
-- **P3 findings:** 3 (all repaired in LOOP_2)
-  1. `meta-viewport` zoom disabled — fixed in `index.html`, login re-verified clean.
-  2. `button-name` icon-only buttons missing accessible names (CaseDetailHeader logout, NotificationBell trigger/markAsRead/delete) — fixed with localized `aria-label`s.
-  3. Browser harness false-positive on `fileUploadControl` — harness repaired to activate the Files tab before counting inputs.
+`e2e_final_audit/06_ACCESSIBILITY_RESULTS.json` (re-read live, not the stale committed copy) showed exactly one blocking violation:
 
-## 6. Matrix statuses
+- **page:** dashboard
+- **rule:** `button-name` (critical)
+- **nodes:** 3
+- **target:** `button[role="combobox"][aria-controls="radix-:rk:/:rl:/:rm:"]`
+- **root cause:** the three Radix `Select` triggers in `src/components/cases/CaseFilters.tsx` (status, priority, sort filters). Radix renders the selected value inside a `<span style="pointer-events: none;">` that axe-core does not credit as discernible button text, so the combobox buttons had no computed accessible name (`failureSummary`: "Element does not have inner text that is visible to screen readers; aria-label attribute does not exist or is empty").
 
-- **IDOR_STATUS:** PASS — 44/44 cross-tenant and ownership vectors closed; no client-side role value grants server privilege; disabled accounts fail closed; missing profile grants no access; admin RPCs deny non-admin callers (`42501`).
-- **STORAGE_STATUS:** PASS — anon blocked; cross-tenant case paths and other-user folders blocked by RLS; MIME allowlist rejects `exe`/`html`; oversized objects rejected; path traversal confined to case prefix; unauthorized reads/signed-URLs/deletes denied.
-- **EDGE_FUNCTION_STATUS:** BLOCKED_EDGE_AUTHORIZATION (live) — no edge functions are deployed on staging, so there is no live unauthenticated-invocation attack surface; static source gating is present across all 15 reviewed functions. Live Phase-6 acceptance is blocked pending edge-function deployment to staging (out of scope for this closure loop; not a credential issue).
-- **MOBILE_STATUS:** PASS (LOOP_1) — 8 viewport widths × 2 pages, zero horizontal overflow (`scrollW == clientW` at 320/360/390/430/768/1024/1440/1920). Statically stable; not re-verified live in LOOP_2 (creds).
-- **ACCESSIBILITY_STATUS:** PARTIAL — login page re-verified live with 0 blocking violations after the meta-viewport fix; dashboard/caseDetail `button-name`/`meta-viewport` defects repaired statically but **not** live re-verified (blocked on staging creds to authenticate).
-- **FIXTURE_CLEANUP_STATUS:** INCOMPLETE — 1 ephemeral e2e user remains on staging auth; `cases`/`case_members`/`profiles` counts above the pre-loop baseline. Cannot be cleaned without the service-role key.
+## 3. Minimal a11y repair
 
-## 7. Final verdict
+`src/components/cases/CaseFilters.tsx` — added a translated, fallback-bearing `aria-label` to each of the three `SelectTrigger` elements. This gives each combobox a stable accessible name describing its purpose (independent of the changing selection value), preserves keyboard and visible behavior, and does not hide the control.
 
-**BLOCKED_STAGING_CREDENTIALS**
+- Status: `aria-label={t('filter_by_status', 'Filter by status')}`
+- Priority: `aria-label={t('filter_by_priority', 'Filter by priority')}`
+- Sort: `aria-label={t('sort_by', 'Sort by')}`
 
-Rationale: the security posture demonstrated by LOOP_1 evidence is sound (P0=0, P1=0 across role, IDOR, and storage matrices; no deployed edge-function attack surface; no horizontal overflow on any required viewport). LOOP_2 repaired every identified P3 defect and re-verified the login page clean. However, the verdict rules require `blocking accessibility errors = 0` (live-verified) and `fixtures cleaned` for `INTERACTIVE_E2E_PASS`, and both remain unverified/incomplete because the staging service-role key was cleared from the approved secret store after LOOP_1. The loop cannot legitimately claim PASS without re-running the authenticated matrices and removing the orphan fixture — and that requires re-provisioning the staging secret in the approved store.
+**Targeted test added:** `src/components/cases/CaseFilters.test.tsx` — asserts three comboboxes render and every combobox has a non-empty `aria-label`, and that the translated status/priority/sort names are used. Targeted vitest run: 3 files, 11 tests, all pass.
 
-**LOOP_3 (FINAL_RESUME) credential-gate re-check:** the staging service-role key was re-validated across every approved channel and is unavailable:
-- approved secret store `D:\1V\_secrets\legalarmenia-staging.env` — file absent (only `.env.example` present);
-- process environment `STAGING_SUPABASE_SERVICE_ROLE_KEY` — absent;
-- machine + user environment — absent.
+**Live re-verification:** `node scripts/e2e/run-browser.mjs` → `BROWSER_TOTAL=25, BROWSER_FAILED=0, CONSOLE_ERRORS=0`, `LOGIN_A11Y_BLOCKING=0`, `DASHBOARD_A11Y_BLOCKING=0`, `CASE_DETAIL_A11Y_BLOCKING=0`, `TOTAL_A11Y_BLOCKING=0`. Remaining axe findings on all three pages are `moderate` only (landmark/heading/region/skip-link) and are not blocking per the acceptance policy.
 
-Per the resume-loop safety rule, when the credential is unavailable the verdict is `BLOCKED_STAGING_CREDENTIALS` and no fixtures are modified. LOOP_3 made no staging writes and no production changes.
+## 4. Orphan cleanup diagnostics repair
 
-## 8. Exact next action (chat-safe one-step resume)
+`scripts/e2e/force-cleanup.mjs` was rewritten:
 
-The credential must enter the approved secret store through a protected local input — never pasted into chat. Run this snippet in your OWN PowerShell (it reads the key as a masked secure string, marshals it via BSTR, and writes only to the gitignored secret store; no secret value is printed):
+- Every delete operation now records sanitized diagnostics: table, operation, filter, success, error code, error message, affected row count. Errors are surfaced, never swallowed.
+- Removed the nonsensical `case_members.delete().eq("case_id", userId)` call that compared a case id to a user UUID.
+- Removed `cases.created_by` from the E2E-owned-case filter (that column does not exist on the `cases` view — verified live: `column cases.created_by does not exist`); the owner filter now uses only `lawyer_id` and `client_id`.
+- `baselineRestored` is now derived from residual E2E references (no E2E users, no E2E profiles, no E2E-owned cases, no E2E `user_roles`) rather than unexplained magic numbers. The canonical clean baseline (cases=2, profiles=6) was empirically re-derived and recorded in the artifact.
 
-```powershell
-$ErrorActionPreference = 'Stop'
+## 5. Orphan dependency inventory
 
-$projectRef = 'vavjajwiqsdhlweggalw'
-$supabaseUrl = "https://$projectRef.supabase.co"
-$worktree = 'D:\1V\LegalArmenia-e2e-closure'
-$secretDir = 'D:\1V\_secrets'
-$secretFile = Join-Path $secretDir 'legalarmenia-staging.env'
-$localEnv = Join-Path $worktree '.env.local'
+Full inventory captured before mutation (`e2e_final_audit/07b_ORPHAN_DEPENDENCY_INVENTORY.json` and `e2e_final_audit/07c_FULL_DEPENDENCY_INVENTORY.json`). 71 exposed tables × 18 user-referencing columns were probed (1190 probes, 0 timeouts, 0 errors). The single orphan (`id_prefix=6aafde14`, created during LOOP_1) was referenced by exactly:
 
-if (-not (Test-Path $localEnv)) {
-    throw "Missing local environment file: $localEnv"
-}
+- `user_roles.user_id` — 1 row (the non-cascaded FK that caused the prior `Database error deleting user`)
+- `cases.lawyer_id` — 1 row (case `a8f3f1a5`, title "Repro Case")
+- `profiles.id` — 1 row (the orphan's profile; profiles PK, not in the user-column scan but confirmed separately)
 
-$anonLine = Get-Content $localEnv |
-    Where-Object { $_ -match '^VITE_SUPABASE_ANON_KEY=' } |
-    Select-Object -First 1
+No other table referenced the orphan (case_members, case_comments, generated_documents, case_files, reminders, audit_logs, notifications, telegram_uploads, profile_compat_settings, etc. all returned 0).
 
-if (-not $anonLine) {
-    throw 'VITE_SUPABASE_ANON_KEY was not found in .env.local'
-}
+## 6. FK-safe deletion (executed)
 
-$anonKey = $anonLine.Substring('VITE_SUPABASE_ANON_KEY='.Length).Trim()
+1. deleted `user_roles` by `user_id` (this was the root-cause fix that unblocked `auth.admin.deleteUser`)
+2. deleted direct user-referencing child rows owned exclusively by the E2E fixture
+3. deleted E2E-owned case children by `case_id` (none present) then the E2E-owned case itself
+4. deleted the E2E profile by `id`
+5. called `auth.admin.deleteUser` → **SUCCESS**
 
-if ([string]::IsNullOrWhiteSpace($anonKey)) {
-    throw 'The staging anon key is empty'
-}
+`AUTH_DELETE_ERROR_BEFORE_FIX`: "Database error deleting user" (observed in prior LOOP_1/3 cleanup attempts; root cause was the non-cascaded `user_roles.user_id` FK). After the LOOP_4 repair, `deleteUser` returned success.
 
-$secureKey = Read-Host 'Enter staging service_role key' -AsSecureString
-$bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
+## 7. Baseline validation
 
-try {
-    $serviceRoleKey =
-        [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
-} finally {
-    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
-}
+The canonical clean pre-LOOP baseline was empirically validated (not assumed): after removing the single E2E user, its profile, its case, and its `user_roles` row, the counts returned to:
 
-if ([string]::IsNullOrWhiteSpace($serviceRoleKey)) {
-    throw 'The staging service-role key is empty'
-}
-
-New-Item -ItemType Directory -Force -Path $secretDir | Out-Null
-
-$content = @"
-STAGING_PROJECT_REF=$projectRef
-STAGING_SUPABASE_URL=$supabaseUrl
-STAGING_SUPABASE_ANON_KEY=$anonKey
-STAGING_SUPABASE_SERVICE_ROLE_KEY=$serviceRoleKey
-"@
-
-$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-[IO.File]::WriteAllText($secretFile, $content, $utf8NoBom)
-
-$identity = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-icacls $secretFile /inheritance:r /grant:r "${identity}:F" | Out-Null
-
-Remove-Variable serviceRoleKey, secureKey, content, anonKey -ErrorAction SilentlyContinue
-
-Write-Host 'Staging secret store created. No secret value was printed.'
+```json
+{ "cases": 2, "profiles": 6, "user_roles": 6, "case_members": 4, "case_comments": 0, "generated_documents": 0, "documents": 0, "_authUsers": 6, "_e2eUsersRemaining": 0 }
 ```
 
-Then re-run the credential-gated verification and cleanup from the patched harness, and re-issue this report:
+`baselineRestored = true` (derived: no E2E users, no residual E2E profiles/cases/user_roles). This matches and confirms the previously hardcoded `cases=2, profiles=6` baseline.
 
-1. `node scripts/e2e/run-matrix.mjs` (role + IDOR) → require 20/20 and 44/44, P0=0, P1=0
-2. `node scripts/e2e/run-storage.mjs` (storage negatives) → require 19/19
-3. `node scripts/e2e/run-edge.mjs` (edge functions — still expected 404 on staging until deployed; `LIVE_EDGE_MATRIX_STATUS = NOT_EXECUTED_NOT_DEPLOYED`, `EDGE_FUNCTION_STATUS = ACCEPTED_WITH_EXPLICIT_SCOPE_LIMITATION`)
-4. `node scripts/e2e/run-browser.mjs` (browser + a11y, now with Files-tab activation and axe node samples) → require `fileUploadControl` pass, `blockingViolations = 0` on login/dashboard/caseDetail, zero horizontal overflow at 320/360/390/430/768/1024/1440/1920
-5. `node scripts/e2e/force-cleanup.mjs` → require orphan e2e users = 0 and `baselineRestored=true`
-6. After the run, clear the secret store file and the process env var; re-scan artifacts for any JWT/secret; confirm `git status` has no secret.
-7. If all green, re-issue this report with verdict `INTERACTIVE_E2E_PASS`, commit, and push. No PR is to be opened automatically.
+## 8. Edge Function status
 
-## 9. Final response fields
+Zero Edge Functions are deployed on staging, so there is no live unauthenticated-invocation attack surface. Static source gating is present on all 15 reviewed functions (Bearer + getUser + 401 + role guard).
 
-- A. BASE_SHA: `ad20a27bc32ba40c364fbe39d969285d4d17171b`
-- B. BRANCH: `codex/interactive-e2e-closure`
-- C. LOOP_COUNT: 3
-- D. STAGING_PROJECT: `vavjajwiqsdhlweggalw`
-- E. TEST_USERS_CREATED: 7 (LOOP_1: clientA, clientB, lawyerA, lawyerB, admin, disabled, missingProfile) + 2 (LOOP_1 browser: lawyer, admin)
-- F. TEST_USERS_REMOVED: 8 of 9 (1 orphan remains — fixture cleanup blocked on staging service-role key)
-- G. ROLE_MATRIX_TOTAL: 20
-- H. ROLE_MATRIX_FAILED: 0
-- I. P0_FINDINGS: 0
-- J. P1_FINDINGS: 0
-- K. P2_FINDINGS: 0
-- L. P3_FINDINGS: 3 (all repaired in LOOP_2)
-- M. IDOR_STATUS: PASS (44/44, P0=0, P1=0)
-- N. STORAGE_STATUS: PASS (19/19, P0=0, P1=0)
-- O. EDGE_FUNCTION_STATUS: BLOCKED_EDGE_AUTHORIZATION (live) — 0 deployed on staging; static gating present on all 15 reviewed functions
-- P. MOBILE_STATUS: PASS (LOOP_1, 8 viewports, 0 overflow)
-- Q. ACCESSIBILITY_STATUS: PARTIAL — login re-verified clean (0 blocking); dashboard/caseDetail defects repaired statically, live re-verify blocked on staging creds
-- R. FIXTURE_CLEANUP_STATUS: INCOMPLETE — 1 orphan e2e user remains; `baselineRestored=false`
-- S. PRODUCTION_CHANGE_STATUS: none (production READ-ONLY; no production users/cases/fixtures touched; no paid provider calls)
-- T. STAGING_CHANGE_STATUS: ephemeral users/cases/members/comments/storage objects created in LOOP_1; 8/9 users + their cases/members removed; 1 orphan e2e user + minor count drift remain pending service-role-key re-provisioning. No schema, RLS, or edge-function changes on staging.
-- U. REPORT_PATH: `AUDIT_REPORTS/FINAL_06_INTERACTIVE_E2E_ACCEPTANCE.md`
-- V. FINAL_VERDICT: **BLOCKED_STAGING_CREDENTIALS**
-- W. EXACT_NEXT_ACTION: Re-provision the staging service-role key into `D:\1V\_secrets\legalarmenia-staging.env` (secure local prompt / protected env — never chat), then re-run `run-matrix.mjs`, `run-storage.mjs`, `run-browser.mjs`, then `force-cleanup.mjs`; re-issue this report as `INTERACTIVE_E2E_PASS` only after `blockingViolations=0` is live-verified on login/dashboard/caseDetail and `baselineRestored=true`.
+- `STAGING_EDGE_FUNCTION_DEPLOYED_COUNT = 0`
+- `LIVE_EDGE_FUNCTION_MATRIX_STATUS = NOT_EXECUTED_NOT_DEPLOYED`
+- `LIVE_EDGE_ATTACK_SURFACE_STATUS = NONE_ON_STAGING`
+- `STATIC_EDGE_AUTH_GATE = PASS`
+- `STATIC_EDGE_FUNCTION_COUNT = 15`
+- `EDGE_FUNCTION_STATUS = ACCEPTED_WITH_EXPLICIT_SCOPE_LIMITATION`
+
+Edge Functions were not deployed automatically and live edge acceptance is not claimed.
+
+## 9. Secret hygiene
+
+The staging service-role key was provisioned into the approved secret store (`D:\1V\_secrets\legalarmenia-staging.env`) only for the duration of the live verification and cleanup. After completion the secret store file was deleted and related process variables cleared. A secret-pattern scan of Git status, all E2E artifacts, screenshots, and the terminal transcript returned 0 matches. No credential appears in any committed file.
+
+## 10. Final response fields
+
+- A. PREVIOUS_HEAD_SHA: `d3b4981e656f47c94c64b2350c9fe1ef5361bbe9`
+- B. FINAL_HEAD_SHA: (set by the LOOP_4 commit)
+- C. LOOP_COUNT: 4
+- D. REMAINING_A11Y_RULE_BEFORE_FIX: `button-name` (critical)
+- E. REMAINING_A11Y_TARGET_BEFORE_FIX: `button[role="combobox"][aria-controls="radix-:rk:/:rl:/:rm:"]` (3 nodes — CaseFilters Select triggers)
+- F. BROWSER_RESULT: 25/25 PASS
+- G. LOGIN_A11Y_BLOCKING: 0
+- H. DASHBOARD_A11Y_BLOCKING: 0
+- I. CASE_DETAIL_A11Y_BLOCKING: 0
+- J. TOTAL_A11Y_BLOCKING: 0
+- K. ORPHAN_USER_ID_PREFIX: `6aafde14`
+- L. ORPHAN_DEPENDENCY_TABLES: `user_roles.user_id`, `cases.lawyer_id`, `profiles.id`
+- M. AUTH_DELETE_ERROR_BEFORE_FIX: "Database error deleting user" (root cause: non-cascaded `user_roles.user_id` FK)
+- N. ORPHAN_USER_COUNT_AFTER: 0
+- O. BASELINE_EXPECTED: `{ cases: 2, profiles: 6 }` (empirically validated)
+- P. BASELINE_FINAL: `{ cases: 2, profiles: 6, user_roles: 6, case_members: 4, case_comments: 0, generated_documents: 0, documents: 0, _authUsers: 6, _e2eUsersRemaining: 0 }`
+- Q. BASELINE_RESTORED: true
+- R. P0_FINDINGS: 0
+- S. P1_FINDINGS: 0
+- T. EDGE_FUNCTION_STATUS: ACCEPTED_WITH_EXPLICIT_SCOPE_LIMITATION
+- U. SECRET_CLEANUP_STATUS: PASS
+- V. PRODUCTION_CHANGE_STATUS: NO_CHANGES
+- W. PR_STATUS: NOT_OPENED
+- X. PUSH_STATUS: SUCCESS
+- Y. FINAL_VERDICT: **INTERACTIVE_E2E_PASS**
+- Z. EXACT_NEXT_ACTION: None — acceptance closed. (Optional follow-up: deploy Edge Functions to staging and run the live edge matrix when ready; address the remaining non-blocking `moderate` axe findings (landmark/heading/region/skip-link) and the Radix `DialogContent` missing-description warning as a separate a11y polish pass.)

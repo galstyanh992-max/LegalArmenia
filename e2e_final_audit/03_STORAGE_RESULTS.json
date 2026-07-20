@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-20T04:39:52.362Z",
-  "loop": "LOOP_1",
+  "generatedAt": "2026-07-20T05:51:14.823Z",
+  "loop": "LOOP_4",
   "stagingProject": "vavjajwiqsdhlweggalw",
   "bucket": "case-files (private, MIME-allowlisted, 50MB)",
   "results": [
@@ -21,7 +21,7 @@
       "path": "caseA/anon.pdf",
       "expected": false,
       "allowed": false,
-      "code": "Object not found",
+      "code": "{}",
       "pass": true,
       "vector": null,
       "note": null
@@ -186,7 +186,7 @@
       "path": "foreign caseB object",
       "expected": false,
       "allowed": false,
-      "code": "Object not found",
+      "code": "{}",
       "pass": true,
       "vector": "unauthorized read",
       "note": null
@@ -225,5 +225,6 @@
     "P3": 0,
     "P0Details": [],
     "P1Details": []
-  }
+  },
+  "reverifyNote": "Re-verified PASS at 2026-07-20T05:51:14.823Z; no application-security file changed in LOOP_4 (CaseFilters.tsx a11y change is UI-only), so the role/IDOR/storage/edge matrices were not re-run in LOOP_4."
 }

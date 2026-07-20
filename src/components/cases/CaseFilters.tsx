@@ -36,7 +36,7 @@ export function CaseFilters({ filters, onFiltersChange }: CaseFiltersProps) {
         value={filters.status || 'all'}
         onValueChange={(value) => onFiltersChange({ ...filters, status: value as CaseFiltersType['status'] })}
       >
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px]" aria-label={t('filter_by_status', 'Filter by status')}>
           <SelectValue placeholder={t('filter_by_status')} />
         </SelectTrigger>
         <SelectContent>
@@ -54,7 +54,7 @@ export function CaseFilters({ filters, onFiltersChange }: CaseFiltersProps) {
         value={filters.priority || 'all'}
         onValueChange={(value) => onFiltersChange({ ...filters, priority: value as CaseFiltersType['priority'] })}
       >
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px]" aria-label={t('filter_by_priority', 'Filter by priority')}>
           <SelectValue placeholder={t('filter_by_priority')} />
         </SelectTrigger>
         <SelectContent>
@@ -71,7 +71,7 @@ export function CaseFilters({ filters, onFiltersChange }: CaseFiltersProps) {
         value={filters.sortBy || 'newest'}
         onValueChange={(value) => onFiltersChange({ ...filters, sortBy: value as CaseFiltersType['sortBy'] })}
       >
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px]" aria-label={t('sort_by', 'Sort by')}>
           <SelectValue placeholder={t('sort_by')} />
         </SelectTrigger>
         <SelectContent>

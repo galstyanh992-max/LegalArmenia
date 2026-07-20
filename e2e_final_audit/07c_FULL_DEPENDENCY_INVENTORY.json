@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-20T09:21:53.917Z",
+  "loop": "LOOP_4",
+  "orphanIdPrefix": "6aafde14",
+  "tablesProbed": 70,
+  "probes": 1190,
+  "referencingRows": [
+    {
+      "table": "user_roles",
+      "col": "user_id",
+      "count": 1,
+      "error": null
+    },
+    {
+      "table": "cases",
+      "col": "lawyer_id",
+      "count": 1,
+      "error": null
+    }
+  ],
+  "timeouts": []
+}

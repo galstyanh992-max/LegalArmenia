@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-20T05:00:41.310Z",
-  "loop": "LOOP_1",
+  "generatedAt": "2026-07-20T06:09:41.276Z",
+  "loop": "LOOP_4",
   "stagingProject": "vavjajwiqsdhlweggalw",
   "devServer": "http://localhost:8080",
   "results": [
@@ -29,8 +29,8 @@
       "flow": "fileUploadControl",
       "actor": "lawyer",
       "expected": true,
-      "allowed": false,
-      "note": "file input count=0"
+      "allowed": true,
+      "note": "file input count=1"
     },
     {
       "flow": "login",
@@ -198,7 +198,7 @@
   ],
   "summary": {
     "total": 25,
-    "failed": 1,
+    "failed": 0,
     "consoleErrors": 0
   },
   "fatal": null

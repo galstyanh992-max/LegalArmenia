@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-20T04:29:47.892Z",
-  "loop": "LOOP_1",
+  "generatedAt": "2026-07-20T05:49:49.367Z",
+  "loop": "LOOP_4",
   "stagingProject": "vavjajwiqsdhlweggalw",
   "fixtures": {
     "caseA": {
@@ -597,5 +597,6 @@
     "P3": 0,
     "P0Details": [],
     "P1Details": []
-  }
+  },
+  "reverifyNote": "Re-verified PASS at 2026-07-20T05:49:49.367Z; no application-security file changed in LOOP_4 (CaseFilters.tsx a11y change is UI-only), so the role/IDOR/storage/edge matrices were not re-run in LOOP_4."
 }

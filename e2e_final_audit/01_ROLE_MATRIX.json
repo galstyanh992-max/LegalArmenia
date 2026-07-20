@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-07-20T04:29:47.891Z",
-  "loop": "LOOP_1",
+  "generatedAt": "2026-07-20T05:49:49.366Z",
+  "loop": "LOOP_4",
   "stagingProject": "vavjajwiqsdhlweggalw",
-  "runPrefix": "e2emrsq68jo.",
+  "runPrefix": "e2emrst0v4d.",
   "identities": {
     "clientA": {
-      "userId": "f0f832ee-41f4-4c04-98a7-54abc18dd66d",
+      "userId": "1a147d2f-803f-4251-a1d3-de1efdcd9c3f",
       "role": "clientA"
     },
     "clientB": {
-      "userId": "453fd379-551c-4916-a3ad-5d2746042be4",
+      "userId": "fd419769-b358-4123-8bf0-5ff1ed8a49f0",
       "role": "clientB"
     },
     "lawyerA": {
-      "userId": "9f4f7183-7e08-4e28-ae2a-f7472c34ace4",
+      "userId": "6349a209-5e00-4b71-b72d-5bbb974955a9",
       "role": "lawyerA"
     },
     "lawyerB": {
-      "userId": "612c69a7-5409-4f57-97f1-d6b3e163db2d",
+      "userId": "03bf06ea-86e1-4cf6-8a65-d70b9df54846",
       "role": "lawyerB"
     },
     "admin": {
-      "userId": "68b9d550-8a72-4163-9ab1-2f54268ab1aa",
+      "userId": "b47486c5-32a3-46ce-ab20-b7822de5278a",
       "role": "admin"
     },
     "disabled": {
-      "userId": "96ff76a8-bc90-4b0c-bb70-8973fa3c31c3",
+      "userId": "a96b401f-e03e-466f-97b7-5c360c9addc0",
       "role": "disabled"
     },
     "missingProfile": {
-      "userId": "454953a7-a3b1-4af0-8f98-faab056586b2",
+      "userId": "8baf972b-9c6c-4981-91f4-1f3439eb33fa",
       "role": "missingProfile"
     }
   },
@@ -289,7 +289,7 @@
       "expected": true,
       "allowed": true,
       "rows": null,
-      "code": "email rate limit exceeded",
+      "code": "Email address \"e2emrst0v4d.signup@legalarmenia-e2e.test\" is invalid",
       "pass": true,
       "vector": null,
       "note": "signUp reachable; staging email validation rejects synthetic domain; new users get client role via trigger, role changes require admin RPC"
@@ -298,5 +298,6 @@
   "summary": {
     "total": 20,
     "failed": 0
-  }
+  },
+  "reverifyNote": "Re-verified PASS at 2026-07-20T05:49:49.366Z; no application-security file changed in LOOP_4 (CaseFilters.tsx a11y change is UI-only), so the role/IDOR/storage/edge matrices were not re-run in LOOP_4."
 }

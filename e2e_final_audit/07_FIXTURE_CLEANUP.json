@@ -1,14 +1,65 @@
 {
-  "generatedAt": "2026-07-20T05:01:51.459Z",
+  "generatedAt": "2026-07-20T09:24:40.088Z",
+  "loop": "LOOP_4",
+  "orphanIdPrefixBefore": "6aafde14",
+  "orphanCaseRemoved": {
+    "idPrefix": "a8f3f1a5",
+    "title": "Repro Case",
+    "status": "open",
+    "removedVia": "cases.lawyer_id"
+  },
+  "orphanDependencyTablesBefore": [
+    {
+      "table": "user_roles",
+      "column": "user_id",
+      "rows": 1
+    },
+    {
+      "table": "cases",
+      "column": "lawyer_id",
+      "rows": 1
+    },
+    {
+      "table": "profiles",
+      "column": "id",
+      "rows": 1
+    }
+  ],
+  "authDeleteErrorBeforeFix": "Database error deleting user (observed in prior LOOP_1/3 cleanup attempts; root cause: non-cascaded user_roles.user_id FK referencing auth.users)",
+  "rootCauseFix": "force-cleanup.mjs now deletes user_roles.user_id before auth.admin.deleteUser and records per-op diagnostics; the nonsensical case_members.delete().eq('case_id', userId) call was removed; cases.created_by (non-existent column) was removed from the owner filter.",
+  "fkSafeDeletionOrder": [
+    "user_roles by user_id",
+    "direct user-referencing child rows (case_comments.author_id, generated_documents.user_id, case_members.user_id, audit_logs.user_id, notifications.user_id, reminders.user_id, telegram_uploads.user_id, telegram_verification_codes.user_id, profile_compat_settings.user_id)",
+    "E2E-owned case children by case_id (case_comments, generated_documents, case_members, case_files, reminders)",
+    "E2E-owned cases by id",
+    "E2E profile by id",
+    "auth.admin.deleteUser"
+  ],
+  "authDeleteResult": "SUCCESS",
   "finalBaseline": {
-    "cases": 3,
+    "cases": 2,
     "case_members": 4,
     "case_comments": 0,
     "generated_documents": 0,
-    "profiles": 7,
+    "profiles": 6,
+    "user_roles": 6,
     "documents": 0,
-    "_authUsers": 7,
-    "_e2eUsersRemaining": 1
+    "_authUsers": 6,
+    "_e2eUsersRemaining": 0
   },
-  "baselineRestored": false
+  "residualE2eReferences": {
+    "e2eProfiles": 0,
+    "e2eCases": 0,
+    "e2eUserRoles": 0
+  },
+  "baselineExpected": {
+    "cases": 2,
+    "profiles": 6,
+    "basis": "empirically re-derived: total minus E2E-owned rows after orphan removal; matches the pre-LOOP clean state"
+  },
+  "baselineRestored": true,
+  "dependencyInventoryArtifacts": [
+    "e2e_final_audit/07b_ORPHAN_DEPENDENCY_INVENTORY.json",
+    "e2e_final_audit/07c_FULL_DEPENDENCY_INVENTORY.json"
+  ]
 }

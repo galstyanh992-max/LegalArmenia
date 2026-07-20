@@ -1,0 +1,248 @@
+{
+  "generatedAt": "2026-07-20T09:12:23.393Z",
+  "loop": "LOOP_4",
+  "orphanIdPrefix": "6aafde14",
+  "dependencyInventory": [
+    {
+      "table": "profiles",
+      "col": "id",
+      "exists": true,
+      "count": 1,
+      "error": null
+    },
+    {
+      "table": "cases",
+      "col": "lawyer_id",
+      "exists": true,
+      "count": 1,
+      "error": null
+    },
+    {
+      "table": "cases",
+      "col": "created_by",
+      "exists": true,
+      "count": null,
+      "error": ""
+    },
+    {
+      "table": "cases",
+      "col": "client_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "case_members",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "case_comments",
+      "col": "author_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "generated_documents",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "audit_logs",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "reminders",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "notifications",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "tasks",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "tasks",
+      "col": "assigned_to",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "tasks",
+      "col": "created_by",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "messages",
+      "col": "sender_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "messages",
+      "col": "recipient_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "support_tickets",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "support_tickets",
+      "col": "created_by",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "ticket_comments",
+      "col": "author_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "ticket_comments",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "telegram_uploads",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "telegram_verification_codes",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "profile_compat_settings",
+      "col": "user_id",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "case_files",
+      "col": "uploaded_by",
+      "exists": true,
+      "count": 0,
+      "error": null
+    },
+    {
+      "table": "ai_messages",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "ai_history",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "ai_usage",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "usage_records",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "usage",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "lead_stage_history",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "lead_history",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": null
+    },
+    {
+      "table": "documents",
+      "col": "user_id",
+      "exists": true,
+      "count": null,
+      "error": ""
+    },
+    {
+      "table": "documents",
+      "col": "uploaded_by",
+      "exists": true,
+      "count": null,
+      "error": ""
+    }
+  ],
+  "referencingRows": [
+    {
+      "table": "profiles",
+      "col": "id",
+      "exists": true,
+      "count": 1,
+      "error": null
+    },
+    {
+      "table": "cases",
+      "col": "lawyer_id",
+      "exists": true,
+      "count": 1,
+      "error": null
+    }
+  ],
+  "e2ePrefixedCases": []
+}
