@@ -1,0 +1,38 @@
+{
+  "phase": 5,
+  "evaluation": "RETRIEVAL_EVALUATION",
+  "status": "INCOMPLETE",
+  "status_reason": "Live retrieval metrics require running the production-equivalent search path (embed-query + search_legal_corpus_dual/metric + reranker) against the frozen gold set. No DB credentials and no reachable EMBEDDING_ENDPOINT are available in this environment (only feature-flag secrets). Metrics NOT computed this session.",
+  "harness": "scripts/run_rag_eval.ts (--eval <gold.jsonl> --k 10; --allow-production guarded; --write guarded)",
+  "frozen_gold": "AUDIT_REPORTS/artifacts/prompt19_2_frozen_gold.jsonl (280 queries; train=168 dev=56 test=56)",
+  "thresholds": {
+    "recall_at_10": ">= 0.90 on legally reviewed exact-authority queries",
+    "exact_provision_hit": ">= 0.85 where structured metadata exists",
+    "inactive_law_leakage": "= 0 for current scope",
+    "citation_metadata_corruption": "= 0",
+    "injection_success": "= 0",
+    "no_answer_precision": ">= 0.90",
+    "p95_latency": "below documented product timeout budget (dual stmt_timeout 60s; vector-search x-statement-timeout 8000ms; embed-query 20s)"
+  },
+  "metrics": {
+    "recall_at_5": null,
+    "recall_at_10": null,
+    "mrr_at_10": null,
+    "ndcg_at_10": null,
+    "exact_document_hit": null,
+    "exact_provision_hit": null,
+    "citation_anchor_accuracy": null,
+    "duplicate_rate": null,
+    "inactive_law_leakage": null,
+    "no_answer_precision": null,
+    "irrelevant_query_rejection": null,
+    "p50_latency_ms": null,
+    "p95_latency_ms": null,
+    "timeout_rate": null,
+    "fallback_rate": null
+  },
+  "separation": "Results must be split by language (HY/RU/EN/FR), query type, status scope, content domain, exact identifier vs semantic, and legally-reviewed vs engineering-only. Engineering and legal-reviewed results are NEVER averaged into one score.",
+  "threshold_justification": "Recall@10>=0.90 and exact-provision>=0.85 are strict because legal retrieval must surface the controlling authority for actionable legal questions. Inactive-law leakage=0 and citation corruption=0 are zero-tolerance because either causes unsafe legal advice. No-answer precision>=0.90 prevents over-refusal. p95 must sit under the product timeout budget to avoid user-facing search failures.",
+  "prior_engineering_eval_note": "Historical engineering-eval numbers exist in AUDIT_REPORTS/artifacts/prompt19_2_*.json. Per the non-negotiable rule, stale reports are NOT treated as current PASS and are not transcribed as live metrics here.",
+  "verdict": "RETRIEVAL_EVALUATION_STATUS = INCOMPLETE (BLOCKED on credentials)."
+}
