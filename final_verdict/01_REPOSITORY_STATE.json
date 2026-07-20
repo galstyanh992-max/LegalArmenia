@@ -1,0 +1,34 @@
+{
+  "artifact": "01_REPOSITORY_STATE",
+  "generated_at_utc": "2026-07-20T15:55:00Z",
+  "origin": "github.com/galstyanh992-max/LegalArmenia",
+  "origin_main_sha": "ad20a27bc32ba40c364fbe39d969285d4d17171b",
+  "convergence_branch": "codex/final-verdict-convergence",
+  "convergence_worktree": "D:\\1V\\LegalArmenia-final-verdict",
+  "relevant_branches": [
+    {
+      "branch": "codex/final-secret-rotation-closure",
+      "sha": "d8f8ce510e268bead35b508c495da9df83d24c2f",
+      "nature": "documentation-only"
+    },
+    {
+      "branch": "codex/interactive-e2e-closure",
+      "sha": "2f46e5a554133cf05fafa9cdf302e2c309be0f64",
+      "nature": "code-bearing (E2E product fixes)"
+    },
+    {
+      "branch": "codex/rag-citation-retrieval-closure",
+      "sha": "a4bfe4da69fc23d1f3d5ca10e2c60634eb60d6d8",
+      "nature": "documentation-only"
+    },
+    {
+      "branch": "codex/final-closure-master-loop",
+      "sha": "921ed3db600f71e0cdc098d09e37abef3a77b2e4",
+      "nature": "documentation-only"
+    }
+  ],
+  "worktree_status": "clean",
+  "production_mutation_policy": "READ_ONLY_DEFAULT",
+  "production_mutations_performed": 0,
+  "sanitization": "no secret values"
+}

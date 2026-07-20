@@ -1,0 +1,119 @@
+{
+  "artifact": "11_EVIDENCE_INDEX",
+  "generated_at_utc": "2026-07-20T15:55:00Z",
+  "convergence_branch": "codex/final-verdict-convergence",
+  "base": "origin/main @ ad20a27bc32ba40c364fbe39d969285d4d17171b",
+  "commits_on_branch": [
+    "9c54654 audit: record final closure runtime state, inventory, and decision artifacts",
+    "82a81eb rag: document rag closure gate state and cutover decision",
+    "2ce14de audit: prepare licensed legal review package",
+    "e35b52a security: record repository history exposure decision"
+  ],
+  "evidence": [
+    {
+      "gate": "runtime_state",
+      "artifact": "final_closure/00_RUNTIME_STATE.json"
+    },
+    {
+      "gate": "secret_consumer_inventory",
+      "artifact": "final_closure/01_SECRET_CONSUMER_INVENTORY.json"
+    },
+    {
+      "gate": "provider_rotation_packets",
+      "artifact": "final_closure/02_PROVIDER_ROTATION_ACTION_PACKETS.md"
+    },
+    {
+      "gate": "operator_action_boundary",
+      "artifact": "final_closure/03_OPERATOR_ACTION_BOUNDARY.md"
+    },
+    {
+      "gate": "jwt_impact",
+      "artifact": "final_closure/04_JWT_ROTATION_IMPACT_ASSESSMENT.md"
+    },
+    {
+      "gate": "jwt_consumer_inventory",
+      "artifact": "final_closure/05_JWT_CONSUMER_INVENTORY.json"
+    },
+    {
+      "gate": "jwt_runbook",
+      "artifact": "final_closure/06_JWT_MAINTENANCE_RUNBOOK.md"
+    },
+    {
+      "gate": "jwt_rollback",
+      "artifact": "final_closure/07_JWT_ROLLBACK_PLAN.md"
+    },
+    {
+      "gate": "integration_matrix",
+      "artifact": "final_closure/08_INTEGRATION_MATRIX.md"
+    },
+    {
+      "gate": "gate_suite_results",
+      "artifact": "final_closure/09_GATE_SUITE_RESULTS.json"
+    },
+    {
+      "gate": "rag_closure",
+      "artifact": "rag_closure/FINAL_RAG_CLOSURE.md"
+    },
+    {
+      "gate": "rag_live_chain",
+      "artifact": "rag_closure/LIVE_CHAIN_EVIDENCE.json"
+    },
+    {
+      "gate": "rag_metric_coverage",
+      "artifact": "rag_closure/METRIC_COVERAGE.json"
+    },
+    {
+      "gate": "rag_retrieval_eval",
+      "artifact": "rag_closure/RETRIEVAL_EVALUATION.json"
+    },
+    {
+      "gate": "rag_citation_injection",
+      "artifact": "rag_closure/CITATION_INJECTION_RESULTS.json"
+    },
+    {
+      "gate": "rag_cutover",
+      "artifact": "rag_closure/CUTOVER_DECISION.md"
+    },
+    {
+      "gate": "legal_review_pack",
+      "artifact": "legal_review_pack/"
+    },
+    {
+      "gate": "history_exposure_map",
+      "artifact": "history_rewrite/00_EXPOSURE_MAP.md"
+    },
+    {
+      "gate": "history_rewrite_dry_run",
+      "artifact": "history_rewrite/01_REWRITE_DRY_RUN.md"
+    },
+    {
+      "gate": "history_clone_coordination",
+      "artifact": "history_rewrite/02_CLONE_COORDINATION_PLAN.md"
+    },
+    {
+      "gate": "history_backup_rollback",
+      "artifact": "history_rewrite/03_BACKUP_AND_ROLLBACK.md"
+    },
+    {
+      "gate": "history_post_rewrite_validation",
+      "artifact": "history_rewrite/04_POST_REWRITE_VALIDATION.md"
+    },
+    {
+      "gate": "history_decision",
+      "artifact": "history_rewrite/05_DECISION.md"
+    },
+    {
+      "gate": "secret_rotation_evidence",
+      "artifact": "secret_rotation_audit/10_DATABASE_PASSWORD_ROTATION_EVIDENCE.json (branch codex/final-secret-rotation-closure @ d8f8ce5)"
+    },
+    {
+      "gate": "interactive_e2e",
+      "artifact": "codex/interactive-e2e-closure @ 2f46e5a (recorded evidence)"
+    },
+    {
+      "gate": "final_verdict_set",
+      "artifact": "final_verdict/00-11"
+    }
+  ],
+  "sanitization": "no secret values indexed"
+}
