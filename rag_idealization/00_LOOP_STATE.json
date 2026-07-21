@@ -1,13 +1,13 @@
 {
-  "loop_iteration": 2,
+  "loop_iteration": 3,
   "date": "2026-07-21",
   "worktree": "D:\\1V\\LegalArmenia-rag-ideal",
   "branch": "codex/rag-ideal-repair",
   "base_sha": "ad20a27bc32ba40c364fbe39d969285d4d17171b",
-  "head_after": "pending_commit",
-  "remote_head": "ad20a27bc32ba40c364fbe39d969285d4d17171b",
+  "head_after": "56e0d8c9f3ac6c2ece8183fea4fb9db036309313",
+  "remote_head": "56e0d8c9f3ac6c2ece8183fea4fb9db036309313",
   "local_remote_match": true,
-  "worktree_clean": false,
+  "worktree_clean": true,
   "production_project": "avmgtsonawtzebvazgcr",
   "production_ledger": 52,
   "latest_applied_migration": "20260719000001",
@@ -40,8 +40,8 @@
   },
   "phase_status": {
     "phase_0_preserve": "PASS",
-    "phase_1_verify_claims": "PASS",
-    "phase_2_classification": "PASS",
+    "phase_1_verify_claims": "PASS (47/47 shared tests; 4 new CE-path tests; CE timer leak fixed)",
+    "phase_2_classification": "PASS (0.7/0.3 unvalidated blend removed; CE-only default; configurable RERANKER_CE_WEIGHT/DET_WEIGHT for A/B)",
     "phase_3_live_access_intake": "PASS_PARTIAL (read-only DB granted)",
     "phase_4_live_embedding_endpoint": "BLOCKED_OPERATOR_ACTION",
     "phase_5_db_coverage": "PARTIAL_PASS",
@@ -54,7 +54,7 @@
     "phase_12_backfill_plan": "BLOCKED_OPERATOR_ACTION"
   },
   "deterministic_reranker_status": "ACTIVE",
-  "cross_encoder_reranker_status": "NOT_DEPLOYED",
+  "cross_encoder_reranker_status": "NOT_DEPLOYED (service code present at services/legal-reranker; 0.7/0.3 blend hardcoding removed; CE-only safe default)",
   "raw_rpc_security_migration": "PREPARED_NOT_APPLIED (blocked: kb-unified-search authenticated caller)",
   "migrations_applied": 0,
   "backfill_executed": false,
@@ -72,9 +72,20 @@
     "minimum_permission": "read-only (BEGIN READ ONLY); no writes",
     "safe_validation_command": "psql \"<read-only DSN>\" -f phase5_remaining.sql  (queries listed in 01_PHASE5_DB_COVERAGE.md)",
     "secrets_to_share_in_chat": "NONE",
-    "checkpoint_commit": "pending_commit",
-    "resume_phase": "PHASE_5_COMPLETION (active_missing_embeddings, zero_vector, vector_dims, breakdowns, data-quality counts) then PHASE_4"
+    "checkpoint_commit": "56e0d8c9f3ac6c2ece8183fea4fb9db036309313",
+    "resume_phase": "PHASE_5_COMPLETION (active_missing_embeddings, zero_vector, vector_dims, breakdowns, data-quality counts) then PHASE_4 (Metric embedding endpoint URL+key) then PHASE_7/9/10/11"
   },
   "overall_verdict": "OPERATOR_ACTION_REQUIRED",
-  "final_result": "OPERATOR_ACTION_REQUIRED: run the remaining Phase 5 read-only queries (01_PHASE5_DB_COVERAGE.md) with the already-granted read-only DSN to confirm ACTIVE_MISSING_EMBEDDINGS=0, actual wrong-dimension=0, zero-vector=0, and the breakdown/data-quality counts; then provide the Metric embedding endpoint URL+key for Phase 4."
+  "final_result": "OPERATOR_ACTION_REQUIRED: run the remaining Phase 5 read-only queries (01_PHASE5_DB_COVERAGE.md) with the already-granted read-only DSN to confirm ACTIVE_MISSING_EMBEDDINGS=0, actual wrong-dimension=0, zero-vector=0, and the breakdown/data-quality counts; then provide the Metric embedding endpoint URL+key for Phase 4. Iteration 3 advanced Phase 2 (removed unvalidated 0.7/0.3 blend, CE-only safe default, CE timer leak fixed, 4 new CE tests).",
+  "iteration_3_changes": {
+    "files_changed": [
+      "supabase/functions/_shared/legal-reranker.ts",
+      "supabase/functions/_shared/legal-reranker.test.ts"
+    ],
+    "root_cause": "Phase 2 defect: cross-encoder hook hardcoded an unvalidated 0.7*CE + 0.3*DET blend (a hypothesis, not an A/B-approved constant), and the CE path was not exercised by any test. Secondary: tryCrossEncoder leaked its 5s abort timer when fetch rejected because clearTimeout was only on the success path.",
+    "fix": "Default blend is now CE-only (ce_weight=1, det_weight=0) with deterministic score as a stable tiebreak only; RERANKER_CE_WEIGHT/RERANKER_DET_WEIGHT (clamped, normalized) allow benchmarking alternatives once the A/B harness is live; blend recorded in RerankMetadata.ce_blend; timer cleared in finally.",
+    "tests": "deno test legal-reranker.test.ts + semantic-status.test.ts = 47/47 PASS (added 4 CE-path tests: CE-success reorder, unreachable fail-closed, bad-shape fail-closed, configurable blend normalization). deno check clean on vector-search, legal-chat, embed-query, rag-search, legal-reranker, semantic-status.",
+    "commit": "56e0d8c reranker: replace unvalidated 0.7/0.3 CE blend with CE-only default; fix CE timer leak",
+    "pushed": true
+  }
 }
