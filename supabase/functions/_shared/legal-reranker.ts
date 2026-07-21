@@ -81,6 +81,8 @@ export interface RerankMetadata {
   endpoint_used: boolean;
   endpoint_error?: string;
   diversification: { max_per_document: number; dedup_window: number; removed_duplicates: number };
+  /** CE/DET blend weights used, or null when only the deterministic scorer ran */
+  ce_blend: CeBlendWeights | null;
 }
 
 export interface RerankWeights {
@@ -185,6 +187,28 @@ function textOf(c: RerankCandidate): string {
 
 function clamp01(x: number): number {
   return Number.isFinite(x) ? Math.min(1, Math.max(0, x)) : 0;
+}
+
+// Cross-encoder / deterministic blend weights. Phase 2 of the RAG idealization
+// loop prohibits activating an arbitrary CE/DET blend (e.g. 0.7/0.3) without a
+// blind A/B evaluation. Until an A/B winner is selected and pinned, the safe
+// production default is CE-only ordering (ceWeight=1, detWeight=0): the
+// cross-encoder score sorts the shortlist and the deterministic score is used
+// only as a tiebreak for exactly-equal CE scores. Operators may set
+// RERANKER_CE_WEIGHT / RERANKER_DET_WEIGHT to benchmark alternative blends
+// (CE-only, 0.8/0.2, 0.7/0.3, ...); values are clamped to [0,1] and normalized.
+export interface CeBlendWeights {
+  ce_weight: number;
+  det_weight: number;
+}
+
+function resolveCeBlend(): CeBlendWeights {
+  const ce = clamp01(envNumber("RERANKER_CE_WEIGHT", 1));
+  const det = clamp01(envNumber("RERANKER_DET_WEIGHT", 0));
+  const sum = ce + det;
+  if (sum <= 0) return { ce_weight: 1, det_weight: 0 };
+  if (Math.abs(sum - 1) > 1e-6) return { ce_weight: ce / sum, det_weight: det / sum };
+  return { ce_weight: ce, det_weight: det };
 }
 
 // ─── Feature scorers ────────────────────────────────────────────────────────
@@ -340,9 +364,9 @@ async function tryCrossEncoder(
   const endpoint = Deno.env.get("RERANKER_ENDPOINT");
   if (!endpoint) return { ok: false };
   const apiKey = Deno.env.get("RERANKER_API_KEY");
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), Number(Deno.env.get("RERANKER_TIMEOUT_MS")) || 5000);
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), Number(Deno.env.get("RERANKER_TIMEOUT_MS")) || 5000);
     const headers: Record<string, string> = { "Content-Type": "application/json" };
     if (apiKey) headers["X-API-Key"] = apiKey;
     const res = await fetch(`${endpoint.replace(/\/+$/, "")}/rerank`, {
@@ -357,7 +381,6 @@ async function tryCrossEncoder(
       }),
       signal: controller.signal,
     });
-    clearTimeout(timeout);
     if (!res.ok) return { ok: false, error: `reranker_${res.status}` };
     const payload = await res.json() as { model?: string; scores?: number[] };
     if (!Array.isArray(payload.scores) || payload.scores.length !== shortlist.length) {
@@ -366,6 +389,8 @@ async function tryCrossEncoder(
     return { ok: true, model: payload.model ?? "cross-encoder", scores: payload.scores };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "reranker_unreachable" };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -399,6 +424,7 @@ export async function rerankLegalCandidates<T extends RerankCandidate = RerankCa
   let rerankerModel: string | null = "deterministic-legal-v1";
   let endpointUsed = false;
   let endpointError: string | undefined;
+  let ceBlend: CeBlendWeights | null = null;
 
   // 2) Optional cross-encoder refinement on the shortlist (top min(limit*3, 60)).
   if (!opts.disableCrossEncoder && Deno.env.get("RERANKER_ENDPOINT")) {
@@ -407,15 +433,30 @@ export async function rerankLegalCandidates<T extends RerankCandidate = RerankCa
     const ce = await tryCrossEncoder(opts.query, shortlist as unknown as RerankedRow[], requestId);
     endpointUsed = true;
     if (ce.ok && ce.scores) {
-      // Blend: keep deterministic score as a tiebreaker/authority floor, but
-      // let the cross-encoder dominate ordering within the shortlist.
-      const blended = shortlist.map((s, i) => ({
-        ...s,
-        rerank_score: clamp01(0.7 * Number(ce.scores![i]) + 0.3 * s.rerank_score),
-      }));
-      blended.sort((a, b) => b.rerank_score - a.rerank_score);
+      // CE/DET blend. Default is CE-only (1.0/0.0): the cross-encoder score
+      // orders the shortlist; the deterministic score is only a tiebreak for
+      // exactly-equal CE scores, never an arbitrary authority floor. This is
+      // the unvalidated-default-safe behavior required before A/B selection.
+      ceBlend = resolveCeBlend();
+      const blended = shortlist.map((s, i) => {
+        const ceScore = clamp01(Number(ce.scores![i]));
+        return {
+          ...s,
+          rerank_score: clamp01(ceBlend!.ce_weight * ceScore + ceBlend!.det_weight * s.rerank_score),
+          _ce: ceScore,
+          _det: s.rerank_score,
+        };
+      });
+      blended.sort((a, b) => {
+        const byCe = b._ce - a._ce;
+        if (Math.abs(byCe) > 1e-12) return byCe;
+        const byDet = b._det - a._det;
+        if (Math.abs(byDet) > 1e-12) return byDet;
+        return (a.row.chunk_id ?? "").localeCompare(b.row.chunk_id ?? "");
+      });
+      const cleaned = blended.map(({ _ce, _det, ...rest }) => rest);
       const tail = scored.slice(shortlist.length);
-      scored = [...blended, ...tail];
+      scored = [...cleaned, ...tail];
       rerankMode = "cross_encoder";
       rerankerModel = ce.model ?? "cross-encoder";
     } else {
@@ -441,6 +482,7 @@ export async function rerankLegalCandidates<T extends RerankCandidate = RerankCa
       dedup_window: 200,
       removed_duplicates: removedDuplicates,
     },
+    ce_blend: ceBlend,
   };
 
   return { rows: out, metadata };

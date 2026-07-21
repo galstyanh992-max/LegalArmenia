@@ -279,3 +279,93 @@ Deno.test("ordering: semantic-only weights rank by vector_score when others zero
   // doctrine has higher vector_score (0.7 > 0.41) so it ranks first under pure semantic
   assertEquals(rows[0].chunk_id, "c3");
 });
+Deno.test("cross-encoder: CE success reorders shortlist by CE score (CE-only default blend)", async () => {
+  const prevFetch = globalThis.fetch;
+  const prevEp = Deno.env.get("RERANKER_ENDPOINT");
+  const prevKey = Deno.env.get("RERANKER_API_KEY");
+  Deno.env.set("RERANKER_ENDPOINT", "https://ce.test.local");
+  Deno.env.set("RERANKER_API_KEY", "test-key");
+  const scoreById: Record<string, number> = { c1: 0.99, c2: 0.2, c4: 0.1, c3: 0.05 };
+  globalThis.fetch = ((_input: unknown, init?: RequestInit) => {
+    const body = JSON.parse(typeof init?.body === "string" ? init.body : "{}");
+    const docs = (body as { documents?: { id: string }[] }).documents ?? [];
+    return Promise.resolve(new Response(JSON.stringify({ model: "test-ce-v1", scores: docs.map((d) => scoreById[d.id] ?? 0) }), { status: 200, headers: { "content-type": "application/json" } }));
+  }) as typeof globalThis.fetch;
+  try {
+    const { rows, metadata } = await rerankRows(baseKB, { query: "x" });
+    assertEquals(metadata.rerank_mode, "cross_encoder");
+    assertEquals(metadata.reranker_model, "test-ce-v1");
+    assertEquals(metadata.endpoint_used, true);
+    assertEquals(metadata.endpoint_error, undefined);
+    assertEquals(metadata.ce_blend, { ce_weight: 1, det_weight: 0 });
+    assertEquals(rows[0].chunk_id, "c1");
+  } finally {
+    globalThis.fetch = prevFetch;
+    if (prevEp === undefined) Deno.env.delete("RERANKER_ENDPOINT"); else Deno.env.set("RERANKER_ENDPOINT", prevEp);
+    if (prevKey === undefined) Deno.env.delete("RERANKER_API_KEY"); else Deno.env.set("RERANKER_API_KEY", prevKey);
+  }
+});
+
+Deno.test("cross-encoder: endpoint unreachable fails closed to deterministic ordering", async () => {
+  const prevFetch = globalThis.fetch;
+  const prevEp = Deno.env.get("RERANKER_ENDPOINT");
+  Deno.env.set("RERANKER_ENDPOINT", "https://ce.test.local");
+  globalThis.fetch = (() => Promise.reject(new Error("ECONNREFUSED"))) as typeof globalThis.fetch;
+  try {
+    const { rows, metadata } = await rerankRows(baseKB, { query: "x" });
+    assertEquals(metadata.rerank_mode, "deterministic_legal_v1");
+    assertEquals(metadata.endpoint_used, true);
+    assertEquals(metadata.endpoint_error, "ECONNREFUSED");
+    assertEquals(metadata.ce_blend, null);
+    const det = await rerankRows(baseKB, { query: "x", disableCrossEncoder: true });
+    assertEquals(rows.map((r) => r.chunk_id), det.rows.map((r) => r.chunk_id));
+  } finally {
+    globalThis.fetch = prevFetch;
+    if (prevEp === undefined) Deno.env.delete("RERANKER_ENDPOINT"); else Deno.env.set("RERANKER_ENDPOINT", prevEp);
+  }
+});
+
+Deno.test("cross-encoder: bad score shape fails closed to deterministic", async () => {
+  const prevFetch = globalThis.fetch;
+  const prevEp = Deno.env.get("RERANKER_ENDPOINT");
+  Deno.env.set("RERANKER_ENDPOINT", "https://ce.test.local");
+  globalThis.fetch = ((_input: unknown, init?: RequestInit) => {
+    const body = JSON.parse(typeof init?.body === "string" ? init.body : "{}");
+    const docs = (body as { documents?: unknown[] }).documents ?? [];
+    return Promise.resolve(new Response(JSON.stringify({ model: "test-ce", scores: docs.map(() => 0.5).slice(0, 1) }), { status: 200, headers: { "content-type": "application/json" } }));
+  }) as typeof globalThis.fetch;
+  try {
+    const { metadata } = await rerankRows(baseKB, { query: "x" });
+    assertEquals(metadata.rerank_mode, "deterministic_legal_v1");
+    assertEquals(metadata.endpoint_error, "reranker_score_shape");
+    assertEquals(metadata.ce_blend, null);
+  } finally {
+    globalThis.fetch = prevFetch;
+    if (prevEp === undefined) Deno.env.delete("RERANKER_ENDPOINT"); else Deno.env.set("RERANKER_ENDPOINT", prevEp);
+  }
+});
+
+Deno.test("cross-encoder: RERANKER_CE_WEIGHT/DET_WEIGHT configure and normalize the blend", async () => {
+  const prevFetch = globalThis.fetch;
+  const prevEp = Deno.env.get("RERANKER_ENDPOINT");
+  const prevCe = Deno.env.get("RERANKER_CE_WEIGHT");
+  const prevDet = Deno.env.get("RERANKER_DET_WEIGHT");
+  Deno.env.set("RERANKER_ENDPOINT", "https://ce.test.local");
+  Deno.env.set("RERANKER_CE_WEIGHT", "0.7");
+  Deno.env.set("RERANKER_DET_WEIGHT", "0.3");
+  globalThis.fetch = ((_input: unknown, init?: RequestInit) => {
+    const body = JSON.parse(typeof init?.body === "string" ? init.body : "{}");
+    const docs = (body as { documents?: { id: string }[] }).documents ?? [];
+    return Promise.resolve(new Response(JSON.stringify({ model: "test-ce", scores: docs.map(() => 0.5) }), { status: 200, headers: { "content-type": "application/json" } }));
+  }) as typeof globalThis.fetch;
+  try {
+    const { metadata } = await rerankRows(baseKB, { query: "x" });
+    assertEquals(metadata.ce_blend, { ce_weight: 0.7, det_weight: 0.3 });
+    assertEquals(metadata.rerank_mode, "cross_encoder");
+  } finally {
+    globalThis.fetch = prevFetch;
+    if (prevEp === undefined) Deno.env.delete("RERANKER_ENDPOINT"); else Deno.env.set("RERANKER_ENDPOINT", prevEp);
+    if (prevCe === undefined) Deno.env.delete("RERANKER_CE_WEIGHT"); else Deno.env.set("RERANKER_CE_WEIGHT", prevCe);
+    if (prevDet === undefined) Deno.env.delete("RERANKER_DET_WEIGHT"); else Deno.env.set("RERANKER_DET_WEIGHT", prevDet);
+  }
+});
