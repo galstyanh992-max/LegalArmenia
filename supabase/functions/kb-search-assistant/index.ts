@@ -1,18 +1,9 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
-// model-config import removed — all AI calls routed via openai-router.ts (callText)
 import { handleCors } from "../_shared/edge-security.ts";
 import { recordAiMetric } from "../_shared/ai-metrics.ts";
-
-interface KBSearchResult {
-  id: string;
-  title: string;
-  content_text: string;
-  category: string;
-  source_name?: string | null;
-  source_url?: string | null;
-  rank: number;
-}
+import { searchKB } from "../_shared/rag-search.ts";
+import type { KBSearchResult, RetrievalMode } from "../_shared/rag-types.ts";
 
 interface SearchOutput {
   results: Array<{
@@ -24,22 +15,12 @@ interface SearchOutput {
   }>;
   keywords: string[];
   totalFound: number;
-  retrieval_mode: "keyword_only";
-  semantic_ok: false;
-  semantic_error: string;
+  retrieval_mode: RetrievalMode;
+  semantic_ok: boolean;
+  semantic_error?: string;
   qwen_semantic_ok: false;
   qwen_semantic_error: string;
-  threshold_applied: false;
-}
-
-interface CorpusRow {
-  document_id: string;
-  doc_id: string | null;
-  title: string | null;
-  text_snippet: string | null;
-  source_url: string | null;
-  source: string | null;
-  score: number;
+  threshold_applied: boolean;
 }
 
 const SEARCH_ASSISTANT_SYSTEM_PROMPT = `
@@ -84,38 +65,31 @@ serve(async (req) => {
 
     console.log(`KB Search Assistant: query="${query.substring(0, 100)}..."`);
 
-    // Step 1: Use AI to extract keywords from the query
+    // Step 1: Use AI to extract keywords from the query (kept for the
+    // `keywords` response field / UI affordance; retrieval itself now uses the
+    // canonical hybrid path below, so semantic signal is preserved).
     let keywords: string[] = [];
-    
+
     try {
-      // Route via centralized OpenAI router
       const { callText } = await import("../_shared/openai-router.ts");
       const kbResult = await callText("kb-search-assistant", [
         { role: "system", content: SEARCH_ASSISTANT_SYSTEM_PROMPT },
         { role: "user", content: query },
       ]);
-      const aiResponse = { ok: true, json: async () => ({ choices: [{ message: { content: kbResult.text } }] }) };
-
-      if (aiResponse.ok) {
-        const aiData = await aiResponse.json();
-        const content = aiData.choices?.[0]?.message?.content || "";
-        
-        // Parse the JSON array from the response
-        const jsonMatch = content.match(/\[.*\]/s);
-        if (jsonMatch) {
-          try {
-            keywords = JSON.parse(jsonMatch[0]);
-            console.log(`AI extracted keywords: ${keywords.join(", ")}`);
-          } catch {
-            console.log("Failed to parse AI keywords, using fallback");
-          }
+      const content = kbResult.text || "";
+      const jsonMatch = content.match(/\[.*\]/s);
+      if (jsonMatch) {
+        try {
+          keywords = JSON.parse(jsonMatch[0]);
+          console.log(`AI extracted keywords: ${keywords.join(", ")}`);
+        } catch {
+          console.log("Failed to parse AI keywords, using fallback");
         }
       }
     } catch (aiErr) {
       console.error("AI keyword extraction error:", aiErr);
     }
 
-    // Fallback: extract keywords manually if AI failed
     if (keywords.length === 0) {
       keywords = query
         .split(/[\s,.\u054D\u057F]+/)
@@ -124,88 +98,44 @@ serve(async (req) => {
       console.log(`Fallback keywords: ${keywords.join(", ")}`);
     }
 
-    // Step 2: Search the unified corpus with extracted keywords
-    let searchResults: KBSearchResult[] = [];
-    
-    if (keywords.length > 0) {
-      const { data, error } = await supabase.rpc("search_legal_corpus_dual", {
-        p_query_text: keywords.join(" "),
-        p_metric_embedding: null,
-        p_qwen_embedding: null,
-        p_content_domain: "knowledge_base",
-        p_norm_status: "active",
-        p_limit: Math.min(limit, 50),
-        p_metric_limit: 0,
-        p_qwen_limit: 0,
-        p_bm25_limit: Math.min(Math.max(limit, 20), 50),
-        p_effective_at: null,
-      });
+    // Step 2: Canonical hybrid retrieval — same searchKB() used by legal-chat /
+    // ai-analyze / multi-agent-analyze / generate-document / generate-complaint
+    // and by kb-search (see AUDIT_REPORTS/RAG/12_canonical_retrieval_contract.md).
+    // Replaces the prior two direct `search_legal_corpus_dual` calls that always
+    // passed p_metric_embedding: null (keyword-only). The natural-language query
+    // is embedded for the semantic arm; FTS still covers the keyword arm.
+    const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 50);
+    const rag = await searchKB({
+      supabase,
+      supabaseUrl,
+      supabaseKey: supabaseServiceKey,
+      query,
+      limit: safeLimit,
+      snippetLength: 4000,
+    });
 
-      if (!error && data) {
-        searchResults = ((Array.isArray(data) ? data : []) as CorpusRow[])
-          .map((r) => ({
-            id: r.document_id,
-            title: r.title || r.doc_id || "Untitled",
-            content_text: r.text_snippet || "",
-            category: r.source || "knowledge_base",
-            source_name: r.source,
-            source_url: r.source_url,
-            rank: Number(r.score) || 0,
-          }))
-          .sort((a, b) => b.rank - a.rank);
-      }
-    }
+    const searchResults: KBSearchResult[] = rag.results;
 
-    // Fallback: use the raw query if keyword extraction produced no corpus hits
-    if (searchResults.length === 0) {
-      const { data: ftsData, error: ftsError } = await supabase.rpc("search_legal_corpus_dual", {
-        p_query_text: query,
-        p_metric_embedding: null,
-        p_qwen_embedding: null,
-        p_content_domain: "knowledge_base",
-        p_norm_status: "active",
-        p_limit: limit,
-        p_metric_limit: 0,
-        p_qwen_limit: 0,
-        p_bm25_limit: Math.max(limit, 20),
-        p_effective_at: null,
-      });
-
-      if (!ftsError && ftsData) {
-        searchResults = ((Array.isArray(ftsData) ? ftsData : []) as CorpusRow[])
-          .map((r) => ({
-            id: r.document_id,
-            title: r.title || r.doc_id || "Untitled",
-            content_text: r.text_snippet || "",
-            category: r.source || "knowledge_base",
-            source_name: r.source,
-            source_url: r.source_url,
-            rank: Number(r.score) || 0,
-          }))
-          .filter((r) => r.rank > 0.001);
-      }
-    }
-
-    // Step 3: Format output according to requirements
+    // Step 3: Format output with truthful telemetry.
     const output: SearchOutput = {
-      results: searchResults.slice(0, limit).map((r) => ({
+      results: searchResults.slice(0, safeLimit).map((r) => ({
         title: r.title,
-        snippet: r.content_text.substring(0, 300) + (r.content_text.length > 300 ? "..." : ""),
-        source: r.source_name || r.source_url || `ID: ${r.id}`,
-        category: r.category,
+        snippet: (r.content_text || "").substring(0, 300) +
+          ((r.content_text || "").length > 300 ? "..." : ""),
+        source: r.source_name || `ID: ${r.id}`,
+        category: r.category || "knowledge_base",
         documentId: r.id,
       })),
       keywords,
       totalFound: searchResults.length,
-      retrieval_mode: "keyword_only",
-      semantic_ok: false,
-      semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
+      retrieval_mode: rag.retrieval_mode ?? "keyword_only",
+      semantic_ok: rag.semantic_ok === true,
+      semantic_error: rag.semantic_error,
       qwen_semantic_ok: false,
       qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_DISABLED",
-      threshold_applied: false,
+      threshold_applied: rag.semantic_ok === true,
     };
 
-    // Log API usage
     try {
       const { getModelConfig: _getModelConfig } = await import("../_shared/openai-router.ts");
       const kbCfg = _getModelConfig("kb-search-assistant");
@@ -229,7 +159,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("KB Search Assistant error:", error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error instanceof Error ? error.message : "Unknown error",
         results: [],
         keywords: [],

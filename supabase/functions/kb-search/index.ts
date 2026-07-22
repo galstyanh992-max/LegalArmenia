@@ -1,10 +1,12 @@
-﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
-import { log, warn, err } from "../_shared/safe-logger.ts";
+import { log, err } from "../_shared/safe-logger.ts";
 
 import { handleCors } from "../_shared/edge-security.ts";
+import { searchPractice } from "../_shared/rag-search.ts";
+import type { PracticeSearchResult } from "../_shared/rag-types.ts";
 
-// в”Ђв”Ђв”Ђ Types в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Types ────────────────────────────────────────────────────────────────
 
 interface SearchRequest {
   query: string;
@@ -34,48 +36,7 @@ interface SearchResultDocument {
   max_score?: number;
 }
 
-interface ChunksRpcDoc {
-  id: string;
-  title: string;
-  practice_category: string;
-  court_type: string;
-  outcome: string;
-  decision_date: string | null;
-  source_url: string | null;
-  max_score: number;
-}
-
-interface ChunksRpcChunk {
-  doc_id: string;
-  chunk_index: number;
-  excerpt: string;
-  score: number;
-}
-
-interface ChunksRpcResponse {
-  documents: ChunksRpcDoc[];
-  chunks: ChunksRpcChunk[];
-}
-
-interface CorpusRow {
-  chunk_id: string;
-  document_id: string;
-  doc_id: string | null;
-  title: string | null;
-  text_snippet: string | null;
-  source_url: string | null;
-  source: string | null;
-  score: number;
-}
-
-type CorpusRpcClient = {
-  rpc: (
-    fn: "search_legal_corpus_dual",
-    params: Record<string, unknown>,
-  ) => Promise<{ data: unknown; error: { message?: string } | null }>;
-};
-
-// в”Ђв”Ђв”Ђ Constants в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Constants ────────────────────────────────────────────────────────────
 
 const ALLOWED_CATEGORIES = new Set([
   "criminal", "civil", "administrative", "echr", "constitutional",
@@ -99,7 +60,7 @@ const HTML_ENTITY_MAP: Record<string, string> = {
 };
 const HTML_ENTITY_RE = /&(?:amp|lt|gt|quot|apos|#34|#39);/gi;
 
-// в”Ђв”Ђв”Ђ Handler в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Handler ────────────────────────────────────────────────────────────────
 
 serve(async (req) => {
   const cors = handleCors(req);
@@ -172,41 +133,43 @@ serve(async (req) => {
     const safeChunksPerDoc = Math.max(1, Math.min(Number(limitChunksPerDoc) || 4, 6));
 
     log("kb-search", "Search start", { requestId, qLen: query.length, category });
-    const rpcClient = sb as unknown as CorpusRpcClient;
 
-    // === PRIMARY: unified corpus search ===
-    let path = "chunks";
-    let results: SearchResultDocument[];
+    // ── Canonical retrieval: same searchPractice() used inside dualSearch()
+    // by legal-chat / ai-analyze / multi-agent-analyze / generate-document /
+    // generate-complaint, and now by kb-unified-search (Prompt 4). Replaces
+    // the prior two-tier (chunks RPC + flat-fallback RPC) null-vector calls —
+    // searchPractice() already does semantic + FTS hybrid in one call, so the
+    // fallback tier is no longer structurally necessary.
+    const rag = await searchPractice({
+      supabase: sb,
+      supabaseUrl: supabaseServiceUrl,
+      supabaseKey: supabaseServiceRoleKey,
+      query,
+      category,
+      requestId,
+      limit: Math.max(safeLimitDocs, 1),
+    });
 
-    try {
-      results = await searchViaChunksRpc(rpcClient, query, category, safeLimitDocs, safeChunksPerDoc);
-    } catch (e) {
-      warn("kb-search", "Chunks RPC failed, falling back", { requestId });
-      results = [];
-    }
+    const results = groupIntoDocuments(rag.results, category, safeLimitDocs, safeChunksPerDoc);
 
-    // === FALLBACK: repeat unified corpus search with document limit ===
-    if (results.length === 0) {
-      path = "fallback";
-      try {
-        results = await searchViaFallbackRpc(rpcClient, query, category, safeLimitDocs);
-      } catch (e) {
-        err("kb-search", "Fallback RPC also failed", e, { requestId });
-        results = [];
-      }
-    }
-
-    log("kb-search", "Search done", { requestId, path, docs: results.length });
+    log("kb-search", "Search done", {
+      requestId,
+      docs: results.length,
+      retrieval_mode: rag.retrieval_mode,
+      semantic_ok: rag.semantic_ok,
+    });
 
     return new Response(
       JSON.stringify({
         documents: results,
-        retrieval_mode: "keyword_only",
-        semantic_ok: false,
-        semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
+        retrieval_mode: rag.retrieval_mode,
+        semantic_ok: rag.semantic_ok,
+        semantic_error: rag.semantic_error,
+        // Qwen ECHR route is disabled repo-wide (F-4, artifact 06) — unrelated
+        // to this fix; kept as an explicit, truthful field rather than removed.
         qwen_semantic_ok: false,
         qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_DISABLED",
-        threshold_applied: false,
+        threshold_applied: rag.semantic_ok,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
@@ -216,147 +179,79 @@ serve(async (req) => {
   }
 });
 
-// в”Ђв”Ђв”Ђ PRIMARY: Chunks RPC в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Grouping: PracticeSearchResult[] (flat chunks) → SearchResultDocument[] (per-doc) ──
 
-async function searchViaChunksRpc(
-  sb: CorpusRpcClient,
-  query: string,
+function groupIntoDocuments(
+  rows: PracticeSearchResult[],
   category: string | null,
   limitDocs: number,
   chunksPerDoc: number,
-): Promise<SearchResultDocument[]> {
-  const { data, error } = await sb.rpc("search_legal_corpus_dual", {
-    p_query_text: query,
-    p_metric_embedding: null,
-    p_qwen_embedding: null,
-    p_content_domain: "practice",
-    p_norm_status: "active",
-    p_limit: Math.max(limitDocs * chunksPerDoc, limitDocs),
-    p_metric_limit: 0,
-    p_qwen_limit: 0,
-    p_bm25_limit: Math.max(limitDocs * chunksPerDoc, 30),
-    p_effective_at: null,
-  });
-
-  if (error) throw new Error(`search_legal_corpus_dual RPC: ${error.message}`);
-  if (!data) return [];
-
-  const rows = (Array.isArray(data) ? data : []) as CorpusRow[];
-  const docMap = new Map<string, ChunksRpcDoc>();
-  const chunks: ChunksRpcChunk[] = [];
+): SearchResultDocument[] {
+  const docOrder: string[] = [];
+  const docsById = new Map<string, {
+    id: string;
+    title: string;
+    practice_category: string;
+    court_type: string;
+    max_score: number;
+    key_paragraphs: unknown[];
+    chunks: TopChunk[];
+  }>();
 
   for (const row of rows) {
-    if (!docMap.has(row.document_id)) {
-      docMap.set(row.document_id, {
-        id: row.document_id,
-        title: row.title || row.doc_id || "Untitled",
-        practice_category: row.source === "echr" ? "echr" : (category || ""),
-        court_type: row.source || "",
-        outcome: "",
-        decision_date: null,
-        source_url: row.source_url,
+    // document_id is optional on PracticeSearchResult; fall back to a
+    // non-optional identifier so rows never collapse under "undefined".
+    const docId = row.document_id || row.chunk_id || row.id;
+    let doc = docsById.get(docId);
+    if (!doc) {
+      doc = {
+        id: docId,
+        title: row.title || "Untitled",
+        practice_category: row.practice_category || (row.court_type === "echr" ? "echr" : (category || "")),
+        court_type: row.court_type || "",
         max_score: Number(row.score) || 0,
-      });
+        key_paragraphs: row.key_paragraphs || [],
+        chunks: [],
+      };
+      docsById.set(docId, doc);
+      docOrder.push(docId);
     }
-    chunks.push({
-      doc_id: row.document_id,
-      chunk_index: chunks.filter((chunk) => chunk.doc_id === row.document_id).length,
-      excerpt: row.text_snippet || "",
-      score: Number(row.score) || 0,
-    });
+    if (doc.chunks.length < chunksPerDoc) {
+      const text = (row.content_text || row.content_snippet || "").substring(0, 500);
+      doc.chunks.push({ chunkIndex: doc.chunks.length, text });
+    }
+    doc.max_score = Math.max(doc.max_score, Number(row.score) || 0);
   }
 
-  const docs = [...docMap.values()].slice(0, limitDocs);
-
-  if (docs.length === 0) return [];
-
-  // Group chunks by doc_id
-  const chunksByDoc = new Map<string, ChunksRpcChunk[]>();
-  for (const c of chunks) {
-    const arr = chunksByDoc.get(c.doc_id) || [];
-    arr.push(c);
-    chunksByDoc.set(c.doc_id, arr);
-  }
-
-  return docs.map((doc) => {
-    const docChunks = chunksByDoc.get(doc.id) || [];
-    // Use first chunk excerpt as legal_reasoning_summary preview
-    const preview = docChunks.length > 0
-      ? docChunks[0].excerpt.substring(0, 500)
-      : null;
-
+  return docOrder.slice(0, limitDocs).map((id) => {
+    const doc = docsById.get(id)!;
     return {
       id: doc.id,
       title: doc.title,
       practice_category: doc.practice_category,
       court_type: doc.court_type,
-      outcome: doc.outcome,
+      outcome: "",
       applied_articles: [],
       key_violations: [],
-      legal_reasoning_summary: preview,
+      legal_reasoning_summary: doc.chunks[0]?.text || null,
       decision_map: null,
-      key_paragraphs: [],
-      top_chunks: docChunks.map((c) => ({
-        chunkIndex: c.chunk_index,
-        text: c.excerpt,
-      })),
-      totalChunks: docChunks.length,
-      max_score: Number(doc.max_score) || 0,
+      key_paragraphs: doc.key_paragraphs,
+      top_chunks: doc.chunks,
+      totalChunks: doc.chunks.length,
+      max_score: doc.max_score,
     };
   });
 }
 
-// в”Ђв”Ђв”Ђ FALLBACK: unified corpus RPC в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
-
-async function searchViaFallbackRpc(
-  sb: CorpusRpcClient,
-  query: string,
-  category: string | null,
-  limitDocs: number,
-): Promise<SearchResultDocument[]> {
-  const { data, error } = await sb.rpc("search_legal_corpus_dual", {
-    p_query_text: query,
-    p_metric_embedding: null,
-    p_qwen_embedding: null,
-    p_content_domain: "practice",
-    p_norm_status: "active",
-    p_limit: limitDocs,
-    p_metric_limit: 0,
-    p_qwen_limit: 0,
-    p_bm25_limit: Math.max(limitDocs, 30),
-    p_effective_at: null,
-  });
-
-  if (error) throw new Error(`fallback corpus RPC: ${error.message}`);
-  const rows = Array.isArray(data) ? data : [];
-  if (rows.length === 0) return [];
-
-  return rows.map((r: Record<string, unknown>) => ({
-    id: r.document_id as string,
-    title: r.title as string,
-    practice_category: ((r.source === "echr" ? "echr" : category) ?? "") as string,
-    court_type: (r.source ?? "") as string,
-    outcome: "",
-    applied_articles: [],
-    key_violations: [],
-    legal_reasoning_summary: (r.text_snippet ?? null) as string | null,
-    decision_map: null,
-    key_paragraphs: [],
-    top_chunks: [],
-    totalChunks: 0,
-    max_score: Number(r.score ?? 0) || 0,
-  }));
-}
-
-// в”Ђв”Ђв”Ђ Helpers в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Helpers ──────────────────────────────────────────────────────────────
 
 /**
  * Normalize search query:
  * - Strip HTML tags
- * - Decode safe HTML entities (&quot; в†’ ", &amp; в†’ &, etc.)
+ * - Decode safe HTML entities (&quot; → ", &amp; → &, etc.)
  * - Remove control chars (keep \n \r \t)
  * - Collapse whitespace, cap at 200 chars
- * - Preserves Armenian (U+0531вЂ“U+058F), Cyrillic, and quotes for phrase-mode
+ * - Preserves Armenian (U+0531–U+058F), Cyrillic, and quotes for phrase-mode
  */
 function normalizeSearchQuery(raw: string): string {
   let q = raw
@@ -378,4 +273,3 @@ function jsonRes(body: Record<string, unknown>, status: number): Response {
     headers: { ...defaultCorsHeaders, "Content-Type": "application/json" },
   });
 }
-

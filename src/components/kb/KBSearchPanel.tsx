@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+﻿import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { appendReferenceBlock, clearReferences, useReferencesText } from "@/lib/references-store";
 import { useTranslation } from "react-i18next";
 import { Search, FileText, ChevronDown, ChevronRight, Loader2, Scale, AlertTriangle, BookOpen, Gavel, Maximize2, Minimize2, Copy, ClipboardList } from "lucide-react";
@@ -281,75 +281,33 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
       const trimmed = searchQuery.trim();
       if (trimmed.length < 2) { setIsSearchingKB(false); return; }
 
-      const corpusRpc = supabase.rpc as unknown as (
-        fn: "search_legal_corpus_dual",
-        args: Record<string, unknown>,
-      ) => Promise<{ data: unknown; error: { message: string } | null }>;
-
-      const { data, error } = await corpusRpc("search_legal_corpus_dual", {
-        p_query_text: trimmed,
-        p_metric_embedding: null,
-        p_qwen_embedding: null,
-        p_content_domain: "knowledge_base",
-        p_norm_status: "active",
-        p_limit: 50,
-        p_metric_limit: 0,
-        p_qwen_limit: 0,
-        p_bm25_limit: 50,
-        p_effective_at: null,
+      // Canonical hybrid retrieval via kb-unified-search (same edge function
+      // used by searchUnified below). Replaces the prior direct
+      // supabase.rpc("search_legal_corpus_dual", { p_metric_embedding: null })
+      // call, which was keyword-only and is now denied by the ACL tightening
+      // (public/anon/authenticated EXECUTE revoked on search_legal_corpus_dual
+      // — see AUDIT_REPORTS/RAG/19a_rpc_privilege_repair.md). Legislation KB
+      // results now come from the semantic+FTS hybrid path with truthful
+      // telemetry from kb-unified-search.
+      const { data, error } = await supabase.functions.invoke("kb-unified-search", {
+        body: { query: trimmed, category: null, kbCategory: null },
       });
 
       if (error) throw error;
 
-      const rows = (Array.isArray(data) ? data : []) as Array<{
-        chunk_id: string;
-        document_id: string;
-        title: string | null;
-        doc_id: string | null;
-        text_snippet: string | null;
-        source_url: string | null;
-        citation_anchor: string | null;
-        source: string | null;
-        score: number;
-      }>;
-
+      const kbDocs = data?.kb?.documents || [];
+      const kbChunksRaw = data?.kb?.chunks || [];
       const chunksByDoc = new Map<string, KBChunkResult[]>();
-      const docsById = new Map<string, {
-        id: string; title: string; category: string;
-        source_name: string | null; article_number: string | null;
-        source_url: string | null; max_score: number;
-      }>();
-
-      for (const row of rows) {
-        if (!docsById.has(row.document_id)) {
-          docsById.set(row.document_id, {
-            id: row.document_id,
-            title: row.title || row.doc_id || "Untitled",
-            category: row.source || "legal",
-            source_name: row.source || null,
-            article_number: row.citation_anchor,
-            source_url: row.source_url,
-            max_score: Number(row.score) || 0,
-          });
-        }
-        const arr = chunksByDoc.get(row.document_id) || [];
-        arr.push({
-          doc_id: row.document_id,
-          chunk_index: arr.length,
-          chunk_type: "text",
-          label: row.citation_anchor,
-          char_start: 0,
-          excerpt: row.text_snippet || "",
-          full_text: row.text_snippet || "",
-          score: Number(row.score) || 0,
-        });
-        chunksByDoc.set(row.document_id, arr);
+      for (const chunk of kbChunksRaw) {
+        const arr = chunksByDoc.get(chunk.doc_id) || [];
+        arr.push(chunk);
+        chunksByDoc.set(chunk.doc_id, arr);
       }
-
-      const docs = [...docsById.values()];
-      const globalMax = docs.reduce((mx, d) => Math.max(mx, Number(d.max_score) || 0), 0);
-
-      const results: KBSearchResult[] = docs.map((doc) => {
+      const globalMax = kbDocs.reduce(
+        (mx: number, d: { max_score: number }) => Math.max(mx, Number(d.max_score) || 0),
+        0,
+      );
+      const results: KBSearchResult[] = kbDocs.map((doc: { id: string; title: string; category: string; source_name: string | null; article_number: string | null; source_url: string | null; max_score: number }) => {
         const raw = Number(doc.max_score) || 0;
         const relevancePct = globalMax > 0 ? Math.round((raw / globalMax) * 100) : 0;
         return { ...doc, relevancePct, chunks: chunksByDoc.get(doc.id) || [] };

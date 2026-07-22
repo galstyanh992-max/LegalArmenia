@@ -47,15 +47,24 @@ export function isValidInternalCall(req: Request): boolean {
   const provided = req.headers.get("x-internal-key");
   if (!provided) return false;
 
-  // Check primary internal key
+  // Check primary internal key (constant-time compare to avoid timing leaks)
   const secret = Deno.env.get("INTERNAL_INGEST_KEY");
-  if (secret && provided === secret) return true;
+  if (secret && ctEqual(provided, secret)) return true;
 
   // Check cron worker key (stored in vault, passed by pg_cron)
   const cronKey = Deno.env.get("CRON_WORKER_KEY");
-  if (cronKey && provided === cronKey) return true;
+  if (cronKey && ctEqual(provided, cronKey)) return true;
 
   return false;
+}
+
+/** Constant-time string comparison to mitigate timing attacks on shared secrets. */
+function ctEqual(a: string, b: string): boolean {
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
 }
 
 /**

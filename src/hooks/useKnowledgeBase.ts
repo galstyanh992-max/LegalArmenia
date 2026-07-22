@@ -65,73 +65,35 @@ export function useKnowledgeBase(filters: KBFilters = {}) {
     queryFn: async () => {
       if (!filters.search || filters.search.length < 2) return null;
 
-      const corpusRpc = supabase.rpc as unknown as (
-        fn: 'search_legal_corpus_dual',
-        args: Record<string, unknown>,
-      ) => Promise<{ data: unknown; error: { message: string } | null }>;
+      // ── Canonical retrieval: kb-unified-search (fixed in Prompt 4/5 of the
+      // product-wide RAG pack — see AUDIT_REPORTS/RAG/11_product_coverage_lock.md).
+      // Replaces the prior direct supabase.rpc('search_legal_corpus_dual', ...)
+      // call, which always passed p_metric_embedding: null and was never
+      // semantic. A browser client cannot safely call embed-query itself
+      // (that requires a server-only internal key), so this hook must go
+      // through the edge function rather than reuse the shared Deno helper.
+      const { data: unifiedData, error: unifiedError } = await supabase.functions.invoke('kb-unified-search', {
+        body: { query: filters.search, category: null, kbCategory: null },
+      }).then(res => res, () => ({ data: null, error: { message: 'kb-unified-search failed' } }));
 
-      const chunkResult = await corpusRpc('search_legal_corpus_dual', {
-          p_query_text: filters.search,
-          p_metric_embedding: null,
-          p_qwen_embedding: null,
-          p_content_domain: 'knowledge_base',
-          p_norm_status: 'active',
-          p_limit: 50,
-          p_metric_limit: 0,
-          p_qwen_limit: 0,
-          p_bm25_limit: 50,
-          p_effective_at: null,
-        })
-        .then(res => res, () => ({ data: null, error: { message: 'corpus search failed' } }));
-
-      // Parse chunk results
+      // Parse chunk results — kb-unified-search's kb.documents/kb.chunks
+      // shapes already match KBChunkSearchResult field-for-field.
       const chunkDocs: KBChunkSearchResult[] = [];
-      if (chunkResult.data) {
-        const rows = (Array.isArray(chunkResult.data) ? chunkResult.data : []) as Array<{
-          chunk_id: string;
-          document_id: string;
-          title: string | null;
-          doc_id: string | null;
-          text_snippet: string | null;
-          source_url: string | null;
-          citation_anchor: string | null;
-          source: string | null;
-          score: number;
-        }>;
-
-        const chunksByDoc = new Map<string, KBChunkSearchResult['chunks']>();
-        const docsById = new Map<string, {
+      if (!unifiedError && unifiedData?.kb) {
+        const docs = (unifiedData.kb.documents || []) as Array<{
           id: string; title: string; category: string;
           source_name: string | null; article_number: string | null;
           source_url: string | null; max_score: number;
-        }>();
-        for (const row of rows) {
-          if (!docsById.has(row.document_id)) {
-            docsById.set(row.document_id, {
-              id: row.document_id,
-              title: row.title || row.doc_id || 'Untitled',
-              category: row.source || 'legal',
-              source_name: row.source || null,
-              article_number: row.citation_anchor,
-              source_url: row.source_url,
-              max_score: Number(row.score) || 0,
-            });
-          }
-          const arr = chunksByDoc.get(row.document_id) || [];
-          arr.push({
-            doc_id: row.document_id,
-            chunk_index: arr.length,
-            chunk_type: 'text',
-            label: row.citation_anchor,
-            char_start: 0,
-            excerpt: row.text_snippet || '',
-            full_text: row.text_snippet,
-            score: Number(row.score) || 0,
-          });
-          chunksByDoc.set(row.document_id, arr);
+        }>;
+        const chunks = (unifiedData.kb.chunks || []) as KBChunkSearchResult['chunks'];
+
+        const chunksByDoc = new Map<string, KBChunkSearchResult['chunks']>();
+        for (const c of chunks) {
+          const arr = chunksByDoc.get(c.doc_id) || [];
+          arr.push(c);
+          chunksByDoc.set(c.doc_id, arr);
         }
 
-        const docs = [...docsById.values()];
         const globalMax = docs.reduce((mx, d) => Math.max(mx, Number(d.max_score) || 0), 0);
 
         for (const doc of docs) {

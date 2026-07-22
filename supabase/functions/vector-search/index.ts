@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { log, warn, err } from "../_shared/safe-logger.ts";
 import { handleCors, checkInternalAuth, callInternalFunction } from "../_shared/edge-security.ts";
 import { applyTemporalValidation, buildTemporalWarnings, normalizeEffectiveDate } from "../_shared/temporal-validity-engine.ts";
+import { rerankRows } from "../_shared/legal-reranker.ts";
 
 type SearchTables = "kb" | "practice" | "both";
 
@@ -96,14 +97,21 @@ serve(async (req) => {
     const hasKeywordRows = rows.some(isKeywordRow);
     const retrievalMode = resolveRetrievalMode(hasSemanticRows, hasKeywordRows);
     const semanticOk = Boolean(metricEmbedding);
-    const kbRaw = rows
-      .filter((row) => row.content_domain === "knowledge_base" && searchTables !== "practice")
-      .map(mapKb)
-      .slice(0, safeLimit);
-    const practiceRaw = rows
-      .filter((row) => row.content_domain === "practice" && searchTables !== "kb")
-      .map(mapPractice)
-      .slice(0, safeLimit);
+
+    // Rerank each bucket with the deterministic legal reranker (an optional
+    // cross-encoder may refine the shortlist when RERANKER_ENDPOINT is set).
+    // The RPC returns hybrid candidates in its own order; this re-orders them by
+    // a transparent feature vector (semantic + keyword + authority + temporal +
+    // identifier + language) so high-authority, in-force sources surface first.
+    const kbCandidates = rows.filter((row) => row.content_domain === "knowledge_base" && searchTables !== "practice");
+    const practiceCandidates = rows.filter((row) => row.content_domain === "practice" && searchTables !== "kb");
+    const [kbRanked, practiceRanked] = await Promise.all([
+      rerankRows(kbCandidates, { query, referenceDate: normalizedReferenceDate, limit: safeLimit }, requestId),
+      rerankRows(practiceCandidates, { query, referenceDate: normalizedReferenceDate, limit: safeLimit }, requestId),
+    ]);
+    const rerankMetadata = { kb: kbRanked.metadata, practice: practiceRanked.metadata };
+    const kbRaw = kbRanked.rows.map(mapKb);
+    const practiceRaw = practiceRanked.rows.map(mapPractice);
     const validated = applyTemporalValidation([...kbRaw, ...practiceRaw], normalizedReferenceDate);
     const kb = validated.filter((row) => (row as { content_domain?: string }).content_domain !== "practice" && kbRaw.some((k) => k.chunk_id === row.chunk_id));
     const practice = validated.filter((row) => practiceRaw.some((p) => p.chunk_id === row.chunk_id));
@@ -127,8 +135,11 @@ serve(async (req) => {
       qwen_semantic_error: qwenWarning,
       threshold_applied: semanticOk,
       threshold_value: semanticThreshold,
-      rerank_ok: semanticOk,
-      rerank_error: warnings.length ? warnings.join("; ") : undefined,
+      rerank_ok: true,
+      rerank_mode: rerankMetadata.kb.rerank_mode,
+      reranker_model: rerankMetadata.kb.reranker_model,
+      rerank_metadata: rerankMetadata,
+      rerank_error: [rerankMetadata.kb.endpoint_error, rerankMetadata.practice.endpoint_error].filter(Boolean).join("; ") || undefined,
       temporal_warnings: temporalWarnings,
       request_id: requestId,
     }, 200, corsHeaders);
@@ -146,6 +157,7 @@ serve(async (req) => {
       qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_NOT_RUN",
       threshold_applied: false,
       rerank_ok: false,
+      rerank_mode: "deterministic_legal_v1",
       rerank_error: message,
       request_id: requestId,
     }, 500, corsHeaders);
@@ -238,7 +250,8 @@ function mapKb(row: CorpusRow) {
     retrieval_model: row.retrieval_model,
     retrieval_route: row.retrieval_route,
     rank: row.fts_score,
-    score: row.score,
+    rerank_score: (row as CorpusRow & { rerank_score?: number }).rerank_score ?? row.score,
+    score: (row as CorpusRow & { rerank_score?: number }).rerank_score ?? row.score,
   };
 }
 
@@ -265,8 +278,9 @@ function mapPractice(row: CorpusRow) {
     fts_score: row.fts_score,
     retrieval_model: row.retrieval_model,
     retrieval_route: row.retrieval_route,
-    relevance_score: row.score,
-    score: row.score,
+    relevance_score: (row as CorpusRow & { rerank_score?: number }).rerank_score ?? row.score,
+    rerank_score: (row as CorpusRow & { rerank_score?: number }).rerank_score ?? row.score,
+    score: (row as CorpusRow & { rerank_score?: number }).rerank_score ?? row.score,
   };
 }
 

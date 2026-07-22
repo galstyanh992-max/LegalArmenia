@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.1";
 import { log, err } from "../_shared/safe-logger.ts";
+import { dualSearch } from "../_shared/rag-search.ts";
+import type { KBSearchResult, PracticeSearchResult } from "../_shared/rag-types.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,19 +16,6 @@ const MAX_PRACTICE_DOCS = 20;
 const MAX_PRACTICE_CHUNKS = Number(Deno.env.get("MAX_PRACTICE_CHUNKS_RETURNED")) || 40;
 const MAX_PREVIEW_CHARS = 500;
 const MAX_QUERY_LENGTH = Number(Deno.env.get("MAX_QUERY_LENGTH")) || 2000;
-
-interface CorpusRow {
-  chunk_id: string;
-  document_id: string;
-  doc_id: string | null;
-  title: string | null;
-  text_snippet: string | null;
-  source_url: string | null;
-  citation_anchor: string | null;
-  source: string | null;
-  content_domain: "knowledge_base" | "practice" | "unknown";
-  score: number;
-}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -56,27 +45,22 @@ serve(async (req) => {
     const query = normalizeQuery(rawQuery);
     if (query.length < 2) return jsonRes({ error: "Query too short" }, 400);
 
-    const { data, error } = await sb.rpc("search_legal_corpus_dual", {
-      p_query_text: query,
-      p_metric_embedding: null,
-      p_qwen_embedding: null,
-      p_content_domain: null,
-      p_norm_status: "active",
-      p_limit: MAX_KB_CHUNKS + MAX_PRACTICE_CHUNKS,
-      p_metric_limit: 0,
-      p_qwen_limit: 0,
-      p_bm25_limit: MAX_KB_CHUNKS + MAX_PRACTICE_CHUNKS,
-      p_effective_at: null,
+    // ── Canonical retrieval: same dualSearch() used by legal-chat / ai-analyze /
+    // multi-agent-analyze / generate-document / generate-complaint (see
+    // AUDIT_REPORTS/RAG/12_canonical_retrieval_contract.md). Replaces the prior
+    // direct RPC call that always passed p_metric_embedding: null.
+    const rag = await dualSearch({
+      supabase: sb,
+      supabaseUrl: Deno.env.get("SUPABASE_URL")!,
+      supabaseKey: Deno.env.get("SUPABASE_ANON_KEY")!,
+      query,
+      requestId,
+      kbLimit: MAX_KB_CHUNKS,
+      practiceLimit: MAX_PRACTICE_CHUNKS,
     });
 
-    if (error) throw new Error(error.message);
-
-    const rows = (Array.isArray(data) ? data : []) as CorpusRow[];
-    const kbRows = rows.filter((row) => row.content_domain === "knowledge_base").slice(0, MAX_KB_CHUNKS);
-    const practiceRows = rows.filter((row) => row.content_domain === "practice").slice(0, MAX_PRACTICE_CHUNKS);
-
-    const kb = buildKbPayload(kbRows);
-    const practice = buildPracticePayload(practiceRows);
+    const kb = buildKbPayload(rag.kbResults.slice(0, MAX_KB_CHUNKS));
+    const practice = buildPracticePayload(rag.practiceResults.slice(0, MAX_PRACTICE_CHUNKS));
     const merged = [
       ...kb.documents.map((doc) => ({
         source: "kb",
@@ -102,6 +86,8 @@ serve(async (req) => {
       requestId,
       kbDocs: kb.documents.length,
       practiceDocs: practice.length,
+      retrieval_mode: rag.retrieval_mode,
+      semantic_ok: rag.semantic_ok,
     });
 
     return jsonRes({
@@ -109,12 +95,14 @@ serve(async (req) => {
       practice,
       merged,
       requestId,
-      retrieval_mode: "keyword_only",
-      semantic_ok: false,
-      semantic_error: "SEMANTIC_EMBEDDING_NOT_REQUESTED",
+      retrieval_mode: rag.retrieval_mode,
+      semantic_ok: rag.semantic_ok,
+      semantic_error: rag.semantic_error,
+      // Qwen ECHR route is disabled repo-wide (F-4, artifact 06) — unrelated to
+      // this fix; kept as an explicit, truthful field rather than removed.
       qwen_semantic_ok: false,
       qwen_semantic_error: "QWEN_OPTIONAL_FALLBACK_DISABLED",
-      threshold_applied: false,
+      threshold_applied: rag.semantic_ok,
     }, 200);
   } catch (error) {
     err("kb-unified-search", "Search failed", error, { requestId });
@@ -122,7 +110,7 @@ serve(async (req) => {
   }
 });
 
-function buildKbPayload(rows: CorpusRow[]) {
+function buildKbPayload(rows: KBSearchResult[]) {
   const docs = new Map<string, {
     id: string;
     title: string;
@@ -144,26 +132,29 @@ function buildKbPayload(rows: CorpusRow[]) {
   }> = [];
 
   for (const row of rows) {
-    if (!docs.has(row.document_id)) {
-      docs.set(row.document_id, {
-        id: row.document_id,
-        title: row.title || row.doc_id || "Untitled",
-        category: row.source || "legal",
-        source_name: row.source || null,
-        article_number: row.citation_anchor,
-        source_url: row.source_url,
+    // document_id is optional on KBSearchResult; fall back to a stable
+    // non-optional identifier so rows never collapse under an "undefined" key.
+    const docId = row.document_id || row.chunk_id || row.id;
+    if (!docs.has(docId)) {
+      docs.set(docId, {
+        id: docId,
+        title: row.title || "Untitled",
+        category: row.category || "legal",
+        source_name: row.source_name || null,
+        article_number: row.citation_anchor ?? null,
+        source_url: null,
         max_score: Number(row.score) || 0,
       });
     }
-    const chunkIndex = chunks.filter((chunk) => chunk.doc_id === row.document_id).length;
+    const chunkIndex = chunks.filter((chunk) => chunk.doc_id === docId).length;
     chunks.push({
-      doc_id: row.document_id,
+      doc_id: docId,
       chunk_index: chunkIndex,
       chunk_type: "text",
-      label: row.citation_anchor,
+      label: row.citation_anchor ?? null,
       char_start: 0,
-      excerpt: (row.text_snippet || "").substring(0, MAX_PREVIEW_CHARS),
-      full_text: row.text_snippet,
+      excerpt: (row.content_text || "").substring(0, MAX_PREVIEW_CHARS),
+      full_text: row.content_text || null,
       score: Number(row.score) || 0,
     });
   }
@@ -171,7 +162,7 @@ function buildKbPayload(rows: CorpusRow[]) {
   return { documents: [...docs.values()].slice(0, MAX_KB_DOCS), chunks };
 }
 
-function buildPracticePayload(rows: CorpusRow[]) {
+function buildPracticePayload(rows: PracticeSearchResult[]) {
   const docs = new Map<string, {
     id: string;
     title: string;
@@ -188,29 +179,30 @@ function buildPracticePayload(rows: CorpusRow[]) {
   }>();
 
   for (const row of rows) {
-    const doc = docs.get(row.document_id) ?? {
-      id: row.document_id,
-      title: row.title || row.doc_id || "Untitled",
-      practice_category: row.source === "echr" ? "echr" : "civil",
-      court_type: row.source || "",
-      outcome: "",
-      decision_date: null,
-      source_url: row.source_url,
+    // document_id is optional on PracticeSearchResult; same non-optional
+    // fallback identifier as buildKbPayload.
+    const docId = row.document_id || row.chunk_id || row.id;
+    const doc = docs.get(docId) ?? {
+      id: docId,
+      title: row.title || "Untitled",
+      practice_category: row.practice_category || (row.court_type === "echr" ? "echr" : "civil"),
+      court_type: row.court_type || "",
+      outcome: row.outcome || "",
+      decision_date: row.decision_date || null,
+      source_url: null,
       max_score: Number(row.score) || 0,
       top_chunks: [],
       returnedChunks: 0,
       totalChunks: 0,
       preview: "",
     };
-    doc.top_chunks.push({
-      chunkIndex: doc.top_chunks.length,
-      text: (row.text_snippet || "").substring(0, MAX_PREVIEW_CHARS),
-    });
+    const text = (row.content_text || row.content_snippet || "").substring(0, MAX_PREVIEW_CHARS);
+    doc.top_chunks.push({ chunkIndex: doc.top_chunks.length, text });
     doc.returnedChunks = doc.top_chunks.length;
     doc.totalChunks = doc.top_chunks.length;
     doc.preview = doc.top_chunks[0]?.text || "";
     doc.max_score = Math.max(doc.max_score, Number(row.score) || 0);
-    docs.set(row.document_id, doc);
+    docs.set(docId, doc);
   }
 
   return [...docs.values()].slice(0, MAX_PRACTICE_DOCS);
