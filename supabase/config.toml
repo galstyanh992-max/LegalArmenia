@@ -188,3 +188,5 @@ verify_jwt = true
 [functions.kb-search-assistant]
 enabled = true
 verify_jwt = true
+
+# Linked preview deployment trigger: 2026-07-22
