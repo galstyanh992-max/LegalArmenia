@@ -1,4 +1,4 @@
-﻿import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { appendReferenceBlock, clearReferences, useReferencesText } from "@/lib/references-store";
 import { useTranslation } from "react-i18next";
 import { Search, FileText, ChevronDown, ChevronRight, Loader2, Scale, AlertTriangle, BookOpen, Gavel, Maximize2, Minimize2, Copy, ClipboardList } from "lucide-react";
@@ -202,6 +202,7 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
   // KB legislation search state
   const [kbResults, setKbResults] = useState<KBSearchResult[]>([]);
   const [isSearchingKB, setIsSearchingKB] = useState(false);
+  const [kbSearchError, setKbSearchError] = useState<string | null>(null);
   const [expandedKBDocs, setExpandedKBDocs] = useState<Set<string>>(new Set());
 
   // ─── Merged results ────────────────────────────────────────────────
@@ -314,9 +315,14 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
       });
 
       setKbResults(results);
+      setKbSearchError(null);
     } catch (err) {
+      // Edge function unavailable/failed — surface an explicit, safe error
+      // instead of silently showing an empty result set. Do not fall back to
+      // a direct RPC call.
       console.error("KB chunk search error:", err);
       setKbResults([]);
+      setKbSearchError("Legislation search is temporarily unavailable. Please try again.");
     } finally {
       setIsSearchingKB(false);
     }
@@ -379,10 +385,15 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
         max_score: Number(p.max_score) || 0,
       }));
       setPracticeDocuments(practiceItems);
+      setKbSearchError(null);
 
       return true;
     } catch (e) {
-      console.warn("Unified search failed, falling back to parallel RPCs", e);
+      // kb-unified-search unavailable/failed — fall back to the separate
+      // edge-function-backed searches below (searchKBLegislation, searchPractice).
+      // Neither fallback calls the RPC directly; if both also fail, each
+      // surfaces its own explicit error via kbSearchError / searchError.
+      console.warn("Unified search failed, falling back to separate edge searches", e);
       return false;
     }
   }, [setPracticeDocuments]);
@@ -404,6 +415,9 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
   const runSearch = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim() || searchQuery.trim().length < 2) return;
     setMergedVisibleCount(MERGED_PAGE_SIZE);
+    // Clear any stale error from a prior attempt before this new search starts,
+    // so a previous failure's message doesn't linger during the new attempt.
+    setKbSearchError(null);
 
     // Try unified endpoint first (single request for both KB + Practice)
     const unifiedOk = await searchUnified(searchQuery, null);
@@ -548,9 +562,11 @@ export function KBSearchPanel({ caseId, onInsertReference, onReferencesChange }:
           </Tabs>
         )}
 
-        {searchError && (
+        {(searchError || kbSearchError) && (
           <Alert variant="destructive" className="py-2 mb-2">
-            <AlertDescription className="text-xs">{searchError}</AlertDescription>
+            <AlertDescription className="text-xs">
+              {[searchError, kbSearchError].filter(Boolean).join(" ")}
+            </AlertDescription>
           </Alert>
         )}
 

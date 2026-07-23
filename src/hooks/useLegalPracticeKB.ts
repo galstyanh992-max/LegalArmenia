@@ -109,11 +109,21 @@ export function useLegalPracticeKB() {
 
       const edgeResult = await edgePromise;
 
-      // Edge function may fail (timeout, etc.) — treat as soft failure
-      const edgeDocs: KBDocument[] = edgeResult.error ? [] : (edgeResult.data?.documents || []);
+      if (edgeResult.error) {
+        // Edge function unavailable/failed — surface an explicit, safe error
+        // instead of silently returning an empty set (which is indistinguishable
+        // from a real zero-match search). Do not fall back to a direct RPC call.
+        setState((s) => ({
+          ...s,
+          documents: [],
+          isSearching: false,
+          searchError: "Practice search is temporarily unavailable. Please try again.",
+        }));
+        return [];
+      }
 
       // Limit to top 20 results
-      const documents = edgeDocs.slice(0, 20);
+      const documents: KBDocument[] = (edgeResult.data?.documents || []).slice(0, 20);
 
       setState((s) => ({
         ...s,
