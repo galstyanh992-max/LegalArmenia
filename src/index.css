@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -31,34 +33,34 @@ html {
     --shadow-medium: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02);
     --shadow-elevated: 0 10px 15px -3px rgba(0,0,0,0.04), 0 4px 6px -2px rgba(0,0,0,0.02);
 
-    /* Backgrounds */
-    --background: 210 20% 97%; /* #F6F8FA */
-    --foreground: 215 26% 9%; /* #11161D */
+    /* Backgrounds - Legal Light Mode */
+    --background: 214 48% 98%; /* #F8FAFC - Professional light */
+    --foreground: 215 32% 6%; /* #0F172A - Professional dark navy */
 
-    --card: 0 0% 100%; /* #FFFFFF */
-    --card-foreground: 215 26% 9%;
+    --card: 0 0% 100%; /* #FFFFFF - Pure white cards */
+    --card-foreground: 215 32% 6%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 26% 9%;
+    --popover-foreground: 215 32% 6%;
 
-    --primary: 224 64% 33%; /* #1E3A8A */
+    --primary: 222 77% 25%; /* #1E3A8A - Trust Navy */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 25% 95%; /* Light gray */
-    --secondary-foreground: 215 26% 9%;
+    --secondary: 220 76% 32%; /* #1E40AF - Darker Blue */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 95%;
+    --muted: 213 27% 93%; /* #E9EEF5 */
     --muted-foreground: 211 14% 45%;
 
-    --accent: 41 45% 52%; /* #B9974F */
+    --accent: 37 92% 50%; /* #B45309 - Authority Gold */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 63% 31%; /* #7F1D1D */
+    --destructive: 0 91% 71%; /* #DC2626 - Warning Red */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 10% 90%;
-    --input: 210 10% 90%;
-    --ring: 224 64% 33%;
+    --border: 214 32% 91%; /* #CBD5E1 */
+    --input: 214 32% 91%;
+    --ring: 222 77% 25%; /* Primary blue */
 
     --warning: 41 45% 52%;
     --warning-foreground: 0 0% 100%;
@@ -134,7 +136,7 @@ html {
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter", "SF Pro", "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Lato", "Inter", "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     /* Prevent text inflation on mobile */
     text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
@@ -579,35 +581,69 @@ html:not(.light) {
     border-color: rgba(215, 180, 106, 0.18);
   }
 
-  /* === Typography helpers === */
+  /* === Typography helpers - Legal Professional === */
   .text-title {
-    font-size: 34px;
-    line-height: 1.1;
-    font-weight: 600;
-    letter-spacing: 0;
-    color: hsl(213 30% 94%);
+    font-family: "EB Garamond", serif;
+    font-size: 40px;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: hsl(215 32% 8%);
   }
   .text-section {
-    font-size: 22px;
+    font-family: "EB Garamond", serif;
+    font-size: 28px;
     line-height: 1.25;
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: -0.25px;
+    color: hsl(215 32% 10%);
   }
   .text-card-title {
-    font-size: 18px;
-    line-height: 1.3;
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    line-height: 1.35;
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: -0.1px;
+    color: hsl(215 32% 12%);
   }
   .text-body {
-    font-size: 14px;
-    line-height: 1.55;
+    font-family: "Lato", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: 0.2px;
+    color: hsl(215 32% 20%);
   }
   .text-meta {
-    font-size: 12px;
-    line-height: 1.4;
-    letter-spacing: 0.01em;
-    color: hsl(215 18% 68%);
+    font-family: "Lato", sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+    color: hsl(215 20% 45%);
+  }
+
+  /* Legal domain specific typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "EB Garamond", serif;
+  }
+
+  h1 {
+    @apply text-4xl font-bold tracking-tight;
+    color: hsl(215 32% 8%);
+  }
+
+  h2 {
+    @apply text-3xl font-semibold tracking-tight;
+    color: hsl(215 32% 10%);
+  }
+
+  h3 {
+    @apply text-2xl font-semibold tracking-tight;
+    color: hsl(215 32% 12%);
+  }
+
+  h4, h5, h6 {
+    @apply text-xl font-semibold;
+    color: hsl(215 32% 15%);
   }
 
   [data-radix-popper-content-wrapper] {
