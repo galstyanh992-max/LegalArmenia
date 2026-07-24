@@ -53,11 +53,9 @@ import {
   FileCode,
   ChevronLeft,
   ChevronRight,
-  FolderOpen,
   Database,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { PromptFilesEditor } from './PromptFilesEditor';
 
 // AI Functions list
 const AI_FUNCTIONS = [
@@ -661,15 +659,7 @@ export const PromptManager = () => {
             <Database className="h-4 w-4" />
             База промптов
           </TabsTrigger>
-          <TabsTrigger value="files" className="gap-2">
-            <FolderOpen className="h-4 w-4" />
-            Файлы промптов
-          </TabsTrigger>
         </TabsList>
-
-        <TabsContent value="files">
-          <PromptFilesEditor />
-        </TabsContent>
 
         <TabsContent value="database">
       <Card>
